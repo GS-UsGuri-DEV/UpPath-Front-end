@@ -1,30 +1,25 @@
 import { useState } from 'react';
-import { account } from '../../shared/appwrite';
-import { ID } from 'appwrite';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import type { LoginFormData } from '../../types/auth';
+import { useAuth } from '../../contexts/useAuth';
+import FormInput from '../../components/Form/FormInput';
+import FormButton from '../../components/Form/FormButton';
 
 export default function Login() {
-  const [email,setEmail] = useState('');
-  const [password,setPassword] = useState('');
-  const [msg,setMsg] = useState('');
+  const [msg, setMsg] = useState('');
   const nav = useNavigate();
+  const { login } = useAuth();
 
-  async function signup(){
-    try{
-      await account.create(ID.unique(), email, password);
-      await account.createEmailPasswordSession(email, password);
-      nav('/dashboard');
-    }catch(e: unknown){
-      const msgText = e instanceof Error ? e.message : String(e);
-      setMsg(msgText);
-    }
-  }
+  const { register, handleSubmit, formState } = useForm<LoginFormData>({
+    defaultValues: { email: '', password: '' },
+  });
 
-  async function signin(){
-    try{
-      await account.createEmailPasswordSession(email, password);
+  async function onSubmit(data: LoginFormData) {
+    try {
+      await login(data.email, data.password);
       nav('/dashboard');
-    }catch(e: unknown){
+    } catch (e: unknown) {
       const msgText = e instanceof Error ? e.message : String(e);
       setMsg(msgText);
     }
@@ -32,16 +27,18 @@ export default function Login() {
 
   return (
     <div className="min-h-screen grid place-items-center p-6">
-      <div className="w-full max-w-sm bg-white rounded-xl shadow p-6 space-y-3">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-sm bg-white rounded-xl shadow p-6 space-y-4">
         <h1 className="text-xl font-semibold">UpPath — Login</h1>
         {msg && <p className="text-sm text-red-600">{msg}</p>}
-        <input className="w-full border rounded p-2" placeholder="email" value={email} onChange={e=>setEmail(e.target.value)} />
-        <input className="w-full border rounded p-2" placeholder="senha" type="password" value={password} onChange={e=>setPassword(e.target.value)} />
-        <div className="flex gap-2">
-          <button onClick={signup} className="flex-1 bg-green-600 text-white rounded p-2">Sign up</button>
-          <button onClick={signin} className="flex-1 bg-blue-600 text-white rounded p-2">Login</button>
+
+        <FormInput label="Email" placeholder="email" {...register('email')} />
+        <FormInput label="Senha" placeholder="senha" type="password" {...register('password')} />
+
+        <div className="space-y-2">
+          <FormButton type="submit" disabled={formState.isSubmitting}>Login</FormButton>
+          <Link to="/cadastro" className="block text-center text-sm text-blue-600">Criar conta</Link>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
