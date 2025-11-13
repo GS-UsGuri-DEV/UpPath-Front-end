@@ -1,13 +1,16 @@
-import { useState } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Login from './routes/Login/Login';
+import Dashboard from './routes/Dashboard/Dashboard';
+import Protected from './routes/Protected/Protected';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <div className="App">
-      <p>You clicked {count} times</p>
-    </div>
-  )
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route element={<Protected />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
 }
-
-  export default App
