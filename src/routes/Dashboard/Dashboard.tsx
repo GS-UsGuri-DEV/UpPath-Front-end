@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { account, storage, BUCKET_PUBLIC, ID } from '../../shared/appwrite';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/useAuth';
 
 export default function Dashboard() {
   const [me, setMe] = useState<unknown | null>(null);
   const [fileUrl, setFileUrl] = useState<string | undefined>();
   const nav = useNavigate();
+  const { logout, userData } = useAuth();
 
   useEffect(() => {
     account.get().then(setMe).catch(() => nav('/'));
@@ -14,20 +16,32 @@ export default function Dashboard() {
   async function upload(e: React.ChangeEvent<HTMLInputElement>){
     const f = e.target.files?.[0]; if(!f) return;
     const r = await storage.createFile(BUCKET_PUBLIC, ID.unique(), f);
-  const url = storage.getFilePreview(BUCKET_PUBLIC, r.$id);
+    const url = storage.getFilePreview(BUCKET_PUBLIC, r.$id);
     setFileUrl(url);
   }
 
-  async function logout() {
-    await account.deleteSession('current');
+  async function handleLogout() {
+    await logout();
     nav('/');
-  }
-
-  return (
+  }  return (
     <div className="max-w-3xl mx-auto p-6 space-y-6">
       <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">UpPath — Dashboard</h1>
-        <button onClick={logout} className="px-3 py-1 rounded bg-gray-800 text-white">Sair</button>
+        <div>
+          <h1 className="text-2xl font-bold">UpPath — Dashboard</h1>
+          {userData && (
+            <p className="text-sm text-gray-600">
+              {userData.nome_completo} {userData.is_admin && <span className="text-blue-600 font-semibold">(Admin)</span>}
+            </p>
+          )}
+        </div>
+        <div className="flex gap-2">
+          {userData?.is_admin && (
+            <Link to="/admin" className="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700">
+              Painel Admin
+            </Link>
+          )}
+          <button onClick={handleLogout} className="px-3 py-1 rounded bg-gray-800 text-white">Sair</button>
+        </div>
       </header>
 
       <section className="rounded-xl border bg-white p-4">
