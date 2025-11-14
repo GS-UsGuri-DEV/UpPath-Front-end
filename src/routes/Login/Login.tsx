@@ -1,23 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import type { LoginFormData } from '../../types/auth';
 import { useAuth } from '../../contexts/useAuth';
 import FormInput from '../../components/Form/FormInput';
 import FormButton from '../../components/Form/FormButton';
+import { FaArrowRight, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function Login() {
   const [msg, setMsg] = useState('');
   const nav = useNavigate();
   const { login } = useAuth();
 
-  const { register, handleSubmit, formState } = useForm<LoginFormData>({
+  const { register, handleSubmit, formState, setValue } = useForm<LoginFormData>({
     defaultValues: { email: '', password: '' },
   });
+  const { errors } = formState;
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
+
+  // Carregar credenciais salvas ao montar o componente
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    const savedPassword = localStorage.getItem('rememberedPassword');
+    if (savedEmail && savedPassword) {
+      setValue('email', savedEmail);
+      setValue('password', savedPassword);
+      setRemember(true);
+    }
+  }, [setValue]);
 
   async function onSubmit(data: LoginFormData) {
     try {
       await login(data.email, data.password);
+      
+      // Salvar ou remover credenciais baseado no checkbox
+      if (remember) {
+        localStorage.setItem('rememberedEmail', data.email);
+        localStorage.setItem('rememberedPassword', data.password);
+      } else {
+        localStorage.removeItem('rememberedEmail');
+        localStorage.removeItem('rememberedPassword');
+      }
+      
       nav('/dashboard');
     } catch (e: unknown) {
       const msgText = e instanceof Error ? e.message : String(e);
@@ -26,19 +51,60 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen grid place-items-center p-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-sm bg-white rounded-xl shadow p-6 space-y-4">
-        <h1 className="text-xl font-semibold">UpPath — Login</h1>
-        {msg && <p className="text-sm text-red-600">{msg}</p>}
+    <div className="login-bg">
+      <div className="login-card-wrapper">
 
-        <FormInput label="Email" placeholder="email" {...register('email')} />
-        <FormInput label="Senha" placeholder="senha" type="password" {...register('password')} />
 
-        <div className="space-y-2">
-          <FormButton type="submit" disabled={formState.isSubmitting}>Login</FormButton>
-          <Link to="/cadastro" className="block text-center text-sm text-blue-600">Criar conta</Link>
+        <form onSubmit={handleSubmit(onSubmit)} className="login-card">
+                  <div className="login-brand">
+          <h1 className="login-title">Login</h1>
         </div>
-      </form>
+            {msg && (
+              <div className="msg-box">
+                <p className="msg-text">{msg}</p>
+              </div>
+            )}
+
+            <FormInput label="CPF ou E-mail" placeholder="CPF ou e-mail" {...register('email', { required: 'CPF ou email é obrigatório' })} error={errors.email?.message as string | undefined} />
+
+            <div className="space-y-2">
+              <FormInput
+                label="Senha"
+                placeholder="••••••••"
+                type={showPassword ? 'text' : 'password'}
+                {...register('password', { required: 'Senha é obrigatória' })}
+                error={errors.password?.message as string | undefined}
+                rightIcon={showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                onRightIconClick={() => setShowPassword(s => !s)}
+              />
+
+              <div className="flex items-center justify-between text-sm text-slate-400">
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" className="rounded bg-slate-700 border-slate-600" checked={remember} onChange={() => setRemember(s => !s)} />
+                  Lembrar-me
+                </label>
+                <Link to="#" className="text-slate-400 hover:text-white">Esqueceu a senha?</Link>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <FormButton type="submit" disabled={formState.isSubmitting}>
+                {formState.isSubmitting ? 'Entrando...' : (
+                  <>
+                    <span>Entrar</span>
+                    <FaArrowRight />
+                  </>
+                )}
+              </FormButton>
+              <Link 
+                to="/cadastro" 
+                className="block text-center text-sm text-slate-400"
+              >
+                Não tem conta? <span className="text-blue-400 font-semibold hover:text-blue-300 transition-colors">Criar conta</span>
+              </Link>
+            </div>
+        </form>
+      </div>
     </div>
   );
 }
