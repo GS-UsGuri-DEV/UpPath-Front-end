@@ -22,7 +22,6 @@ export default function Login() {
   const emailValue = watch('email');
   const passwordValue = watch('password');
 
-  // Carregar credenciais salvas ao montar o componente
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail');
     const savedPassword = localStorage.getItem('rememberedPassword');
@@ -37,7 +36,6 @@ export default function Login() {
     try {
       await login(data.email, data.password);
       
-      // Salvar ou remover credenciais baseado no checkbox
       if (remember) {
         localStorage.setItem('rememberedEmail', data.email);
         localStorage.setItem('rememberedPassword', data.password);

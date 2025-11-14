@@ -17,7 +17,6 @@ export default function Cadastro() {
 
   const type = watch('type') as 'usuario' | 'admin' | 'empresa' | undefined;
 
-  // Máscaras simples para CPF e CNPJ (formatam durante a digitação)
   function formatCPF(v: string) {
     const digits = v.replace(/\D/g, '').slice(0, 11);
     return digits
@@ -59,7 +58,7 @@ export default function Cadastro() {
         try {
           await account.deleteSession('current');
         } catch {
-          // Ignora erro se não houver sessão ativa
+          // ok
         }
 
         await account.create(ID.unique(), company.email_contato ?? '', senha);
@@ -104,7 +103,7 @@ export default function Cadastro() {
         try {
           await account.deleteSession('current');
         } catch {
-          // Ignora erro se não houver sessão ativa
+          // ok
         }
 
         await account.create(ID.unique(), user.email ?? '', senha);
