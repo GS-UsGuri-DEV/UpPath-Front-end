@@ -17,7 +17,6 @@ export default function Cadastro() {
 
   const type = watch('type') as 'usuario' | 'admin' | 'empresa' | undefined;
 
-  // Máscaras simples para CPF e CNPJ (formatam durante a digitação)
   function formatCPF(v: string) {
     const digits = v.replace(/\D/g, '').slice(0, 11);
     return digits
@@ -59,7 +58,7 @@ export default function Cadastro() {
         try {
           await account.deleteSession('current');
         } catch {
-          // Ignora erro se não houver sessão ativa
+          // ok
         }
 
         await account.create(ID.unique(), company.email_contato ?? '', senha);
@@ -104,7 +103,7 @@ export default function Cadastro() {
         try {
           await account.deleteSession('current');
         } catch {
-          // Ignora erro se não houver sessão ativa
+          // ok
         }
 
         await account.create(ID.unique(), user.email ?? '', senha);
@@ -130,21 +129,39 @@ export default function Cadastro() {
   }
 
   return (
-    <div className="min-h-screen grid place-items-center p-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-sm bg-white rounded-xl shadow p-6 space-y-4">
-        <h1 className="text-xl font-semibold">Cadastro</h1>
-        {msg && <p className="text-sm text-red-600">{msg}</p>}
+    <div className="cadastro-bg">
+      <form onSubmit={handleSubmit(onSubmit)} className="cadastro-card">
+        <h1 className="cadastro-title">Cadastro</h1>
+        {msg && (
+          <div className="msg-box">
+            <p className="msg-text">{msg}</p>
+          </div>
+        )}
 
-        <div className="flex gap-2 items-center">
-          <label className="text-sm">Tipo:</label>
-          <label className="text-sm"><input type="radio" value="usuario" {...register('type')} defaultChecked /> Usuário</label>
-          <label className="text-sm"><input type="radio" value="admin" {...register('type')} /> Admin</label>
-          <label className="text-sm"><input type="radio" value="empresa" {...register('type')} /> Empresa</label>
+        <div className="radio-group">
+          <label className="radio-label" style={{ fontWeight: '600' }}>Tipo:</label>
+          <label className="radio-label">
+            <input type="radio" value="usuario" className="radio-input" {...register('type')} defaultChecked />
+            Usuário
+          </label>
+          <label className="radio-label">
+            <input type="radio" value="admin" className="radio-input" {...register('type')} />
+            Admin
+          </label>
+          <label className="radio-label">
+            <input type="radio" value="empresa" className="radio-input" {...register('type')} />
+            Empresa
+          </label>
         </div>
 
         {type === 'empresa' ? (
           <>
-            <FormInput label="Nome da empresa" placeholder="nome da empresa" {...register('nome_empresa', { required: 'Nome da empresa é obrigatório' })} />
+            <FormInput 
+              label="Nome da empresa" 
+              placeholder="nome da empresa" 
+              {...register('nome_empresa', { required: 'Nome da empresa é obrigatório' })} 
+              required
+            />
             <FormInput
               label="CNPJ"
               placeholder="00.000.000/0000-00"
@@ -153,29 +170,84 @@ export default function Cadastro() {
                 onChange: (e: ChangeEvent<HTMLInputElement>) => setValue('cnpj', formatCNPJ(e.target.value)),
                 validate: v => (v ? v.replace(/\D/g,'').length === 14 : false) || 'CNPJ inválido',
               })}
+              required
             />
-            <FormInput label="Email de contato" placeholder="email de contato" {...register('email_contato', { required: 'Email é obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Email inválido' } })} />
-            <FormInput label="Senha" placeholder="senha" type="password" {...register('senha', { required: 'Senha é obrigatória', minLength: { value: 8, message: 'Senha mínima 8 caracteres' }, pattern: { value: /(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])/, message: 'Senha deve conter letras maiúsculas, minúsculas e números' } })} />
-            <FormInput label="Confirmar senha" placeholder="confirme a senha" type="password" {...register('confirmPassword', { validate: v => v === watch('senha') || 'As senhas não coincidem' })} />
+            <FormInput 
+              label="Email de contato" 
+              placeholder="email de contato" 
+              {...register('email_contato', { required: 'Email é obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Email inválido' } })} 
+              required
+            />
+            <FormInput 
+              label="Senha" 
+              placeholder="senha" 
+              type="password" 
+              {...register('senha', { required: 'Senha é obrigatória', minLength: { value: 8, message: 'Senha mínima 8 caracteres' }, pattern: { value: /(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])/, message: 'Senha deve conter letras maiúsculas, minúsculas e números' } })} 
+              required
+            />
+            <FormInput 
+              label="Confirmar senha" 
+              placeholder="confirme a senha" 
+              type="password" 
+              {...register('confirmPassword', { validate: v => v === watch('senha') || 'As senhas não coincidem' })} 
+              required
+            />
           </>
         ) : (
           <>
-            <FormInput label="Nome completo" placeholder="nome completo" {...register('nome_completo', { required: 'Nome é obrigatório' })} />
-            <FormInput label="CPF" placeholder="000.000.000-00" {...register('cpf', { onChange: (e: ChangeEvent<HTMLInputElement>) => setValue('cpf', formatCPF(e.target.value)), validate: v => (v ? v.replace(/\D/g,'').length === 11 : true) || 'CPF inválido' })} />
-            <FormInput label="Email" placeholder="email" {...register('email', { required: 'Email é obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Email inválido' } })} />
-            <FormInput label="Senha" placeholder="senha" type="password" {...register('senha', { required: 'Senha é obrigatória', minLength: { value: 8, message: 'Senha mínima 8 caracteres' }, pattern: { value: /(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])/, message: 'Senha deve conter letras maiúsculas, minúsculas e números' } })} />
-            <FormInput label="Confirmar senha" placeholder="confirme a senha" type="password" {...register('confirmPassword', { validate: v => v === watch('senha') || 'As senhas não coincidem' })} />
+            <FormInput 
+              label="Nome completo" 
+              placeholder="nome completo" 
+              {...register('nome_completo', { required: 'Nome é obrigatório' })} 
+              required
+            />
+            <FormInput 
+              label="CPF" 
+              placeholder="000.000.000-00" 
+              {...register('cpf', { required: 'CPF é obrigatório', onChange: (e: ChangeEvent<HTMLInputElement>) => setValue('cpf', formatCPF(e.target.value)), validate: v => (v ? v.replace(/\D/g,'').length === 11 : false) || 'CPF inválido' })} 
+              required
+            />
+            <FormInput 
+              label="Email" 
+              placeholder="email" 
+              {...register('email', { required: 'Email é obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Email inválido' } })} 
+              required
+            />
+            <FormInput 
+              label="Senha" 
+              placeholder="senha" 
+              type="password" 
+              {...register('senha', { required: 'Senha é obrigatória', minLength: { value: 8, message: 'Senha mínima 8 caracteres' }, pattern: { value: /(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])/, message: 'Senha deve conter letras maiúsculas, minúsculas e números' } })} 
+              required
+            />
+            <FormInput 
+              label="Confirmar senha" 
+              placeholder="confirme a senha" 
+              type="password" 
+              {...register('confirmPassword', { validate: v => v === watch('senha') || 'As senhas não coincidem' })} 
+              required
+            />
             <FormInput label="ID da empresa (opcional)" placeholder="id_empresa" {...register('id_empresa')} />
-            <FormInput label="Data de nascimento" placeholder="YYYY-MM-DD" type="date" {...register('data_nascimento')} />
+            <FormInput 
+              label="Data de nascimento" 
+              placeholder="YYYY-MM-DD" 
+              type="date" 
+              {...register('data_nascimento', { required: 'Data de nascimento é obrigatória' })} 
+              required
+            />
             <FormInput label="Nível de carreira" placeholder="ex: Junior, Senior" {...register('nivel_carreira')} />
             <FormInput label="Ocupação" placeholder="ocupação" {...register('ocupacao')} />
             <FormInput label="Gênero" placeholder="gênero" {...register('genero')} />
           </>
         )}
 
-        <div className="space-y-2">
-          <FormButton type="submit" disabled={formState.isSubmitting}>Criar conta</FormButton>
-          <Link to="/" className="block text-center text-sm text-blue-600">Já tem cadastro? Faça login</Link>
+        <div className="space-y-3">
+          <FormButton type="submit" disabled={formState.isSubmitting}>
+            {formState.isSubmitting ? 'Criando conta...' : 'Criar conta'}
+          </FormButton>
+          <p className="link-muted">
+            <span className="text-slate-400">Já tem cadastro?</span> <Link to="/" className="text-blue-400 font-semibold hover:text-blue-300 transition-colors">Faça login</Link>
+          </p>
         </div>
       </form>
     </div>

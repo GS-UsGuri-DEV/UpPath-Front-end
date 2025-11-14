@@ -1,5 +1,6 @@
 import { useAuth } from '../../contexts/useAuth';
 import { Link } from 'react-router-dom';
+import { FaUsers, FaBuilding, FaChartBar, FaCog, FaLock, FaClipboardList } from 'react-icons/fa';
 
 export default function AdminPanel() {
   const { userData, logout } = useAuth();
@@ -33,7 +34,7 @@ export default function AdminPanel() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold">Usuários</h2>
-              <span className="text-2xl">👥</span>
+              <FaUsers className="text-2xl text-blue-600" />
             </div>
             <p className="text-sm text-gray-600 mb-4">Gerencie usuários cadastrados no sistema</p>
             <button className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
@@ -44,7 +45,7 @@ export default function AdminPanel() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold">Empresas</h2>
-              <span className="text-2xl">🏢</span>
+              <FaBuilding className="text-2xl text-blue-600" />
             </div>
             <p className="text-sm text-gray-600 mb-4">Gerencie empresas cadastradas</p>
             <button className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
@@ -55,7 +56,7 @@ export default function AdminPanel() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold">Relatórios</h2>
-              <span className="text-2xl">📊</span>
+              <FaChartBar className="text-2xl text-blue-600" />
             </div>
             <p className="text-sm text-gray-600 mb-4">Visualize estatísticas e relatórios</p>
             <button className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
@@ -66,7 +67,7 @@ export default function AdminPanel() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold">Configurações</h2>
-              <span className="text-2xl">⚙️</span>
+              <FaCog className="text-2xl text-blue-600" />
             </div>
             <p className="text-sm text-gray-600 mb-4">Configure parâmetros do sistema</p>
             <button className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
@@ -77,7 +78,7 @@ export default function AdminPanel() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold">Permissões</h2>
-              <span className="text-2xl">🔐</span>
+              <FaLock className="text-2xl text-blue-600" />
             </div>
             <p className="text-sm text-gray-600 mb-4">Gerencie permissões e acessos</p>
             <button className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
@@ -88,7 +89,7 @@ export default function AdminPanel() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold">Logs do Sistema</h2>
-              <span className="text-2xl">📝</span>
+              <FaClipboardList className="text-2xl text-blue-600" />
             </div>
             <p className="text-sm text-gray-600 mb-4">Visualize logs de atividades</p>
             <button className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
