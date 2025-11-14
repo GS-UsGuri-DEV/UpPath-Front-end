@@ -2,14 +2,34 @@ import React from 'react';
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
-  name: string;
+  name?: string;
+  error?: string | undefined;
+  rightIcon?: React.ReactNode;
+  onRightIconClick?: () => void;
 };
 
-export default function FormInput({ label, className, ...rest }: Props) {
+export default function FormInput({ label, className, error, rightIcon, onRightIconClick, ...rest }: Props) {
   return (
-    <div className={"space-y-1 " + (className ?? '')}>
-      {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}
-      <input className="w-full border rounded p-2" {...rest} />
+    <div className={"space-y-2 " + (className ?? '')}>
+      {label && <label className="input-label">{label}</label>}
+      <div className="relative">
+        <input
+          className={`input-field ${error ? 'input-error' : ''} ${rightIcon ? 'pr-10' : ''}`}
+          aria-invalid={error ? 'true' : 'false'}
+          {...rest}
+        />
+        {rightIcon && (
+          <button
+            type="button"
+            onClick={onRightIconClick}
+            title="Mostrar/Ocultar senha"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 transition-colors"
+          >
+            {rightIcon}
+          </button>
+        )}
+      </div>
+      {error && <p className="error-text">{error}</p>}
     </div>
   );
 }
