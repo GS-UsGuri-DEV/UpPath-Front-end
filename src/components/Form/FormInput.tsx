@@ -6,15 +6,25 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   error?: string | undefined;
   rightIcon?: React.ReactNode;
   onRightIconClick?: () => void;
+  isValid?: boolean;
 };
 
-export default function FormInput({ label, className, error, rightIcon, onRightIconClick, ...rest }: Props) {
+export default function FormInput({ label, className, error, rightIcon, onRightIconClick, isValid, ...rest }: Props) {
+  const inputClassName = `input-field ${
+    error ? 'input-error' : isValid ? 'input-success' : ''
+  } ${rightIcon ? 'pr-10' : ''}`;
+
   return (
     <div className={"space-y-2 " + (className ?? '')}>
-      {label && <label className="input-label">{label}</label>}
+      {label && (
+        <label className="input-label">
+          {label}
+          {rest.required && <span className="required-indicator">*</span>}
+        </label>
+      )}
       <div className="relative">
         <input
-          className={`input-field ${error ? 'input-error' : ''} ${rightIcon ? 'pr-10' : ''}`}
+          className={inputClassName}
           aria-invalid={error ? 'true' : 'false'}
           {...rest}
         />

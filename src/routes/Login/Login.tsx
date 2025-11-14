@@ -12,12 +12,15 @@ export default function Login() {
   const nav = useNavigate();
   const { login } = useAuth();
 
-  const { register, handleSubmit, formState, setValue } = useForm<LoginFormData>({
+  const { register, handleSubmit, formState, setValue, watch } = useForm<LoginFormData>({
     defaultValues: { email: '', password: '' },
   });
   const { errors } = formState;
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
+
+  const emailValue = watch('email');
+  const passwordValue = watch('password');
 
   // Carregar credenciais salvas ao montar o componente
   useEffect(() => {
@@ -65,7 +68,14 @@ export default function Login() {
               </div>
             )}
 
-            <FormInput label="CPF ou E-mail" placeholder="CPF ou e-mail" {...register('email', { required: 'CPF ou email é obrigatório' })} error={errors.email?.message as string | undefined} />
+            <FormInput 
+              label="CPF ou E-mail" 
+              placeholder="CPF ou e-mail" 
+              {...register('email', { required: 'CPF ou email é obrigatório' })} 
+              error={errors.email?.message as string | undefined}
+              isValid={!errors.email && !!emailValue && emailValue.length > 0}
+              required
+            />
 
             <div className="space-y-2">
               <FormInput
@@ -74,8 +84,10 @@ export default function Login() {
                 type={showPassword ? 'text' : 'password'}
                 {...register('password', { required: 'Senha é obrigatória' })}
                 error={errors.password?.message as string | undefined}
+                isValid={!errors.password && !!passwordValue && passwordValue.length >= 8}
                 rightIcon={showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                 onRightIconClick={() => setShowPassword(s => !s)}
+                required
               />
 
               <div className="flex items-center justify-between text-sm text-slate-400">
@@ -98,9 +110,9 @@ export default function Login() {
               </FormButton>
               <Link 
                 to="/cadastro" 
-                className="block text-center text-sm text-slate-400"
+                className="block text-center text-sm"
               >
-                Não tem conta? <span className="text-blue-400 font-semibold hover:text-blue-300 transition-colors">Criar conta</span>
+                <span className="text-slate-400">Não tem conta?</span> <span className="text-blue-400 font-semibold hover:text-blue-300 transition-colors">Criar conta</span>
               </Link>
             </div>
         </form>
