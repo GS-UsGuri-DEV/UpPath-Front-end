@@ -91,7 +91,7 @@ export default function Cadastro() {
     }
 
     if (data.type === 'usuario' || data.type === 'admin') {
-      const user = data as (SignupFormData & { email?: string; senha?: string; confirmPassword?: string; id_empresa?: string | number | null; nome_completo?: string; cpf?: string });
+      const user = data as (SignupFormData & { email?: string; senha?: string; confirmPassword?: string; id_empresa?: string | number | null; nome_completo?: string; cpf?: string; data_nascimento?: string; nivel_carreira?: string; ocupacao?: string; genero?: string });
       const senha = user.senha;
       const confirm = user.confirmPassword;
       if (!senha || senha !== confirm) {
@@ -115,11 +115,18 @@ export default function Cadastro() {
           email: user.email ?? '',
           cpf: user.cpf ?? '',
           is_admin: data.type === 'admin',
+          data_nascimento: user.data_nascimento ?? '',
+          nivel_carreira: user.nivel_carreira ?? null,
+          ocupacao: user.ocupacao ?? null,
+          genero: user.genero ?? null,
           data_cadastro: new Date().toISOString(),
         };
 
         await db.createDocument(DB_ID, COLLECTION_USERS, ID.unique(), userPayload);
 
+        // Small delay to ensure document is saved before navigating
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
         nav('/dashboard');
       } catch (e: unknown) {
         const msgText = e instanceof Error ? e.message : String(e);
