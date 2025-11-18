@@ -1,11 +1,11 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from './routes/Login/Login';
-import Cadastro from './routes/Cadastro';
-import Dashboard from './routes/Dashboard/Dashboard';
-import Protected from './routes/Protected/Protected';
-import ProtectedAdmin from './routes/ProtectedAdmin/ProtectedAdmin';
-import AdminPanel from './routes/AdminPanel';
-import Home from './routes/Home';
+import { Routes, Route, Navigate } from 'react-router-dom'
+import Login from './routes/Login/Login'
+import Cadastro from './routes/Cadastro'
+import Dashboard from './routes/Dashboard/Dashboard'
+import Protected from './routes/Protected/Protected'
+import ProtectedAdmin from './routes/ProtectedAdmin/ProtectedAdmin'
+import AdminPanel from './routes/AdminPanel'
+import Home from './routes/Home'
 
 export default function App() {
   return (
@@ -21,5 +21,5 @@ export default function App() {
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
-  );
+  )
 }

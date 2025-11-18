@@ -1,21 +1,29 @@
-import React from 'react';
+import React from 'react'
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
-  label?: string;
-  name?: string;
-  error?: string | undefined;
-  rightIcon?: React.ReactNode;
-  onRightIconClick?: () => void;
-  isValid?: boolean;
-};
+  label?: string
+  name?: string
+  error?: string | undefined
+  rightIcon?: React.ReactNode
+  onRightIconClick?: () => void
+  isValid?: boolean
+}
 
-export default function FormInput({ label, className, error, rightIcon, onRightIconClick, isValid, ...rest }: Props) {
+export default function FormInput({
+  label,
+  className,
+  error,
+  rightIcon,
+  onRightIconClick,
+  isValid,
+  ...rest
+}: Props) {
   const inputClassName = `input-field ${
     error ? 'input-error' : isValid ? 'input-success' : ''
-  } ${rightIcon ? 'pr-10' : ''}`;
+  } ${rightIcon ? 'pr-10' : ''}`
 
   return (
-    <div className={"space-y-2 " + (className ?? '')}>
+    <div className={'space-y-2 ' + (className ?? '')}>
       {label && (
         <label className="input-label">
           {label}
@@ -33,7 +41,7 @@ export default function FormInput({ label, className, error, rightIcon, onRightI
             type="button"
             onClick={onRightIconClick}
             title="Mostrar/Ocultar senha"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 transition-colors"
+            className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-500 transition-colors hover:text-slate-700"
           >
             {rightIcon}
           </button>
@@ -41,5 +49,5 @@ export default function FormInput({ label, className, error, rightIcon, onRightI
       </div>
       {error && <p className="error-text">{error}</p>}
     </div>
-  );
+  )
 }

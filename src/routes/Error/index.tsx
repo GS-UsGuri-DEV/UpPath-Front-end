@@ -1,5 +1,5 @@
-import { TbError404 } from 'react-icons/tb';
-import { Link } from 'react-router-dom';
+import { TbError404 } from 'react-icons/tb'
+import { Link } from 'react-router-dom'
 
 export default function Error404() {
   return (
@@ -28,5 +28,5 @@ export default function Error404() {
         </div>
       </section>
     </main>
-  );
+  )
 }

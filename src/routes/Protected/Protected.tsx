@@ -1,17 +1,21 @@
-import { useEffect, useState } from 'react';
-import { account } from '../../shared/appwrite';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react'
+import { account } from '../../shared/appwrite'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
 export default function Protected() {
-  const [loading, setLoading] = useState(true);
-  const [ok, setOk] = useState(false);
-  const loc = useLocation();
+  const [loading, setLoading] = useState(true)
+  const [ok, setOk] = useState(false)
+  const loc = useLocation()
 
   useEffect(() => {
-    account.get().then(() => setOk(true)).catch(() => setOk(false)).finally(() => setLoading(false));
-  }, []);
+    account
+      .get()
+      .then(() => setOk(true))
+      .catch(() => setOk(false))
+      .finally(() => setLoading(false))
+  }, [])
 
-  if (loading) return <div className="p-6">Carregando...</div>;
-  if (!ok) return <Navigate to="/login" state={{ from: loc }} replace />;
-  return <Outlet />;
+  if (loading) return <div className="p-6">Carregando...</div>
+  if (!ok) return <Navigate to="/login" state={{ from: loc }} replace />
+  return <Outlet />
 }
