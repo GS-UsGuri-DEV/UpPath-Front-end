@@ -5,11 +5,13 @@ import Dashboard from './routes/Dashboard/Dashboard';
 import Protected from './routes/Protected/Protected';
 import ProtectedAdmin from './routes/ProtectedAdmin/ProtectedAdmin';
 import AdminPanel from './routes/AdminPanel';
+import Home from './routes/Home';
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/cadastro" element={<Cadastro />} />
       <Route element={<Protected />}>
         <Route path="/dashboard" element={<Dashboard />} />

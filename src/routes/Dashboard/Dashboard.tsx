@@ -1,20 +1,23 @@
 import { useEffect, useState } from 'react';
 import { account, storage, BUCKET_PUBLIC, ID, db } from '../../shared/appwrite';
 import type { Models } from 'appwrite';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/useAuth';
+import BemEstar from '../../components/BemEstar/BemEstar';
+import NavBar from '../../components/NavBar/NavBar';
 
 export default function Dashboard() {
   const [me, setMe] = useState<Models.User<Models.Preferences> | null>(null);
   const [fileUrl, setFileUrl] = useState<string | undefined>();
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [lastFileId, setLastFileId] = useState<string | null>(null);
+  
   const [editMode, setEditMode] = useState(false);
   const [editNome, setEditNome] = useState('');
   const [editDataNasc, setEditDataNasc] = useState('');
   const [editMessage, setEditMessage] = useState<string | null>(null);
   const nav = useNavigate();
-  const { logout, userData, checkAuth } = useAuth();
+  const { userData, checkAuth } = useAuth();
 
   // Format date to only show date part (YYYY-MM-DD)
   const formatDate = (dateStr: string | undefined | null) => {
@@ -29,6 +32,8 @@ export default function Dashboard() {
   useEffect(() => {
     account.get().then(setMe).catch(() => nav('/'));
   }, [nav]);
+
+  
 
   useEffect(() => {
     // Initialize edit fields with current data
@@ -100,10 +105,7 @@ export default function Dashboard() {
     }
   }
 
-  async function handleLogout() {
-    await logout();
-    nav('/');
-  }
+  // logout handled by NavBar; keep nav available if needed
 
   const displayName = String(userData?.nome_completo ?? ((me as unknown as Record<string, unknown>)?.name as string) ?? '—');
   const displayEmail = String(((me as unknown as Record<string, unknown>)?.email as string) ?? userData?.email ?? '—');
@@ -164,19 +166,8 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-6">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Perfil</h1>
-          <p className="text-sm text-gray-600">Visão do perfil do usuário</p>
-        </div>
-        <div className="flex gap-2">
-          {Boolean((userData as unknown as Record<string, unknown>)?.is_admin) && (
-            <Link to="/admin" className="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700">
-              Painel Admin
-            </Link>
-          )}
-          <button onClick={handleLogout} className="px-3 py-1 rounded bg-gray-800 text-white">Sair</button>
-        </div>
+      <header>
+        <NavBar />
       </header>
 
       <section className="rounded-xl border bg-white p-6 flex items-center gap-6">
@@ -319,6 +310,8 @@ export default function Dashboard() {
           </div>
         </div>
       </section>
+
+      <BemEstar />
 
       <section className="rounded-xl border bg-white p-4">
         <h2 className="font-semibold mb-2">Upload (Storage)</h2>
