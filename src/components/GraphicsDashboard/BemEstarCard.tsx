@@ -48,11 +48,11 @@ export default function BemEstarCard({
           <span>Média: {media}</span>
           <span
             className={
-              tendencia === 'down'
+              status === 'Melhorando'
                 ? 'font-semibold text-green-600'
-                : tendencia === 'up'
+                : status === 'Piorando'
                   ? 'font-semibold text-red-600'
-                  : ''
+                  : 'font-semibold text-gray-500'
             }
           >
             {status}
