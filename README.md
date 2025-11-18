@@ -1,4 +1,5 @@
 # UpPath-Front-end
+
 ## 💡 Sumário Executivo
 
 O **UpPath** é uma plataforma EduTech com propósito que une **inteligência artificial**, **gestão de carreira** e **bem-estar emocional** para guiar o desenvolvimento profissional de forma personalizada e sustentável.

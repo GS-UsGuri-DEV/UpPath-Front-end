@@ -1,18 +1,18 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Login from './routes/Login/Login';
-import Cadastro from './routes/Cadastro';
-import Dashboard from './routes/Dashboard/Dashboard';
-import Perfil from './routes/Perfil/Perfil';
-import Protected from './routes/Protected/Protected';
-import ProtectedAdmin from './routes/ProtectedAdmin/ProtectedAdmin';
-import AdminPanel from './routes/AdminPanel';
-import Home from './routes/Home';
-import NavBar from './components/NavBar/NavBar';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import Login from './routes/Login/Login'
+import Cadastro from './routes/Cadastro'
+import Dashboard from './routes/Dashboard/Dashboard'
+import Perfil from './routes/Perfil/Perfil'
+import Protected from './routes/Protected/Protected'
+import ProtectedAdmin from './routes/ProtectedAdmin/ProtectedAdmin'
+import AdminPanel from './routes/AdminPanel'
+import Home from './routes/Home'
+import NavBar from './components/NavBar/NavBar'
 
 export default function App() {
-  const location = useLocation();
-  const hideNavBarOn = ['/login', '/cadastro'];
-  const showNavBar = !hideNavBarOn.includes(location.pathname);
+  const location = useLocation()
+  const hideNavBarOn = ['/login', '/cadastro']
+  const showNavBar = !hideNavBarOn.includes(location.pathname)
 
   return (
     <>
@@ -31,5 +31,5 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
-  );
+  )
 }
