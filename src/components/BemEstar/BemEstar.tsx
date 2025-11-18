@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '../../contexts/useAuth';
-import { db } from '../../shared/appwrite';
-import { Query } from 'appwrite';
-import { FaMedal, FaFire } from 'react-icons/fa';
+import { useEffect, useState } from 'react'
+import { useAuth } from '../../contexts/useAuth'
+import { db } from '../../shared/appwrite'
+import { Query } from 'appwrite'
+import { FaMedal, FaFire } from 'react-icons/fa'
 
 // Simple gamified panel for Bem-estar based on last 7 days of records.
 export default function BemEstar() {
@@ -110,7 +110,12 @@ export default function BemEstar() {
 
   const score = computeScore()
 
-  const badge = score >= 71 ? { label: 'Ouro', color: 'text-yellow-500' } : score >= 41 ? { label: 'Prata', color: 'text-gray-400' } : { label: 'Bronze', color: 'text-orange-700' };
+  const badge =
+    score >= 71
+      ? { label: 'Ouro', color: 'text-yellow-500' }
+      : score >= 41
+        ? { label: 'Prata', color: 'text-gray-400' }
+        : { label: 'Bronze', color: 'text-orange-700' }
 
   // compute streak: count consecutive days from latest record backwards where there is a record per day
   const computeStreak = () => {
@@ -194,15 +199,16 @@ export default function BemEstar() {
 
       <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="col-span-1 flex items-center gap-4">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-r from-yellow-300 to-red-400 flex items-center justify-center text-5xl">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-r from-yellow-300 to-red-400 text-5xl">
             <FaMedal className={badge.color} />
           </div>
           <div>
             <div className="text-sm text-gray-500">Score</div>
             <div className="text-2xl font-bold">{score}</div>
             <div className="text-xs text-gray-600">{badge.label}</div>
-            <div className="mt-2 text-sm flex items-center gap-1">
-              <FaFire className="text-orange-500" /> {streak} dia{streak !== 1 ? 's' : ''} consecutivo
+            <div className="mt-2 flex items-center gap-1 text-sm">
+              <FaFire className="text-orange-500" /> {streak} dia
+              {streak !== 1 ? 's' : ''} consecutivo
             </div>
           </div>
         </div>

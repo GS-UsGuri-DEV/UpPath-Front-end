@@ -106,7 +106,7 @@ fetch(`${API_URL}/api/v1/dashboard/company/1/completo`)
 // Consulta específica: Bem-estar do usuário
 async function getBemEstarUsuario(userId) {
   const response = await fetch(
-    `${API_URL}/api/v1/dashboard/user/${userId}/bem-estar`
+    `${API_URL}/api/v1/dashboard/user/${userId}/bem-estar`,
   );
   const data = await response.json();
   return data.data;
