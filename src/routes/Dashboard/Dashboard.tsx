@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { FaBookOpen, FaChartLine, FaLightbulb } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+import { mockDashboardData } from '../../api/mocks/dashboardMock'
 import BemEstar from '../../components/BemEstar/BemEstar'
 import GamificationCard from '../../components/BemEstar/GamificationCard'
 import { useAuth } from '../../contexts/useAuth'
 import { useUserDashboard } from '../../hooks/useUserDashboard'
 import type { UserDashboard } from '../../types/userDashboard'
-import { mockDashboardData } from '../../api/mocks/dashboardMock'
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -84,155 +84,268 @@ export default function Dashboard() {
 
         {(displayData || dashboardData) && (
           <>
-            {/* Gráfico de Evolução do Bem-estar */}
-            <div className="rounded-xl border bg-white p-6">
-              <div className="mb-4 flex items-center gap-2">
+            {/* Métricas de Bem-estar - Design Moderno */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
                 <FaChartLine className="text-xl text-green-600" />
                 <h2 className="text-lg font-semibold">Evolução do Bem-estar</h2>
               </div>
+
               {displayData.bem_estar && displayData.bem_estar.length > 0 ? (
-                <div className="space-y-4">
-                  <div className="h-64 w-full">
-                    <svg
-                      viewBox="0 0 600 250"
-                      className="h-full w-full"
-                      preserveAspectRatio="xMidYMid meet"
-                    >
-                      {/* Grid lines */}
-                      {[0, 2, 4, 6, 8, 10].map((y) => (
-                        <g key={y}>
-                          <line
-                            x1="50"
-                            y1={220 - y * 20}
-                            x2="580"
-                            y2={220 - y * 20}
-                            stroke="#e5e7eb"
-                            strokeWidth="1"
+                (() => {
+                  const sortedData = [...displayData.bem_estar].sort(
+                    (a, b) =>
+                      new Date(a.data_registro).getTime() -
+                      new Date(b.data_registro).getTime(),
+                  )
+
+                  const calcularMedia = (valores: number[]) => {
+                    return valores.length > 0
+                      ? (
+                          valores.reduce((a, b) => a + b, 0) / valores.length
+                        ).toFixed(1)
+                      : '0'
+                  }
+
+                  const calcularTendencia = (valores: number[]) => {
+                    if (valores.length < 2) return 'neutral'
+                    const primeiro = valores[0]
+                    const ultimo = valores[valores.length - 1]
+                    return ultimo > primeiro
+                      ? 'up'
+                      : ultimo < primeiro
+                        ? 'down'
+                        : 'neutral'
+                  }
+
+                  const estresseData = sortedData.map((d) => d.nivel_estresse)
+                  const motivacaoData = sortedData.map((d) => d.nivel_motivacao)
+                  const sonoData = sortedData.map((d) => d.qualidade_sono)
+
+                  const mediaEstresse = calcularMedia(estresseData)
+                  const mediaMotivacao = calcularMedia(motivacaoData)
+                  const mediaSono = calcularMedia(sonoData)
+
+                  const tendenciaEstresse = calcularTendencia(estresseData)
+                  const tendenciaMotivacao = calcularTendencia(motivacaoData)
+                  const tendenciaSono = calcularTendencia(sonoData)
+
+                  const ultimoRegistro = sortedData[sortedData.length - 1]
+
+                  const MiniChart = ({
+                    values,
+                    color,
+                  }: {
+                    values: number[]
+                    color: string
+                  }) => {
+                    const maxVal = 10
+                    const width = 120
+                    const height = 40
+                    const step = width / Math.max(values.length - 1, 1)
+
+                    const points = values
+                      .map(
+                        (v, i) =>
+                          `${i * step},${height - (v / maxVal) * height}`,
+                      )
+                      .join(' ')
+
+                    return (
+                      <svg width={width} height={height} className="opacity-30">
+                        <polyline
+                          points={points}
+                          fill="none"
+                          stroke={color}
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        {values.map((v, i) => (
+                          <circle
+                            key={i}
+                            cx={i * step}
+                            cy={height - (v / maxVal) * height}
+                            r="2"
+                            fill={color}
                           />
-                          <text
-                            x="35"
-                            y={225 - y * 20}
-                            fontSize="10"
-                            fill="#6b7280"
-                            textAnchor="end"
-                          >
-                            {y}
-                          </text>
-                        </g>
-                      ))}
+                        ))}
+                      </svg>
+                    )
+                  }
 
-                      {/* Data lines */}
-                      {(() => {
-                        const sortedData = [...displayData.bem_estar].sort(
-                          (a, b) =>
-                            new Date(a.data_registro).getTime() -
-                            new Date(b.data_registro).getTime(),
-                        )
-                        const maxPoints = 10
-                        const data =
-                          sortedData.length > maxPoints
-                            ? sortedData.slice(-maxPoints)
-                            : sortedData
-                        const step = 530 / Math.max(data.length - 1, 1)
+                  const TrendIcon = ({ trend }: { trend: string }) => {
+                    if (trend === 'up')
+                      return <span className="text-xl text-green-500">↑</span>
+                    if (trend === 'down')
+                      return <span className="text-xl text-red-500">↓</span>
+                    return <span className="text-xl text-gray-400">→</span>
+                  }
 
-                        const createPath = (
-                          values: number[],
-                          color: string,
-                        ) => {
-                          const points = values
-                            .map((v, i) => `${50 + i * step},${220 - v * 20}`)
-                            .join(' ')
-                          return (
-                            <polyline
-                              points={points}
-                              fill="none"
-                              stroke={color}
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
+                  return (
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                      {/* Card Estresse */}
+                      <div className="group relative overflow-hidden rounded-xl border-2 border-red-100 bg-gradient-to-br from-red-50 to-white p-6 shadow-sm transition-all hover:shadow-md">
+                        <div className="absolute top-4 right-4">
+                          <MiniChart values={estresseData} color="#ef4444" />
+                        </div>
+
+                        <div className="relative z-10">
+                          <div className="mb-2 flex items-center gap-2">
+                            <div className="rounded-full bg-red-100 p-2">
+                              <div className="h-3 w-3 rounded-full bg-red-500" />
+                            </div>
+                            <span className="text-sm font-medium text-gray-600">
+                              Estresse
+                            </span>
+                            <TrendIcon trend={tendenciaEstresse} />
+                          </div>
+
+                          <div className="mb-3 flex items-baseline gap-2">
+                            <span className="text-4xl font-bold text-red-600">
+                              {ultimoRegistro.nivel_estresse}
+                            </span>
+                            <span className="text-gray-500">/10</span>
+                          </div>
+
+                          <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-red-100">
+                            <div
+                              className="h-full bg-red-500 transition-all duration-500"
+                              style={{
+                                width: `${(ultimoRegistro.nivel_estresse / 10) * 100}%`,
+                              }}
                             />
-                          )
-                        }
+                          </div>
 
-                        return (
-                          <>
-                            {createPath(
-                              data.map((d) => d.nivel_estresse),
-                              '#ef4444',
-                            )}
-                            {createPath(
-                              data.map((d) => d.nivel_motivacao),
-                              '#10b981',
-                            )}
-                            {createPath(
-                              data.map((d) => d.qualidade_sono),
-                              '#3b82f6',
-                            )}
+                          <div className="flex items-center justify-between text-xs text-gray-600">
+                            <span>Média: {mediaEstresse}</span>
+                            <span
+                              className={
+                                tendenciaEstresse === 'down'
+                                  ? 'font-semibold text-green-600'
+                                  : tendenciaEstresse === 'up'
+                                    ? 'font-semibold text-red-600'
+                                    : ''
+                              }
+                            >
+                              {tendenciaEstresse === 'down'
+                                ? 'Melhorando'
+                                : tendenciaEstresse === 'up'
+                                  ? 'Piorando'
+                                  : 'Estável'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
 
-                            {/* Data points */}
-                            {data.map((entry, i) => (
-                              <g key={i}>
-                                <circle
-                                  cx={50 + i * step}
-                                  cy={220 - entry.nivel_estresse * 20}
-                                  r="3"
-                                  fill="#ef4444"
-                                />
-                                <circle
-                                  cx={50 + i * step}
-                                  cy={220 - entry.nivel_motivacao * 20}
-                                  r="3"
-                                  fill="#10b981"
-                                />
-                                <circle
-                                  cx={50 + i * step}
-                                  cy={220 - entry.qualidade_sono * 20}
-                                  r="3"
-                                  fill="#3b82f6"
-                                />
-                              </g>
-                            ))}
+                      {/* Card Motivação */}
+                      <div className="group relative overflow-hidden rounded-xl border-2 border-green-100 bg-gradient-to-br from-green-50 to-white p-6 shadow-sm transition-all hover:shadow-md">
+                        <div className="absolute top-4 right-4">
+                          <MiniChart values={motivacaoData} color="#10b981" />
+                        </div>
+                        <div className="relative z-10">
+                          <div className="mb-2 flex items-center gap-2">
+                            <div className="rounded-full bg-green-100 p-2">
+                              <div className="h-3 w-3 rounded-full bg-green-500" />
+                            </div>
+                            <span className="text-sm font-medium text-gray-600">
+                              Motivação
+                            </span>
+                            <TrendIcon trend={tendenciaMotivacao} />
+                          </div>
 
-                            {/* X-axis labels */}
-                            {data.map((entry, i) => (
-                              <text
-                                key={i}
-                                x={50 + i * step}
-                                y="240"
-                                fontSize="9"
-                                fill="#6b7280"
-                                textAnchor="middle"
-                              >
-                                {new Date(
-                                  entry.data_registro,
-                                ).toLocaleDateString('pt-BR', {
-                                  day: '2-digit',
-                                  month: '2-digit',
-                                })}
-                              </text>
-                            ))}
-                          </>
-                        )
-                      })()}
-                    </svg>
-                  </div>
+                          <div className="mb-3 flex items-baseline gap-2">
+                            <span className="text-4xl font-bold text-green-600">
+                              {ultimoRegistro.nivel_motivacao}
+                            </span>
+                            <span className="text-gray-500">/10</span>
+                          </div>
 
-                  {/* Legend */}
-                  <div className="flex items-center justify-center gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-red-500" />
-                      <span className="text-gray-600">Estresse</span>
+                          <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-green-100">
+                            <div
+                              className="h-full bg-green-500 transition-all duration-500"
+                              style={{
+                                width: `${(ultimoRegistro.nivel_motivacao / 10) * 100}%`,
+                              }}
+                            />
+                          </div>
+
+                          <div className="flex items-center justify-between text-xs text-gray-600">
+                            <span>Média: {mediaMotivacao}</span>
+                            <span
+                              className={
+                                tendenciaMotivacao === 'up'
+                                  ? 'font-semibold text-green-600'
+                                  : tendenciaMotivacao === 'down'
+                                    ? 'font-semibold text-red-600'
+                                    : ''
+                              }
+                            >
+                              {tendenciaMotivacao === 'up'
+                                ? 'Melhorando'
+                                : tendenciaMotivacao === 'down'
+                                  ? 'Piorando'
+                                  : 'Estável'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Card Sono */}
+                      <div className="group relative overflow-hidden rounded-xl border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6 shadow-sm transition-all hover:shadow-md">
+                        <div className="absolute top-4 right-4">
+                          <MiniChart values={sonoData} color="#3b82f6" />
+                        </div>
+                        <div className="relative z-10">
+                          <div className="mb-2 flex items-center gap-2">
+                            <div className="rounded-full bg-blue-100 p-2">
+                              <div className="h-3 w-3 rounded-full bg-blue-500" />
+                            </div>
+                            <span className="text-sm font-medium text-gray-600">
+                              Qualidade do Sono
+                            </span>
+                            <TrendIcon trend={tendenciaSono} />
+                          </div>
+
+                          <div className="mb-3 flex items-baseline gap-2">
+                            <span className="text-4xl font-bold text-blue-600">
+                              {ultimoRegistro.qualidade_sono}
+                            </span>
+                            <span className="text-gray-500">/10</span>
+                          </div>
+
+                          <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-blue-100">
+                            <div
+                              className="h-full bg-blue-500 transition-all duration-500"
+                              style={{
+                                width: `${(ultimoRegistro.qualidade_sono / 10) * 100}%`,
+                              }}
+                            />
+                          </div>
+
+                          <div className="flex items-center justify-between text-xs text-gray-600">
+                            <span>Média: {mediaSono}</span>
+                            <span
+                              className={
+                                tendenciaSono === 'up'
+                                  ? 'font-semibold text-green-600'
+                                  : tendenciaSono === 'down'
+                                    ? 'font-semibold text-red-600'
+                                    : ''
+                              }
+                            >
+                              {tendenciaSono === 'up'
+                                ? 'Melhorando'
+                                : tendenciaSono === 'down'
+                                  ? 'Piorando'
+                                  : 'Estável'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-green-500" />
-                      <span className="text-gray-600">Motivação</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-blue-500" />
-                      <span className="text-gray-600">Sono</span>
-                    </div>
-                  </div>
-                </div>
+                  )
+                })()
               ) : (
                 <p className="text-sm text-gray-500">
                   Nenhum dado de bem-estar disponível
@@ -360,7 +473,6 @@ export default function Dashboard() {
           </>
         )}
 
-        {/* Bem-estar component (Appwrite local data) */}
         <BemEstar />
 
         {/* Gamification Card */}
