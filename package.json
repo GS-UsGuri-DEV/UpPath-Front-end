@@ -1,16 +1,17 @@
 {
-  "name": "access-control-cp",
+  "name": "up-path",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "preview": "vite preview",
     "api": "json-server --watch db.json  --port 3001",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format": "npm run prettier && npm run eslint",
+    "format:check": "prettier --check .",
+    "prettier": "prettier --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
+    "@rocketseat/eslint-config": "^2.2.2",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.3",
@@ -35,6 +37,7 @@
     "globals": "^16.4.0",
     "json-server": "1.0.0-beta.3",
     "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.7.1",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.44.0",
     "vite": "^7.1.7"
