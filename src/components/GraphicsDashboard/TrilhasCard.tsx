@@ -1,3 +1,4 @@
+import { FiBook } from 'react-icons/fi'
 import type { TrilhasCardProps } from '../../types/graphicsDashboard'
 
 export default function TrilhasCard({ trilhas }: TrilhasCardProps) {
@@ -12,7 +13,7 @@ export default function TrilhasCard({ trilhas }: TrilhasCardProps) {
     >
       <div className="mb-4 flex items-center gap-2">
         <span className="text-xl text-indigo-600" aria-hidden>
-          📚
+          <FiBook />
         </span>
         <h3 className="text-lg font-semibold">Trilhas</h3>
       </div>

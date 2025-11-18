@@ -1,3 +1,4 @@
+import { MdOutlineLightbulb } from 'react-icons/md'
 import type { RecomendacoesCardProps } from '../../types/graphicsDashboard'
 
 export default function RecomendacoesCard({
@@ -16,12 +17,12 @@ export default function RecomendacoesCard({
     >
       <div className="mb-4 flex items-center gap-2">
         <span className="text-xl text-yellow-500" aria-hidden>
-          💡
+          <MdOutlineLightbulb />
         </span>
         <h3 className="text-lg font-semibold">Recomendações</h3>
       </div>
       <div className="space-y-3">
-        {recomendacoes.slice(0, 3).map((rec, idx) => (
+        {recomendacoes.slice(0, 3).map((rec: import('../../types/graphicsDashboard').Recomendacao, idx: number) => (
           <div
             key={idx}
             className="rounded-lg border p-3"

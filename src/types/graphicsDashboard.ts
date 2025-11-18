@@ -1,3 +1,12 @@
+export interface Recomendacao {
+  tipo: string
+  motivo: string
+  data_recomendacao: string
+}
+
+export interface RecomendacoesCardProps {
+  recomendacoes: Recomendacao[]
+}
 export interface Trilha {
   nome_trilha: string
   progresso_percentual: number
