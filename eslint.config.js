@@ -8,7 +8,26 @@ import reactHooks from 'eslint-plugin-react-hooks'
 export default [
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
-    ignores: ['node_modules'],
+    ignores: [
+      'node_modules',
+      'dist',
+      'build',
+      '.turbo',
+      '.vercel',
+      '.cache',
+      '.vite',
+      'coverage',
+      '.parcel-cache',
+      'public',
+      'pnpm-lock.yaml',
+      'package-lock.json',
+      'yarn.lock',
+      '*.min.js',
+      '*.map',
+      '*.png',
+      '*.jpg',
+      '*.svg',
+    ],
     plugins: {
       react,
       'react-hooks': reactHooks,
