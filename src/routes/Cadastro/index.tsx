@@ -253,7 +253,7 @@ export default function Cadastro() {
             {formState.isSubmitting ? 'Criando conta...' : 'Criar conta'}
           </FormButton>
           <p className="link-muted">
-            <span className="text-slate-400">Já tem cadastro?</span> <Link to="/" className="text-blue-400 font-semibold hover:text-blue-300 transition-colors">Faça login</Link>
+            <span className="text-slate-400">Já tem cadastro?</span> <Link to="/login" className="text-blue-400 font-semibold hover:text-blue-300 transition-colors">Faça login</Link>
           </p>
         </div>
       </form>
