@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/useAuth';
-import { db, ID } from '../../shared/appwrite';
+import { db, ID, Permission, Role } from '../../shared/appwrite';
 import { Query } from 'appwrite';
+import { useNavigate } from 'react-router-dom';
+import { FaTimes } from 'react-icons/fa';
 
-export default function GamificationCard() {
+export default function GamificationCard({ notification = false }: { notification?: boolean }) {
   const { userData } = useAuth();
+  const nav = useNavigate();
   const [records, setRecords] = useState<Array<Record<string, unknown>> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -15,8 +18,16 @@ export default function GamificationCard() {
   const [motivation, setMotivation] = useState<number | ''>('');
   const [sleepQuality, setSleepQuality] = useState<number | ''>('');
   const [observation, setObservation] = useState<string>('');
+  const [registeredOnce, setRegisteredOnce] = useState(false);
+  const [hideCard, setHideCard] = useState(false); // New state to hide the card
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+    const hasSeenGame = sessionStorage.getItem('hasSeenGame');
+    if (hasSeenGame) {
+      setHideCard(true);
+    }
+  }, []);
 
   async function fetchLatest() {
     setError(null);
@@ -74,12 +85,18 @@ export default function GamificationCard() {
         observacao: observation ?? ''
       };
 
-      const read = ['role:all'];
-      const write = ['role:users'];
+      // Appwrite permissions: use Permission helpers with Role
+      const permissions = [
+        Permission.read(Role.any()),
+        Permission.write(Role.users())
+      ];
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (db as any).createDocument(DB_ID, COLLECTION, ID.unique(), payload, read, write);
+      await (db as any).createDocument(DB_ID, COLLECTION, ID.unique(), payload, permissions);
       setSubmitMessage('Registro salvo com sucesso!');
       setStress(''); setMotivation(''); setSleepQuality(''); setObservation('');
+      setRegisteredOnce(true);
+      setHideCard(true); // Hide the card after successful submission
+      sessionStorage.setItem('hasSeenGame', 'true'); // Mark as seen in session storage
       await fetchLatest();
     } catch (err) {
       setSubmitMessage(String((err as Error)?.message ?? err));
@@ -99,84 +116,77 @@ export default function GamificationCard() {
   const avg = (arr: number[]) => (arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN);
 
   const records7 = Array.isArray(records) ? records : [];
+  // Calcular médias (útil se quiser exibir futuramente)
   const avgStress = avg(records7.map(r => num(r.nivel_estresse ?? r.NIVEL_ESTRESSE)));
   const avgMotivation = avg(records7.map(r => num(r.nivel_motivacao ?? r.NIVEL_MOTIVACAO)));
   const avgSleep = avg(records7.map(r => num(r.qualidade_sono ?? r.QUALIDADE_SONO)));
 
-  const pct = (v: number) => (isNaN(v) ? 0 : Math.round(Math.max(0, Math.min(10, v)) / 10 * 100));
+  // Pode usar as médias acima para calcular score/badge se quiser mostrar no futuro
+  void avgStress; void avgMotivation; void avgSleep;
 
-  const score = (() => {
-    const s = isNaN(avgStress) ? 5 : avgStress;
-    const m = isNaN(avgMotivation) ? 5 : avgMotivation;
-    const q = isNaN(avgSleep) ? 5 : avgSleep;
-    const raw = ((10 - s) + m + q) / 30;
-    return Math.round(Math.max(0, Math.min(1, raw)) * 100);
-  })();
+  const containerClass = notification
+    ? `fixed bottom-6 right-6 z-50 transition-transform duration-600 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`
+    : `max-w-md mx-auto transition-transform duration-600 ease-out ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`;
 
-  const badge = score >= 71 ? 'Ouro' : score >= 41 ? 'Prata' : 'Bronze';
+  if (!userData || hideCard) return null; // Hide component if user is not logged in or card is hidden
 
   return (
-    <div className={`max-w-md mx-auto transition-transform duration-600 ease-out ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`}>
-      <div className="rounded-xl border bg-white p-4 shadow-md">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-sm text-gray-500">Bem-estar</div>
-            <div className="text-xl font-bold">{score} • {badge}</div>
-            <div className="text-xs text-gray-600">Resumo dos últimos {records7.length} registros</div>
+    <div className={containerClass}>
+      <div className={`rounded-xl border bg-white p-4 shadow-lg ${notification ? 'w-80' : ''}`}>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="text-sm font-semibold text-gray-700">Registre seu bem-estar hoje</div>
           </div>
-          <div className="flex gap-3 items-center">
-            <div className="text-center">
-              <div className="text-xs text-gray-500">Sono</div>
-              <div className="font-semibold">{pct(avgSleep)}%</div>
-            </div>
-            <div className="text-center">
-              <div className="text-xs text-gray-500">Motiv.</div>
-              <div className="font-semibold">{pct(avgMotivation)}%</div>
-            </div>
-            <div className="text-center">
-              <div className="text-xs text-gray-500">Estresse</div>
-              <div className="font-semibold">{100 - pct(avgStress)}%</div>
-            </div>
-          </div>
+          <button 
+            onClick={() => setHideCard(true)}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+            title="Minimizar"
+          >
+            <FaTimes />
+          </button>
         </div>
 
-        <div className="mt-3">
-          <div className="flex justify-between items-center">
-            <a href="/dashboard" className="text-sm text-indigo-600 hover:underline">Ver detalhes</a>
-            <div className="text-xs text-gray-500">Registro rápido</div>
+        <form onSubmit={(e) => { e.preventDefault(); registerToday(); }} className="grid grid-cols-1 gap-2">
+          <div className="flex gap-2">
+            <label className="flex-1 text-xs">
+              Estresse (0-10)
+              <input type="number" min={0} max={10} value={stress} onChange={(e) => setStress(e.target.value === '' ? '' : Number(e.target.value))} className="w-full mt-1 p-2 border rounded text-sm" required />
+            </label>
+            <label className="flex-1 text-xs">
+              Motivação (0-10)
+              <input type="number" min={0} max={10} value={motivation} onChange={(e) => setMotivation(e.target.value === '' ? '' : Number(e.target.value))} className="w-full mt-1 p-2 border rounded text-sm" required />
+            </label>
           </div>
+          <div className="flex gap-2">
+            <label className="flex-1 text-xs">
+              Sono (0-10)
+              <input type="number" min={0} max={10} value={sleepQuality} onChange={(e) => setSleepQuality(e.target.value === '' ? '' : Number(e.target.value))} className="w-full mt-1 p-2 border rounded text-sm" required />
+            </label>
+            <label className="flex-1 text-xs">
+              Observação
+              <input type="text" value={observation} onChange={(e) => setObservation(e.target.value)} className="w-full mt-1 p-2 border rounded text-sm" />
+            </label>
+          </div>
+          <div className="flex items-center gap-2 mt-1">
+            {!registeredOnce ? (
+              <button type="submit" disabled={submitLoading} className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors">
+                {submitLoading ? 'Salvando...' : 'Registrar hoje'}
+              </button>
+            ) : (
+              <button type="button" onClick={() => nav('/dashboard')} className="flex-1 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-sm font-medium transition-colors">
+                Registrar mais
+              </button>
+            )}
+            <button type="button" onClick={() => { setStress(''); setMotivation(''); setSleepQuality(''); setObservation(''); setSubmitMessage(null); }} className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm transition-colors">
+              Limpar
+            </button>
+          </div>
+          {submitMessage && <div className="text-sm text-green-600 text-center">{submitMessage}</div>}
+        </form>
 
-          <form onSubmit={(e) => { e.preventDefault(); registerToday(); }} className="mt-3 grid grid-cols-1 gap-2">
-            <div className="flex gap-2">
-              <label className="flex-1 text-xs">
-                Estresse (0-10)
-                <input type="number" min={0} max={10} value={stress} onChange={(e) => setStress(e.target.value === '' ? '' : Number(e.target.value))} className="w-full mt-1 p-2 border rounded text-sm" />
-              </label>
-              <label className="flex-1 text-xs">
-                Motivação (0-10)
-                <input type="number" min={0} max={10} value={motivation} onChange={(e) => setMotivation(e.target.value === '' ? '' : Number(e.target.value))} className="w-full mt-1 p-2 border rounded text-sm" />
-              </label>
-            </div>
-            <div className="flex gap-2">
-              <label className="flex-1 text-xs">
-                Sono (0-10)
-                <input type="number" min={0} max={10} value={sleepQuality} onChange={(e) => setSleepQuality(e.target.value === '' ? '' : Number(e.target.value))} className="w-full mt-1 p-2 border rounded text-sm" />
-              </label>
-              <label className="flex-1 text-xs">
-                Observação
-                <input type="text" value={observation} onChange={(e) => setObservation(e.target.value)} className="w-full mt-1 p-2 border rounded text-sm" />
-              </label>
-            </div>
-            <div className="flex items-center gap-2">
-              <button type="submit" disabled={submitLoading} className="px-3 py-1 bg-green-600 text-white rounded text-sm">{submitLoading ? 'Salvando...' : 'Registrar hoje'}</button>
-              <button type="button" onClick={() => { setStress(''); setMotivation(''); setSleepQuality(''); setObservation(''); setSubmitMessage(null); }} className="px-3 py-1 bg-gray-100 rounded text-sm">Limpar</button>
-              {submitMessage && <div className="text-sm text-green-600">{submitMessage}</div>}
-            </div>
-          </form>
-
-          {loading && <div className="mt-2 text-xs text-gray-500">Carregando...</div>}
-          {error && <div className="mt-2 text-xs text-red-600">{error}</div>}
-        </div>
+        {loading && <div className="mt-2 text-xs text-gray-500 text-center">Carregando...</div>}
+        {error && <div className="mt-2 text-xs text-red-600 text-center">{error}</div>}
       </div>
     </div>
   );
