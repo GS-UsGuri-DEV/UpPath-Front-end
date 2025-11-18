@@ -4,6 +4,14 @@ import TrendIcon from './TrendIcon'
 
 /**
  * BemEstarCard - Card individual para métrica de bem-estar
+ * @param label Nome da métrica
+ * @param color Cor principal do card
+ * @param bgColor Cor de fundo do card
+ * @param value Valor atual
+ * @param values Array de valores históricos
+ * @param media Média dos valores
+ * @param tendencia Tendência ('up', 'down', 'neutral')
+ * @param status Texto de status
  */
 export default function BemEstarCard({
   label,
@@ -17,9 +25,10 @@ export default function BemEstarCard({
 }: BemEstarCardProps) {
   return (
     <div
-      className={`group relative overflow-hidden rounded-xl border-2 ${bgColor} bg-gradient-to-br from-${color}-50 to-white p-6 shadow-sm transition-all hover:shadow-md`}
+      className={`bemestar-card group relative overflow-hidden border-2 ${bgColor} bg-gradient-to-br from-${color}-50 to-white p-6 shadow-sm transition-all hover:shadow-md`}
+      style={{ borderRadius: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
     >
-      <div className="absolute top-4 right-4">
+      <div className="bemestar-sparkline absolute top-4 right-4">
         <MiniChart values={values} color={color} />
       </div>
       <div className="relative z-10">
@@ -48,11 +57,12 @@ export default function BemEstarCard({
           <span>Média: {media}</span>
           <span
             className={
-              status === 'Melhorando'
-                ? 'font-semibold text-green-600'
+              'bemestar-status ' +
+              (status === 'Melhorando'
+                ? 'text-green-600'
                 : status === 'Piorando'
-                  ? 'font-semibold text-red-600'
-                  : 'font-semibold text-gray-500'
+                  ? 'text-red-600'
+                  : 'text-gray-500')
             }
           >
             {status}

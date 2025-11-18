@@ -1,3 +1,12 @@
+export interface Trilha {
+  nome_trilha: string
+  progresso_percentual: number
+  status: string
+}
+
+export interface TrilhasCardProps {
+  trilhas: Trilha[]
+}
 // Tipos para componentes gráficos do Dashboard
 
 export interface MiniChartProps {
