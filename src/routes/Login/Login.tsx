@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ChangeEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import type { LoginFormData } from '../../types/auth';
@@ -21,6 +21,26 @@ export default function Login() {
 
   const emailValue = watch('email');
   const passwordValue = watch('password');
+
+  function formatCPFOrEmail(value: string) {
+    const raw = value.trim();
+
+    // Considera email apenas se houver '@' ou letras — não trate um ponto '.' isolado como email
+    if (/@/.test(raw) || /[A-Za-z]/.test(raw)) return raw;
+
+    const digits = raw.replace(/\D/g, '').slice(0, 11);
+    if (digits.length === 0) return '';
+    
+    return digits
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  }
+
+  function handleEmailChange(e: ChangeEvent<HTMLInputElement>) {
+    const formatted = formatCPFOrEmail(e.target.value);
+    setValue('email', formatted);
+  }
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail');
@@ -69,7 +89,10 @@ export default function Login() {
             <FormInput 
               label="CPF ou E-mail" 
               placeholder="CPF ou e-mail" 
-              {...register('email', { required: 'CPF ou email é obrigatório' })} 
+              {...register('email', { 
+                required: 'CPF ou email é obrigatório',
+                onChange: handleEmailChange
+              })} 
               error={errors.email?.message as string | undefined}
               isValid={!errors.email && !!emailValue && emailValue.length > 0}
               required

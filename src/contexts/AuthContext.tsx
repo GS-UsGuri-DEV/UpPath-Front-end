@@ -2,12 +2,8 @@ import { createContext, useState, useEffect, useCallback, type ReactNode } from 
 import { account, db } from '../shared/appwrite';
 import type { Models } from 'appwrite';
 
-interface UserData {
-  email: string;
-  is_admin: boolean;
-  id_empresa?: string | number | null;
-  nome_completo?: string;
-}
+// userData will be the raw document returned from the users collection
+type UserData = Models.Document & Record<string, unknown>;
 
 interface AuthContextType {
   user: Models.User<Models.Preferences> | null;
@@ -38,21 +34,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const response = await db.listDocuments(DB_ID, COLLECTION_USERS);
-      interface UserDoc extends Models.Document {
-        email: string;
-        is_admin?: boolean;
-        id_empresa?: string | number | null;
-        nome_completo?: string;
-      }
-      const userDoc = response.documents.find((doc: Models.Document) => (doc as UserDoc).email === email) as UserDoc | undefined;
+      const userDoc = response.documents.find((doc: Models.Document) => {
+        const d = doc as unknown as Record<string, unknown>;
+        return typeof d.email === 'string' && d.email === email;
+      }) as UserData | undefined;
 
       if (userDoc) {
-        return {
-          email: userDoc.email,
-          is_admin: userDoc.is_admin || false,
-          id_empresa: userDoc.id_empresa,
-          nome_completo: userDoc.nome_completo,
-        };
+        // return the raw document so callers can inspect all fields
+        return userDoc;
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -75,7 +64,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function login(email: string, password: string) {
-    await account.createEmailPasswordSession(email, password);
+    try {
+      await account.createEmailPasswordSession(email, password);
+    } catch (err) {
+      const msg = String((err as Error)?.message ?? String(err ?? ''));
+      // Appwrite returns an error when a session is already active in this client
+      if (msg.includes('Creation of a session is prohibited when a session is active')) {
+        await account.deleteSession('current');
+        await account.createEmailPasswordSession(email, password);
+      } else {
+        throw err;
+      }
+    }
+
     const currentUser = await account.get();
     setUser(currentUser);
     const data = await fetchUserData(email);
