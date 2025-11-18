@@ -6,7 +6,7 @@ export default function ProtectedAdmin() {
   const loc = useLocation();
 
   if (loading) return <div className="p-6">Carregando...</div>;
-  if (!user) return <Navigate to="/" state={{ from: loc }} replace />;
+  if (!user) return <Navigate to="/login" state={{ from: loc }} replace />;
   if (!userData?.is_admin) return <Navigate to="/dashboard" state={{ from: loc }} replace />;
   
   return <Outlet />;

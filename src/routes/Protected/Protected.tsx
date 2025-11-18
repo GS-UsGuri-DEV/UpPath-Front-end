@@ -12,6 +12,6 @@ export default function Protected() {
   }, []);
 
   if (loading) return <div className="p-6">Carregando...</div>;
-  if (!ok) return <Navigate to="/" state={{ from: loc }} replace />;
+  if (!ok) return <Navigate to="/login" state={{ from: loc }} replace />;
   return <Outlet />;
 }
