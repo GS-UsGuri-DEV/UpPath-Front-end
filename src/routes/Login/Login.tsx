@@ -1,11 +1,11 @@
-import { useState, useEffect, type ChangeEvent } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useEffect, useState, type ChangeEvent } from 'react'
 import { useForm } from 'react-hook-form'
-import type { LoginFormData } from '../../types/auth'
-import { useAuth } from '../../contexts/useAuth'
-import FormInput from '../../components/Form/FormInput'
-import FormButton from '../../components/Form/FormButton'
 import { FaArrowRight, FaEye, FaEyeSlash } from 'react-icons/fa'
+import { Link, useNavigate } from 'react-router-dom'
+import FormButton from '../../components/Form/FormButton'
+import FormInput from '../../components/Form/FormInput'
+import { useAuth } from '../../contexts/useAuth'
+import type { LoginFormData } from '../../types/auth'
 
 export default function Login() {
   const [msg, setMsg] = useState('')
@@ -114,17 +114,20 @@ export default function Login() {
               required
             />
 
-            <div className="flex items-center justify-between text-sm text-slate-400">
+            <div className="flex items-center justify-between text-sm text-[var(--text-muted)]">
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  className="rounded border-slate-600 bg-slate-700"
+                  className="rounded border-[var(--border-color)] bg-[var(--bg-tertiary)]"
                   checked={remember}
                   onChange={() => setRemember((s) => !s)}
                 />
                 Lembrar-me
               </label>
-              <Link to="#" className="text-slate-400 hover:text-white">
+              <Link
+                to="#"
+                className="text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              >
                 Esqueceu a senha?
               </Link>
             </div>
@@ -142,7 +145,7 @@ export default function Login() {
               )}
             </FormButton>
             <Link to="/cadastro" className="block text-center text-sm">
-              <span className="text-slate-400">Não tem conta?</span>{' '}
+              <span className="text-[var(--text-muted)]">Não tem conta?</span>{' '}
               <span className="font-semibold text-blue-400 transition-colors hover:text-blue-300">
                 Criar conta
               </span>

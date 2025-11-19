@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { storage, BUCKET_PUBLIC, ID, db } from '../../shared/appwrite'
 import { useAuth } from '../../contexts/useAuth'
+import { BUCKET_PUBLIC, ID, db, storage } from '../../shared/appwrite'
 
 interface UploadProfileImageProps {
   onUploadSuccess: (url: string) => void
@@ -47,16 +47,20 @@ export default function UploadProfileImage({
   }
 
   return (
-    <section className="rounded-xl border bg-white p-4">
-      <h3 className="mb-2 font-semibold">Foto de Perfil</h3>
+    <section className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4">
+      <h3 className="mb-2 font-semibold text-[var(--text-primary)]">
+        Foto de Perfil
+      </h3>
       <input
         type="file"
         accept="image/*"
         onChange={upload}
-        className="block w-full text-sm text-gray-700 file:mr-4 file:rounded file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:text-indigo-700 hover:file:bg-indigo-100"
+        className="block w-full text-sm text-[var(--text-secondary)] file:mr-4 file:rounded file:border-0 file:bg-[var(--bg-secondary)] file:px-4 file:py-2 file:text-sm file:text-indigo-700 hover:file:bg-[var(--bg-secondary)]"
       />
       {uploadError && (
-        <div className="mt-2 text-sm text-red-600">{uploadError}</div>
+        <div className="mt-2 text-sm text-[var(--accent-danger)]">
+          {uploadError}
+        </div>
       )}
     </section>
   )

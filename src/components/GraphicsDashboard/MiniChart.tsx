@@ -4,6 +4,22 @@ import type { MiniChartProps } from '../../types/graphicsDashboard'
  * MiniChart - Gráfico sparkline para evolução de métricas
  */
 export default function MiniChart({ values, color }: MiniChartProps) {
+  const getAccentVar = (c: string) => {
+    switch (c) {
+      case 'green':
+        return 'var(--accent-success)'
+      case 'red':
+        return 'var(--accent-danger)'
+      case 'orange':
+      case 'yellow':
+        return 'var(--accent-warning)'
+      case 'indigo':
+      case 'blue':
+      default:
+        return 'var(--accent-primary)'
+    }
+  }
+  const accent = getAccentVar(color)
   const maxVal = 10
   const width = 120
   const height = 40
@@ -17,7 +33,7 @@ export default function MiniChart({ values, color }: MiniChartProps) {
       <polyline
         points={points}
         fill="none"
-        stroke={color}
+        stroke={accent}
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -28,7 +44,7 @@ export default function MiniChart({ values, color }: MiniChartProps) {
           cx={i * step}
           cy={height - (v / maxVal) * height}
           r={2}
-          fill={color}
+          fill={accent}
         />
       ))}
     </svg>

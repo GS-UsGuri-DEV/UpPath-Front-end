@@ -46,23 +46,25 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--bg-primary)]">
       <div className="mx-auto max-w-7xl space-y-6 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-            <p className="text-gray-600">Bem-vindo, {displayName}</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+              Dashboard
+            </h1>
+            <p className="text-[var(--text-muted)]">Bem-vindo, {displayName}</p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={handleOpenGame}
-              className="rounded bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600"
+              className="rounded bg-[var(--accent-primary)] px-4 py-2 text-white transition-colors hover:bg-[var(--accent-primary-hover)]"
             >
               Novo Registro
             </button>
             <button
               onClick={() => navigate('/perfil')}
-              className="rounded bg-indigo-600 px-4 py-2 text-white transition-colors hover:bg-indigo-700"
+              className="rounded bg-[var(--accent-indigo)] px-4 py-2 text-white transition-colors hover:bg-[var(--accent-indigo-hover)]"
             >
               Ver Perfil
             </button>
@@ -77,8 +79,8 @@ export default function Dashboard() {
         )}
 
         {dashboardError && (
-          <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4">
-            <p className="text-sm text-yellow-700">
+          <div className="rounded-xl border border-[var(--border-color)] bg-[var(--accent-warning-bg)] p-4">
+            <p className="text-sm text-[var(--accent-warning-dark)]">
               Usando dados de exemplo (Oracle vazio). Erro da API:{' '}
               {dashboardError}
             </p>

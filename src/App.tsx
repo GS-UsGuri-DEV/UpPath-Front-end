@@ -1,15 +1,15 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import Login from './routes/Login/Login'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import NavBar from './components/NavBar/NavBar'
+import AdminPanel from './routes/AdminPanel'
 import Cadastro from './routes/Cadastro'
 import Dashboard from './routes/Dashboard/Dashboard'
+import Home from './routes/Home'
+import Login from './routes/Login/Login'
 import Perfil from './routes/Perfil/Perfil'
 import Protected from './routes/Protected/Protected'
 import ProtectedAdmin from './routes/ProtectedAdmin/ProtectedAdmin'
-import AdminPanel from './routes/AdminPanel'
-import Home from './routes/Home'
-import FAQ from './routes/FAQ'
 import Contato from './routes/Contato'
-import NavBar from './components/NavBar/NavBar'
+import FAQ from './routes/FAQ'
 
 export default function App() {
   const location = useLocation()
@@ -17,7 +17,7 @@ export default function App() {
   const showNavBar = !hideNavBarOn.includes(location.pathname)
 
   return (
-    <>
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300">
       {showNavBar && <NavBar />}
       <Routes>
         <Route path="/" element={<Home />} />
@@ -34,6 +34,6 @@ export default function App() {
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </>
+    </div>
   )
 }

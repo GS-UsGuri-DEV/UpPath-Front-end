@@ -1,10 +1,10 @@
+import { Query } from 'appwrite'
 import { useEffect, useState } from 'react'
+import { FaFire, FaMedal } from 'react-icons/fa'
 import { useAuth } from '../../contexts/useAuth'
 import { db } from '../../shared/appwrite'
-import { Query } from 'appwrite'
-import { FaMedal, FaFire } from 'react-icons/fa'
-import BemEstarGrid from '../GraphicsDashboard/BemEstarGrid'
 import type { BemEstarCardProps } from '../../types/graphicsDashboard'
+import BemEstarGrid from '../GraphicsDashboard/BemEstarGrid'
 
 /**
  * Componente unificado de Bem-estar
@@ -12,7 +12,9 @@ import type { BemEstarCardProps } from '../../types/graphicsDashboard'
  */
 export default function BemEstarDashboard() {
   const { userData } = useAuth()
-  const [bemEstar, setBemEstar] = useState<Array<Record<string, unknown>> | null>(null)
+  const [bemEstar, setBemEstar] = useState<Array<
+    Record<string, unknown>
+  > | null>(null)
   const [bemLoading, setBemLoading] = useState(false)
   const [bemError, setBemError] = useState<string | null>(null)
 
@@ -90,17 +92,23 @@ export default function BemEstarDashboard() {
     arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN
 
   // Extract metrics
-  const stressValues = records7.map((r) => num(r.nivel_estresse ?? r.NIVEL_ESTRESSE))
-  const motivationValues = records7.map((r) => num(r.nivel_motivacao ?? r.NIVEL_MOTIVACAO))
-  const sleepValues = records7.map((r) => num(r.qualidade_sono ?? r.QUALIDADE_SONO))
+  const stressValues = records7.map((r) =>
+    num(r.nivel_estresse ?? r.NIVEL_ESTRESSE),
+  )
+  const motivationValues = records7.map((r) =>
+    num(r.nivel_motivacao ?? r.NIVEL_MOTIVACAO),
+  )
+  const sleepValues = records7.map((r) =>
+    num(r.qualidade_sono ?? r.QUALIDADE_SONO),
+  )
 
-  const avgStress = avg(stressValues.filter(v => !isNaN(v)))
-  const avgMotivation = avg(motivationValues.filter(v => !isNaN(v)))
-  const avgSleep = avg(sleepValues.filter(v => !isNaN(v)))
+  const avgStress = avg(stressValues.filter((v) => !isNaN(v)))
+  const avgMotivation = avg(motivationValues.filter((v) => !isNaN(v)))
+  const avgSleep = avg(sleepValues.filter((v) => !isNaN(v)))
 
   // Calculate trends
   const calculateTrend = (values: number[]): 'up' | 'down' | 'neutral' => {
-    const validValues = values.filter(v => !isNaN(v))
+    const validValues = values.filter((v) => !isNaN(v))
     if (validValues.length < 2) return 'neutral'
     const recent = validValues.slice(0, Math.ceil(validValues.length / 2))
     const older = validValues.slice(Math.ceil(validValues.length / 2))
@@ -116,7 +124,10 @@ export default function BemEstarDashboard() {
   const sleepTrend = calculateTrend(sleepValues)
 
   // Calculate status
-  const getStatus = (trend: 'up' | 'down' | 'neutral', isInverted = false): string => {
+  const getStatus = (
+    trend: 'up' | 'down' | 'neutral',
+    isInverted = false,
+  ): string => {
     if (trend === 'neutral') return 'Estável'
     if (isInverted) {
       return trend === 'down' ? 'Melhorando' : 'Piorando'
@@ -138,10 +149,10 @@ export default function BemEstarDashboard() {
 
   const badge =
     score >= 71
-      ? { label: 'Ouro', color: 'text-yellow-500' }
+      ? { label: 'Ouro', color: 'text-[var(--accent-warning)]' }
       : score >= 41
-        ? { label: 'Prata', color: 'text-gray-400' }
-        : { label: 'Bronze', color: 'text-orange-700' }
+        ? { label: 'Prata', color: 'text-[var(--text-muted)]' }
+        : { label: 'Bronze', color: 'text-[var(--accent-warning-dark)]' }
 
   // Streak calculation
   const computeStreak = () => {
@@ -174,9 +185,9 @@ export default function BemEstarDashboard() {
     {
       label: 'Qualidade do Sono',
       color: 'blue',
-      bgColor: 'bg-blue-50',
+      bgColor: 'bg-[var(--bg-secondary)]',
       value: isNaN(avgSleep) ? 0 : Math.round(avgSleep * 10) / 10,
-      values: sleepValues.filter(v => !isNaN(v)).reverse(),
+      values: sleepValues.filter((v) => !isNaN(v)).reverse(),
       media: isNaN(avgSleep) ? '0.0' : avgSleep.toFixed(1),
       tendencia: sleepTrend,
       status: getStatus(sleepTrend),
@@ -184,9 +195,9 @@ export default function BemEstarDashboard() {
     {
       label: 'Motivação',
       color: 'green',
-      bgColor: 'bg-green-50',
+      bgColor: 'bg-[var(--bg-secondary)]',
       value: isNaN(avgMotivation) ? 0 : Math.round(avgMotivation * 10) / 10,
-      values: motivationValues.filter(v => !isNaN(v)).reverse(),
+      values: motivationValues.filter((v) => !isNaN(v)).reverse(),
       media: isNaN(avgMotivation) ? '0.0' : avgMotivation.toFixed(1),
       tendencia: motivationTrend,
       status: getStatus(motivationTrend),
@@ -194,11 +205,16 @@ export default function BemEstarDashboard() {
     {
       label: 'Nível de Estresse',
       color: 'red',
-      bgColor: 'bg-red-50',
+      bgColor: 'bg-[var(--bg-secondary)]',
       value: isNaN(avgStress) ? 0 : Math.round(avgStress * 10) / 10,
-      values: stressValues.filter(v => !isNaN(v)).reverse(),
+      values: stressValues.filter((v) => !isNaN(v)).reverse(),
       media: isNaN(avgStress) ? '0.0' : avgStress.toFixed(1),
-      tendencia: stressTrend === 'up' ? 'down' : stressTrend === 'down' ? 'up' : 'neutral',
+      tendencia:
+        stressTrend === 'up'
+          ? 'down'
+          : stressTrend === 'down'
+            ? 'up'
+            : 'neutral',
       status: getStatus(stressTrend, true),
     },
   ]
@@ -206,10 +222,12 @@ export default function BemEstarDashboard() {
   return (
     <section className="space-y-6">
       {/* Header with Gamification */}
-      <div className="rounded-xl border bg-white p-6">
+      <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Bem-estar</h2>
-          <div className="text-sm text-gray-600">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">
+            Bem-estar
+          </h2>
+          <div className="text-sm text-[var(--text-muted)]">
             {recordCount} registro{recordCount !== 1 ? 's' : ''}
           </div>
         </div>
@@ -221,16 +239,22 @@ export default function BemEstarDashboard() {
               <FaMedal className={badge.color} />
             </div>
             <div>
-              <div className="text-sm text-gray-500">Score Geral</div>
+              <div className="text-sm text-[var(--text-muted)]">
+                Score Geral
+              </div>
               <div className="text-3xl font-bold">{score}</div>
-              <div className="text-xs text-gray-600">{badge.label}</div>
+              <div className="text-xs text-[var(--text-muted)]">
+                {badge.label}
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 rounded-lg bg-orange-50 px-4 py-3">
-            <FaFire className="text-2xl text-orange-500" />
+          <div className="flex items-center gap-2 rounded-lg border border-[var(--accent-warning-border)] bg-[var(--accent-warning-bg)] px-4 py-3">
+            <FaFire className="text-2xl text-[var(--accent-warning)]" />
             <div>
-              <div className="text-xs text-gray-600">Sequência</div>
-              <div className="text-lg font-semibold">
+              <div className="text-sm font-medium text-[var(--text-secondary)]">
+                Sequência
+              </div>
+              <div className="text-2xl font-bold text-[var(--text-primary)]">
                 {streak} dia{streak !== 1 ? 's' : ''}
               </div>
             </div>
@@ -247,36 +271,38 @@ export default function BemEstarDashboard() {
             className="flex flex-wrap items-end gap-2"
           >
             <div>
-              <label className="text-xs text-gray-600">De:</label>
+              <label className="text-xs text-[var(--text-muted)]">De:</label>
               <input
                 type="date"
                 value={bemFrom}
                 onChange={(e) => setBemFrom(e.target.value)}
-                className="ml-2 rounded border px-2 py-1 text-sm"
+                className="ml-2 rounded border border-[var(--input-border)] px-2 py-1 text-sm"
               />
             </div>
             <div>
-              <label className="text-xs text-gray-600">Até:</label>
+              <label className="text-xs text-[var(--text-muted)]">Até:</label>
               <input
                 type="date"
                 value={bemTo}
                 onChange={(e) => setBemTo(e.target.value)}
-                className="ml-2 rounded border px-2 py-1 text-sm"
+                className="ml-2 rounded border border-[var(--input-border)] px-2 py-1 text-sm"
               />
             </div>
             <div>
-              <label className="text-xs text-gray-600">Limite:</label>
+              <label className="text-xs text-[var(--text-muted)]">
+                Limite:
+              </label>
               <input
                 type="number"
                 min={1}
                 value={bemLimit}
                 onChange={(e) => setBemLimit(e.target.value)}
-                className="ml-2 w-20 rounded border px-2 py-1 text-sm"
+                className="ml-2 w-20 rounded border border-[var(--input-border)] px-2 py-1 text-sm"
               />
             </div>
             <button
               type="submit"
-              className="rounded bg-indigo-600 px-3 py-1 text-sm text-white hover:bg-indigo-700"
+              className="rounded bg-[var(--accent-indigo)] px-3 py-1 text-sm text-white hover:bg-[var(--accent-indigo-hover)]"
             >
               Filtrar
             </button>
@@ -288,14 +314,14 @@ export default function BemEstarDashboard() {
                 setBemLimit('')
                 fetchBemEstar()
               }}
-              className="rounded bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300"
+              className="rounded bg-[var(--bg-tertiary)] px-3 py-1 text-sm hover:bg-[var(--bg-secondary)]"
             >
               Limpar
             </button>
             <button
               type="button"
               onClick={() => setShowDetails(!showDetails)}
-              className="ml-auto rounded bg-gray-100 px-3 py-1 text-sm hover:bg-gray-200"
+              className="ml-auto rounded bg-[var(--bg-tertiary)] px-3 py-1 text-sm hover:bg-[var(--bg-secondary)]"
             >
               {showDetails ? 'Ocultar Detalhes' : 'Ver Detalhes'}
             </button>
@@ -305,29 +331,29 @@ export default function BemEstarDashboard() {
 
       {/* Loading & Error States */}
       {bemLoading && (
-        <div className="rounded-xl border bg-white p-6 text-center">
-          <div className="text-gray-600">Carregando...</div>
+        <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-6 text-center">
+          <div className="text-[var(--text-muted)]">Carregando...</div>
         </div>
       )}
       {bemError && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-          <div className="text-red-600">Erro: {bemError}</div>
+        <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4">
+          <div className="text-[var(--accent-danger)]">Erro: {bemError}</div>
         </div>
       )}
 
       {/* Visual Cards */}
-      {!bemLoading && !bemError && (
-        <BemEstarGrid cards={cards} />
-      )}
+      {!bemLoading && !bemError && <BemEstarGrid cards={cards} />}
 
       {/* Detailed Table (collapsible) */}
       {showDetails && Array.isArray(bemEstar) && bemEstar.length > 0 && (
-        <div className="rounded-xl border bg-white p-6">
-          <h3 className="mb-4 font-semibold">Histórico Detalhado</h3>
+        <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-6">
+          <h3 className="mb-4 font-semibold text-[var(--text-primary)]">
+            Histórico Detalhado
+          </h3>
           <div className="overflow-x-auto text-xs">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="border-b">
+                <tr className="border-b border-[var(--border-color)]">
                   <th className="p-2 text-left">Data</th>
                   <th className="p-2 text-left">Estresse</th>
                   <th className="p-2 text-left">Motivação</th>
@@ -338,13 +364,26 @@ export default function BemEstarDashboard() {
               <tbody>
                 {bemEstar.map((r, idx) => {
                   const row = r as Record<string, unknown>
-                  const data = String(row['data_registro'] ?? row['DATA_REGISTRO'] ?? '—')
-                  const estresse = String(row['nivel_estresse'] ?? row['NIVEL_ESTRESSE'] ?? '—')
-                  const motivacao = String(row['nivel_motivacao'] ?? row['NIVEL_MOTIVACAO'] ?? '—')
-                  const sono = String(row['qualidade_sono'] ?? row['QUALIDADE_SONO'] ?? '—')
-                  const obs = String(row['observacao'] ?? row['OBSERVACAO'] ?? '—')
+                  const data = String(
+                    row['data_registro'] ?? row['DATA_REGISTRO'] ?? '—',
+                  )
+                  const estresse = String(
+                    row['nivel_estresse'] ?? row['NIVEL_ESTRESSE'] ?? '—',
+                  )
+                  const motivacao = String(
+                    row['nivel_motivacao'] ?? row['NIVEL_MOTIVACAO'] ?? '—',
+                  )
+                  const sono = String(
+                    row['qualidade_sono'] ?? row['QUALIDADE_SONO'] ?? '—',
+                  )
+                  const obs = String(
+                    row['observacao'] ?? row['OBSERVACAO'] ?? '—',
+                  )
                   return (
-                    <tr key={idx} className="border-b hover:bg-gray-50">
+                    <tr
+                      key={idx}
+                      className="border-b border-[var(--border-color)] hover:bg-[var(--bg-secondary)]"
+                    >
                       <td className="p-2">{data.slice(0, 10)}</td>
                       <td className="p-2">{estresse}</td>
                       <td className="p-2">{motivacao}</td>

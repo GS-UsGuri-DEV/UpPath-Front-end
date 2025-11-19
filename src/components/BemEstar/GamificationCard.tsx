@@ -1,9 +1,9 @@
+import { Query } from 'appwrite'
 import { useEffect, useState } from 'react'
+import { FaTimes } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/useAuth'
 import { db, ID, Permission, Role } from '../../shared/appwrite'
-import { Query } from 'appwrite'
-import { useNavigate } from 'react-router-dom'
-import { FaTimes } from 'react-icons/fa'
 import Spinner from '../Spinner/Spinner'
 
 export default function GamificationCard({
@@ -169,18 +169,18 @@ export default function GamificationCard({
   return (
     <div className={containerClass}>
       <div
-        className={`rounded-xl border bg-white p-4 shadow-lg ${notification ? 'w-80' : ''}`}
+        className={`rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4 shadow-lg ${notification ? 'w-80' : ''}`}
       >
         <div className="mb-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
-            <div className="text-sm font-semibold text-gray-700">
+            <div className="text-sm font-semibold text-[var(--text-primary)]">
               Registre seu bem-estar hoje
             </div>
           </div>
           <button
             onClick={() => setHideCard(true)}
-            className="text-gray-400 transition-colors hover:text-gray-600"
+            className="text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
             title="Minimizar"
           >
             <FaTimes />
@@ -205,7 +205,7 @@ export default function GamificationCard({
                 onChange={(e) =>
                   setStress(e.target.value === '' ? '' : Number(e.target.value))
                 }
-                className="mt-1 w-full rounded border p-2 text-sm"
+                className="mt-1 w-full rounded border border-[var(--input-border)] p-2 text-sm"
                 required
               />
             </label>
@@ -221,7 +221,7 @@ export default function GamificationCard({
                     e.target.value === '' ? '' : Number(e.target.value),
                   )
                 }
-                className="mt-1 w-full rounded border p-2 text-sm"
+                className="mt-1 w-full rounded border border-[var(--input-border)] p-2 text-sm"
                 required
               />
             </label>
@@ -239,7 +239,7 @@ export default function GamificationCard({
                     e.target.value === '' ? '' : Number(e.target.value),
                   )
                 }
-                className="mt-1 w-full rounded border p-2 text-sm"
+                className="mt-1 w-full rounded border border-[var(--input-border)] p-2 text-sm"
                 required
               />
             </label>
@@ -249,7 +249,7 @@ export default function GamificationCard({
                 type="text"
                 value={observation}
                 onChange={(e) => setObservation(e.target.value)}
-                className="mt-1 w-full rounded border p-2 text-sm"
+                className="mt-1 w-full rounded border border-[var(--input-border)] p-2 text-sm"
               />
             </label>
           </div>
@@ -258,7 +258,7 @@ export default function GamificationCard({
               <button
                 type="submit"
                 disabled={submitLoading}
-                className="flex-1 rounded bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
+                className="flex-1 rounded bg-[var(--accent-success)] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--accent-success-hover)]"
               >
                 {submitLoading ? 'Salvando...' : 'Registrar hoje'}
               </button>
@@ -266,7 +266,7 @@ export default function GamificationCard({
               <button
                 type="button"
                 onClick={() => nav('/dashboard')}
-                className="flex-1 rounded bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                className="flex-1 rounded bg-[var(--accent-indigo)] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--accent-indigo-hover)]"
               >
                 Registrar mais
               </button>
@@ -280,13 +280,13 @@ export default function GamificationCard({
                 setObservation('')
                 setSubmitMessage(null)
               }}
-              className="rounded bg-gray-100 px-3 py-2 text-sm transition-colors hover:bg-gray-200"
+              className="rounded bg-[var(--bg-tertiary)] px-3 py-2 text-sm transition-colors hover:bg-[var(--bg-secondary)]"
             >
               Limpar
             </button>
           </div>
           {submitMessage && (
-            <div className="text-center text-sm text-green-600">
+            <div className="text-center text-sm text-[var(--accent-success)]">
               {submitMessage}
             </div>
           )}
@@ -298,7 +298,9 @@ export default function GamificationCard({
           </div>
         )}
         {error && (
-          <div className="mt-2 text-center text-xs text-red-600">{error}</div>
+          <div className="mt-2 text-center text-xs text-[var(--accent-danger)]">
+            {error}
+          </div>
         )}
       </div>
     </div>

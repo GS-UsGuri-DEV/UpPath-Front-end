@@ -16,16 +16,31 @@ import TrendIcon from './TrendIcon'
 export default function BemEstarCard({
   label,
   color,
-  bgColor,
   value,
   values,
   media,
   tendencia,
   status,
 }: BemEstarCardProps) {
+  const getAccentVar = (c: string) => {
+    switch (c) {
+      case 'green':
+        return 'var(--accent-success)'
+      case 'red':
+        return 'var(--accent-danger)'
+      case 'orange':
+      case 'yellow':
+        return 'var(--accent-warning)'
+      case 'indigo':
+      case 'blue':
+      default:
+        return 'var(--accent-primary)'
+    }
+  }
+  const accent = getAccentVar(color)
   return (
     <div
-      className={`bemestar-card group relative overflow-hidden border-2 ${bgColor} bg-gradient-to-br from-${color}-50 to-white p-6 shadow-sm transition-all hover:shadow-md`}
+      className={`bemestar-card group relative overflow-hidden border-2 border-[var(--border-color)] bg-[var(--bg-secondary)] p-6 shadow-sm transition-all hover:shadow-md`}
       style={{ borderRadius: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
     >
       <div className="bemestar-sparkline absolute top-4 right-4">
@@ -33,36 +48,42 @@ export default function BemEstarCard({
       </div>
       <div className="relative z-10">
         <div className="mb-2 flex items-center gap-2">
-          <div className={`rounded-full ${bgColor} p-2`}>
-            <div className={`h-3 w-3 rounded-full bg-${color}-500`} />
+          <div className={`rounded-full bg-[var(--bg-tertiary)] p-2`}>
+            <div
+              className="h-3 w-3 rounded-full"
+              style={{ backgroundColor: accent }}
+            />
           </div>
-          <span className="text-sm font-medium text-gray-600">{label}</span>
+          <span className="text-sm font-medium text-[var(--text-muted)]">
+            {label}
+          </span>
           <TrendIcon trend={tendencia} />
         </div>
         <div className="mb-3 flex items-baseline gap-2">
-          <span className={`text-4xl font-bold text-${color}-600`}>
+          <span className="text-4xl font-bold" style={{ color: accent }}>
             {value}
           </span>
-          <span className="text-gray-500">/10</span>
+          <span className="text-[var(--text-muted)]">/10</span>
         </div>
-        <div
-          className={`mb-3 h-2 w-full overflow-hidden rounded-full ${bgColor}`}
-        >
+        <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-[var(--bg-tertiary)]">
           <div
-            className={`h-full bg-${color}-500 transition-all duration-500`}
-            style={{ width: `${(value / 10) * 100}%` }}
+            className="h-full transition-all duration-500"
+            style={{
+              width: `${(value / 10) * 100}%`,
+              backgroundColor: accent,
+            }}
           />
         </div>
-        <div className="flex items-center justify-between text-xs text-gray-600">
+        <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
           <span>Média: {media}</span>
           <span
             className={
               'bemestar-status ' +
               (status === 'Melhorando'
-                ? 'text-green-600'
+                ? 'text-[var(--accent-success)]'
                 : status === 'Piorando'
-                  ? 'text-red-600'
-                  : 'text-gray-500')
+                  ? 'text-[var(--accent-danger)]'
+                  : 'text-[var(--text-muted)]')
             }
           >
             {status}
