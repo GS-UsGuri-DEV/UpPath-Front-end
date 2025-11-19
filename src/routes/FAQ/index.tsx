@@ -70,7 +70,9 @@ export default function FAQ() {
 
         {/* Contact Section */}
         <div className="mt-12 rounded-lg border-t-4 border-[var(--accent-indigo)] bg-[var(--bg-secondary)] p-8 text-center shadow-sm">
-          <h3 className="mb-2 text-xl font-bold text-[var(--text-primary)]" />
+          <h3 className="mb-2 text-xl font-bold text-[var(--text-primary)]">
+            Precisa de ajuda?
+          </h3>
           <div className="mb-4 flex items-center justify-center gap-2">
             <p className="text-2xl font-bold text-[var(--accent-indigo)]">
               AINDA TEM DÚVIDAS?

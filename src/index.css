@@ -504,11 +504,11 @@
   --accent-danger: rgb(239 68 68); /* red-600 */
   --accent-danger-hover: rgb(220 38 38);
   /* Slightly darker accents for better contrast on pale backgrounds */
-    --accent-warning: rgb(212 138 6);
-    --accent-warning-dark: rgb(153 63 0);
-    /* Brighter orange backing (less brown) - translucent for subtlety */
-    --accent-warning-bg: rgb(249 115 22 / 0.14); /* warm orange */
-    --accent-warning-border: rgb(249 115 22 / 0.28);
+  --accent-warning: rgb(212 138 6);
+  --accent-warning-dark: rgb(153 63 0);
+  /* Brighter orange backing (less brown) - translucent for subtlety */
+  --accent-warning-bg: rgb(249 115 22 / 0.14); /* warm orange */
+  --accent-warning-border: rgb(249 115 22 / 0.28);
 }
 
 .light-mode {
@@ -527,7 +527,9 @@
   --accent-primary-hover: rgb(37 99 235); /* blue-600 */
   --accent-indigo: rgb(79 70 229); /* indigo-600 */
   --accent-indigo-hover: rgb(67 56 202);
-  --accent-success: rgb(22 163 74); /* slightly darker green for better visibility */
+  --accent-success: rgb(
+    22 163 74
+  ); /* slightly darker green for better visibility */
   --accent-success-hover: rgb(16 120 74);
   /* Success tint/backing used for small info cards and progress bands */
   --accent-success-bg: rgb(220 252 231);
@@ -535,15 +537,17 @@
   --accent-danger: rgb(239 68 68);
   --accent-danger-hover: rgb(220 38 38);
   /* Slightly darker accents for better contrast on pale backgrounds */
-    --accent-warning: rgb(212 138 6);
-    --accent-warning-dark: rgb(153 63 0);
-    /* Brighter orange for dark mode (keeps warmth without turning brown) */
-    --accent-warning-bg: rgb(234 88 12 / 0.18);
-    --accent-warning-border: rgb(234 88 12 / 0.32);
+  --accent-warning: rgb(212 138 6);
+  --accent-warning-dark: rgb(153 63 0);
+  /* Brighter orange for dark mode (keeps warmth without turning brown) */
+  --accent-warning-bg: rgb(234 88 12 / 0.18);
+  --accent-warning-border: rgb(234 88 12 / 0.32);
 }
 
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  transition: background-color 0.3s, color 0.3s;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 }
