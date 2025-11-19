@@ -1,11 +1,11 @@
+import { ID } from 'appwrite'
 import { useState, type ChangeEvent } from 'react'
 import { useForm } from 'react-hook-form'
-import type { SignupFormData } from '../../types/auth'
-import { account, db } from '../../shared/appwrite'
-import { ID } from 'appwrite'
-import { useNavigate, Link } from 'react-router-dom'
-import FormInput from '../../components/Form/FormInput'
+import { Link, useNavigate } from 'react-router-dom'
 import FormButton from '../../components/Form/FormButton'
+import FormInput from '../../components/Form/FormInput'
+import { account, db } from '../../shared/appwrite'
+import type { SignupFormData } from '../../types/auth'
 
 export default function Cadastro() {
   const [msg, setMsg] = useState('')
@@ -374,7 +374,7 @@ export default function Cadastro() {
             {formState.isSubmitting ? 'Criando conta...' : 'Criar conta'}
           </FormButton>
           <p className="link-muted">
-            <span className="text-slate-400">Já tem cadastro?</span>{' '}
+            <span className="text-[var(--text-muted)]">Já tem cadastro?</span>{' '}
             <Link
               to="/login"
               className="font-semibold text-blue-400 transition-colors hover:text-blue-300"

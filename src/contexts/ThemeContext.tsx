@@ -30,8 +30,11 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
       // ignore write errors (e.g., storage disabled)
     }
     if (typeof document !== 'undefined' && document.documentElement) {
-      document.documentElement.classList.toggle('dark-mode', isDark)
-      document.documentElement.classList.toggle('light-mode', !isDark)
+      // Ensure only the active theme class is present on the root element
+      document.documentElement.classList.remove('dark-mode', 'light-mode')
+      document.documentElement.classList.add(
+        isDark ? 'dark-mode' : 'light-mode',
+      )
     }
   }, [isDark])
 

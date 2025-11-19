@@ -45,16 +45,18 @@ export default function Perfil() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--bg-primary)]">
         <Spinner text="Carregando perfil..." />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--bg-primary)]">
       <div className="mx-auto max-w-3xl space-y-6 p-6">
-        <h1 className="text-2xl font-bold text-gray-800">Meu Perfil</h1>
+        <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+          Meu Perfil
+        </h1>
 
         <ProfileCard
           profileImage={profileImage}

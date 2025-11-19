@@ -113,10 +113,10 @@ export default function BemEstar() {
 
   const badge =
     score >= 71
-      ? { label: 'Ouro', color: 'text-yellow-500' }
+      ? { label: 'Ouro', color: 'text-[var(--accent-warning)]' }
       : score >= 41
-        ? { label: 'Prata', color: 'text-gray-400' }
-        : { label: 'Bronze', color: 'text-orange-700' }
+        ? { label: 'Prata', color: 'text-[var(--text-muted)]' }
+        : { label: 'Bronze', color: 'text-[var(--accent-warning-dark)]' }
 
   // compute streak: count consecutive days from latest record backwards where there is a record per day
   const computeStreak = () => {
@@ -190,10 +190,12 @@ export default function BemEstar() {
   }
 
   return (
-    <section className="rounded-xl border bg-white p-4">
+    <section className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold">Bem-estar (gamificado)</h2>
-        <div className="text-sm text-gray-600">
+        <h2 className="font-semibold text-[var(--text-primary)]">
+          Bem-estar (gamificado)
+        </h2>
+        <div className="text-sm text-[var(--text-muted)]">
           {recordCount} registro{recordCount !== 1 ? 's' : ''}
         </div>
       </div>
@@ -204,11 +206,13 @@ export default function BemEstar() {
             <FaMedal className={badge.color} />
           </div>
           <div>
-            <div className="text-sm text-gray-500">Score</div>
+            <div className="text-sm text-[var(--text-muted)]">Score</div>
             <div className="text-2xl font-bold">{score}</div>
-            <div className="text-xs text-gray-600">{badge.label}</div>
+            <div className="text-xs text-[var(--text-muted)]">
+              {badge.label}
+            </div>
             <div className="mt-2 flex items-center gap-1 text-sm">
-              <FaFire className="text-orange-500" /> {streak} dia
+              <FaFire className="text-[var(--accent-warning)]" /> {streak} dia
               {streak !== 1 ? 's' : ''} consecutivo
             </div>
           </div>
@@ -235,7 +239,7 @@ export default function BemEstar() {
               type="date"
               value={bemFrom}
               onChange={(e) => setBemFrom(e.target.value)}
-              className="ml-2 rounded border px-2 py-1 text-sm"
+              className="ml-2 rounded border border-[var(--input-border)] px-2 py-1 text-sm"
             />
           </div>
           <div>
@@ -244,7 +248,7 @@ export default function BemEstar() {
               type="date"
               value={bemTo}
               onChange={(e) => setBemTo(e.target.value)}
-              className="ml-2 rounded border px-2 py-1 text-sm"
+              className="ml-2 rounded border border-[var(--input-border)] px-2 py-1 text-sm"
             />
           </div>
           <div>
@@ -254,13 +258,13 @@ export default function BemEstar() {
               min={1}
               value={bemLimit}
               onChange={(e) => setBemLimit(e.target.value)}
-              className="ml-2 w-20 rounded border px-2 py-1 text-sm"
+              className="ml-2 w-20 rounded border border-[var(--input-border)] px-2 py-1 text-sm"
             />
           </div>
           <div>
             <button
               type="submit"
-              className="rounded bg-gray-200 px-3 py-1 text-sm"
+              className="rounded bg-[var(--bg-tertiary)] px-3 py-1 text-sm"
             >
               Filtrar
             </button>
@@ -272,7 +276,7 @@ export default function BemEstar() {
                 setBemLimit('')
                 fetchBemEstar()
               }}
-              className="ml-2 rounded bg-gray-100 px-3 py-1 text-sm"
+              className="ml-2 rounded bg-[var(--bg-tertiary)] px-3 py-1 text-sm"
             >
               Limpar
             </button>
@@ -282,7 +286,9 @@ export default function BemEstar() {
 
       <div className="text-sm">
         {bemLoading && <Spinner text="Carregando..." />}
-        {bemError && <div className="text-red-600">Erro: {bemError}</div>}
+        {bemError && (
+          <div className="text-[var(--accent-danger)]">Erro: {bemError}</div>
+        )}
         {Array.isArray(bemEstar) && bemEstar.length > 0 ? (
           <div className="overflow-x-auto text-xs">
             <table className="w-full border-collapse">
@@ -340,7 +346,7 @@ export default function BemEstar() {
             </table>
           </div>
         ) : (
-          <pre className="overflow-x-auto rounded bg-gray-50 p-2 text-xs">
+          <pre className="overflow-x-auto rounded bg-[var(--bg-tertiary)] p-2 text-xs">
             {JSON.stringify(bemEstar ?? 'Nenhum registro', null, 2)}
           </pre>
         )}

@@ -7,14 +7,14 @@ export default function DarkLightMode() {
   return (
     <button
       onClick={toggleTheme}
-      className="flex items-center justify-center rounded-lg bg-[var(--bg-tertiary)] p-2 transition-all duration-200 hover:scale-110 hover:bg-[var(--bg-secondary)] active:scale-95 dark:bg-[var(--bg-tertiary)] dark:hover:bg-[var(--bg-secondary)]"
+      className="flex items-center justify-center rounded-lg p-2 text-[var(--text-primary)] transition-all duration-200 hover:scale-110 hover:bg-[var(--bg-secondary)] active:scale-95"
       aria-label={isDark ? 'Mudar para modo claro' : 'Mudar para modo escuro'}
       type="button"
     >
       {isDark ? (
-        <MdLightMode className="text-2xl text-yellow-400" />
+        <MdLightMode className="text-2xl" />
       ) : (
-        <MdDarkMode className="text-2xl text-slate-200" />
+        <MdDarkMode className="text-2xl" />
       )}
     </button>
   )

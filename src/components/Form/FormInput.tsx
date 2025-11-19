@@ -41,7 +41,7 @@ export default function FormInput({
             type="button"
             onClick={onRightIconClick}
             title="Mostrar/Ocultar senha"
-            className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-500 transition-colors hover:text-slate-700"
+            className="absolute top-1/2 right-3 -translate-y-1/2 text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
           >
             {rightIcon}
           </button>
