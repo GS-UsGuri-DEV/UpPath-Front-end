@@ -7,6 +7,7 @@ import GamificationCard from '../../components/BemEstar/GamificationCard'
 import BemEstarGrid from '../../components/GraphicsDashboard/BemEstarGrid'
 import RecomendacoesCard from '../../components/GraphicsDashboard/RecomendacoesCard'
 import TrilhasCard from '../../components/GraphicsDashboard/TrilhasCard'
+import Spinner from '../../components/Spinner/Spinner'
 import { useAuth } from '../../contexts/useAuth'
 import { useBemEstarCards } from '../../hooks/useBemEstarCards'
 import { useUserDashboard } from '../../hooks/useUserDashboard'
@@ -73,10 +74,8 @@ export default function Dashboard() {
 
         {/* API Dashboard Data */}
         {dashboardLoading && (
-          <div className="rounded-xl border bg-white p-6 text-center">
-            <div className="text-gray-600">
-              Carregando dados do dashboard...
-            </div>
+          <div className="be rounded-xl p-6 text-center">
+            <Spinner text="Carregando dados..." />
           </div>
         )}
 
