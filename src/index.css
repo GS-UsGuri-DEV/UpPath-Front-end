@@ -475,3 +475,33 @@
 .link-muted:hover {
   color: white;
 }
+
+/* ===========================================
+   THEME SYSTEM - Dark/Light Mode
+   =========================================== */
+
+.dark-mode {
+  --bg-primary: rgb(15 23 42);
+  --bg-secondary: rgb(30 41 59);
+  --bg-tertiary: rgb(51 65 85);
+  --text-primary: rgb(248 250 252);
+  --text-secondary: rgb(203 213 225);
+  --text-muted: rgb(148 163 184);
+  --border-color: rgb(71 85 105);
+  --input-bg: rgb(51 65 85);
+  --input-border: rgb(71 85 105);
+  --shadow-color: rgb(0 0 0 / 0.3);
+}
+
+.light-mode {
+  --bg-primary: rgb(248 250 252);
+  --bg-secondary: rgb(255 255 255);
+  --bg-tertiary: rgb(241 245 249);
+  --text-primary: rgb(15 23 42);
+  --text-secondary: rgb(51 65 85);
+  --text-muted: rgb(100 116 139);
+  --border-color: rgb(203 213 225);
+  --input-bg: rgb(255 255 255);
+  --input-border: rgb(203 213 225);
+  --shadow-color: rgb(0 0 0 / 0.1);
+}
