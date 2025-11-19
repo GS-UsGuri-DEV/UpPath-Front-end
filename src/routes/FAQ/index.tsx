@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { FaQuestionCircle, FaChevronRight } from 'react-icons/fa'
+import { FaQuestionCircle } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import SearchBar from '../../components/FAQ/SearchBar'
 import FAQCategory from '../../components/FAQ/FAQCategory'
+import SearchBar from '../../components/FAQ/SearchBar'
 import { faqData } from '../../data/faqData'
 
 export default function FAQ() {
@@ -26,13 +26,13 @@ export default function FAQ() {
   const categories = Array.from(new Set(faqData.map((item) => item.category)))
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-[var(--bg-primary)] py-12">
       <div className="mx-auto max-w-4xl px-6">
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="mb-4 flex items-center justify-center gap-2">
-            <FaQuestionCircle className="text-3xl text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-800">
+            <FaQuestionCircle className="text-3xl text-[var(--accent-indigo)]" />
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
               PERGUNTAS FREQUENTES (FAQ)
             </h1>
           </div>
@@ -69,23 +69,21 @@ export default function FAQ() {
         </div>
 
         {/* Contact Section */}
-        <div className="mt-12 rounded-lg border-t-4 border-blue-600 bg-white p-8 text-center shadow-sm">
-          <h3 className="mb-2 text-xl font-bold text-gray-800">
-            --- E ASSIM DI POIRNE
+        <div className="mt-12 rounded-lg border-t-4 border-[var(--accent-indigo)] bg-[var(--bg-secondary)] p-8 text-center shadow-sm">
+          <h3 className="mb-2 text-xl font-bold text-[var(--text-primary)]">
+            Precisa de ajuda?
           </h3>
           <div className="mb-4 flex items-center justify-center gap-2">
-            <FaChevronRight className="text-2xl text-blue-600" />
-            <p className="text-2xl font-bold text-blue-900">
-              AINDA TEM DÚVIAS?
+            <p className="text-2xl font-bold text-[var(--accent-indigo)]">
+              AINDA TEM DÚVIDAS?
             </p>
           </div>
-          <p className="mb-6 text-sm text-gray-600">
-            Se você encuntro de resposta de preqquvá, nousa equip pranta de
-            ajudar.
+          <p className="mb-6 text-sm text-[var(--text-muted)]">
+            Se você não encontrou a resposta, nossa equipe pode ajudar.
           </p>
           <button
             onClick={() => navigate('/contato')}
-            className="rounded-lg bg-blue-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
+            className="rounded-lg bg-[var(--accent-indigo)] px-8 py-3 font-semibold text-white transition-colors hover:bg-[var(--accent-indigo-hover)]"
           >
             IR PARA PÁGINA DE CONTATO
           </button>
