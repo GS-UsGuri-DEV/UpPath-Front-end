@@ -7,6 +7,8 @@ import Protected from './routes/Protected/Protected'
 import ProtectedAdmin from './routes/ProtectedAdmin/ProtectedAdmin'
 import AdminPanel from './routes/AdminPanel'
 import Home from './routes/Home'
+import FAQ from './routes/FAQ'
+import Contato from './routes/Contato'
 import NavBar from './components/NavBar/NavBar'
 
 export default function App() {
@@ -21,6 +23,8 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/contato" element={<Contato />} />
         <Route element={<Protected />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/perfil" element={<Perfil />} />

@@ -46,6 +46,18 @@ export default function NavBar() {
             >
               Perfil
             </Link>
+            <Link
+              to="/faq"
+              className="rounded px-3 py-1 text-sm hover:bg-gray-100"
+            >
+              FAQ
+            </Link>
+            <Link
+              to="/contato"
+              className="rounded px-3 py-1 text-sm hover:bg-gray-100"
+            >
+              Contato
+            </Link>
           </div>
         </div>
 
