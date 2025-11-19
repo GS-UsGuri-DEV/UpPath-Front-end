@@ -32,7 +32,6 @@ export default function Dashboard() {
 
   const displayName = String(userData?.nome_completo ?? '—')
 
-  // Use mock data if API returns no data or error
   const displayData: UserDashboard =
     dashboardData &&
     dashboardData.bem_estar &&
