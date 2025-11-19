@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import Spinner from '../../components/Spinner/Spinner'
 import { account } from '../../shared/appwrite'
 import type { Models } from 'appwrite'
 import { useNavigate } from 'react-router-dom'
@@ -9,15 +10,21 @@ import ChangePassword from '../../components/Perfil/ChangePassword'
 
 export default function Perfil() {
   const [me, setMe] = useState<Models.User<Models.Preferences> | null>(null)
+  const [loading, setLoading] = useState(true)
   const [fileUrl, setFileUrl] = useState<string | undefined>()
   const nav = useNavigate()
   const { userData } = useAuth()
 
   useEffect(() => {
+    setLoading(true)
     account
       .get()
-      .then(setMe)
+      .then((user) => {
+        setMe(user)
+        setLoading(false)
+      })
       .catch(() => {
+        setLoading(false)
         console.error('Erro ao carregar usuário')
       })
   }, [nav])
@@ -35,6 +42,14 @@ export default function Perfil() {
   const profileImage = String(
     (userData && (userData.profile_image as unknown)) ?? fileUrl ?? '',
   )
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Spinner text="Carregando perfil..." />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

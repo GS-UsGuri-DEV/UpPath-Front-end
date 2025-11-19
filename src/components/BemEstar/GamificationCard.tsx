@@ -4,6 +4,7 @@ import { db, ID, Permission, Role } from '../../shared/appwrite'
 import { Query } from 'appwrite'
 import { useNavigate } from 'react-router-dom'
 import { FaTimes } from 'react-icons/fa'
+import Spinner from '../Spinner/Spinner'
 
 export default function GamificationCard({
   notification = false,
@@ -292,8 +293,8 @@ export default function GamificationCard({
         </form>
 
         {loading && (
-          <div className="mt-2 text-center text-xs text-gray-500">
-            Carregando...
+          <div className="mt-2 text-center">
+            <Spinner text="Carregando..." size={24} />
           </div>
         )}
         {error && (

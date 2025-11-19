@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import Spinner from '../../components/Spinner/Spinner'
 import { account } from '../../shared/appwrite'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
@@ -15,7 +16,12 @@ export default function Protected() {
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <div className="p-6">Carregando...</div>
+  if (loading)
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Spinner text="Carregando..." />
+      </div>
+    )
   if (!ok) return <Navigate to="/login" state={{ from: loc }} replace />
   return <Outlet />
 }
