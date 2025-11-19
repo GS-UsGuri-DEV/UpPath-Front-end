@@ -48,7 +48,7 @@ export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
+        <label className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">
           Nome:
         </label>
         <input
@@ -57,13 +57,13 @@ export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
           value={formData.nome}
           onChange={handleChange}
           required
-          className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2 text-[var(--text-primary)] focus:ring-2 focus:ring-[var(--accent-primary)] focus:outline-none"
           placeholder="Seu nome completo"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
+        <label className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">
           Email:
         </label>
         <input
@@ -72,13 +72,13 @@ export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
           value={formData.email}
           onChange={handleChange}
           required
-          className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2 text-[var(--text-primary)] focus:ring-2 focus:ring-[var(--accent-primary)] focus:outline-none"
           placeholder="seu.email@exemplo.com"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
+        <label className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">
           Assunto:
         </label>
         <input
@@ -87,13 +87,13 @@ export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
           value={formData.assunto}
           onChange={handleChange}
           required
-          className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2 text-[var(--text-primary)] focus:ring-2 focus:ring-[var(--accent-primary)] focus:outline-none"
           placeholder="Assunto da mensagem"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
+        <label className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">
           Mensagem:
         </label>
         <textarea
@@ -102,7 +102,7 @@ export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
           onChange={handleChange}
           required
           rows={5}
-          className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2 text-[var(--text-primary)] focus:ring-2 focus:ring-[var(--accent-primary)] focus:outline-none"
           placeholder="Digite sua mensagem aqui..."
         />
       </div>
@@ -110,13 +110,13 @@ export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 py-3 font-semibold text-white transition-all hover:from-blue-700 hover:to-purple-700 disabled:opacity-50"
+        className="w-full rounded-lg bg-[var(--accent-primary)] py-3 font-semibold text-white transition-all hover:bg-[var(--accent-primary-hover)] disabled:opacity-50"
       >
         {isSubmitting ? 'ENVIANDO...' : 'ENVIAR MENSAGEM'}
       </button>
 
       {submitMessage && (
-        <div className="rounded-lg bg-green-50 p-3 text-sm text-green-700">
+        <div className="rounded-lg bg-[var(--accent-success-bg)] p-3 text-sm text-[var(--accent-success)]">
           {submitMessage}
         </div>
       )}

@@ -5,30 +5,30 @@ import SocialLinks from '../../components/Contato/SocialLinks'
 
 export default function Contato() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 py-12">
+    <div className="min-h-screen bg-[var(--bg-primary)] py-12">
       <div className="mx-auto max-w-7xl px-6">
         {/* Header */}
         <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold text-gray-800">
+          <h1 className="mb-4 text-4xl font-bold text-[var(--text-primary)]">
             Entre em Contato
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-[var(--text-muted)]">
             Estamos aqui para ajudar você a transformar sua carreira
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Form Section */}
-          <div className="rounded-xl bg-white p-8 shadow-lg">
+          <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-8 shadow-lg">
             <div className="mb-6 flex items-center gap-3">
-              <div className="rounded-full bg-indigo-100 p-3">
-                <FaPhoneAlt className="text-2xl text-indigo-600" />
+              <div className="rounded-full bg-[var(--bg-tertiary)] p-3">
+                <FaPhoneAlt className="text-2xl text-[var(--accent-indigo)]" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-800">
+                <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                   Fale Conosco
                 </h2>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-[var(--text-muted)]">
                   Preencha o formulário abaixo
                 </p>
               </div>
@@ -38,7 +38,7 @@ export default function Contato() {
 
             {/* Social Media */}
             <div className="mt-8">
-              <p className="mb-4 text-center text-sm font-medium text-gray-600">
+              <p className="mb-4 text-center text-sm font-medium text-[var(--text-muted)]">
                 Siga-nos nas redes sociais
               </p>
               <SocialLinks />
@@ -50,8 +50,8 @@ export default function Contato() {
             <ContactInfo />
 
             {/* Info Card */}
-            <div className="rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 p-8 text-white shadow-lg">
-              <h3 className="mb-4 text-2xl font-bold">
+            <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-8 text-[var(--text-secondary)] shadow-lg">
+              <h3 className="mb-4 text-2xl font-bold text-[var(--text-primary)]">
                 Por que escolher o UpPath?
               </h3>
               <ul className="space-y-3 text-sm">

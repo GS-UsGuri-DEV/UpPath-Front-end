@@ -1,8 +1,8 @@
 import {
   FaFacebookF,
-  FaTwitter,
   FaInstagram,
   FaLinkedinIn,
+  FaTwitter,
 } from 'react-icons/fa'
 import { contactInfo } from '../../data/contactData'
 
@@ -18,26 +18,26 @@ export default function SocialLinks() {
     {
       icon: <FaFacebookF />,
       url: contactInfo.socialMedia.facebook,
-      bgColor: 'bg-blue-600',
-      hoverColor: 'hover:bg-blue-700',
+      bgColor: 'bg-[var(--accent-primary)]',
+      hoverColor: 'hover:bg-[var(--accent-primary-hover)]',
     },
     {
       icon: <FaTwitter />,
       url: contactInfo.socialMedia.twitter,
-      bgColor: 'bg-sky-500',
-      hoverColor: 'hover:bg-sky-600',
+      bgColor: 'bg-[var(--accent-primary)]',
+      hoverColor: 'hover:bg-[var(--accent-primary-hover)]',
     },
     {
       icon: <FaInstagram />,
       url: contactInfo.socialMedia.instagram,
-      bgColor: 'bg-gradient-to-br from-purple-500 to-pink-500',
-      hoverColor: 'hover:from-purple-600 hover:to-pink-600',
+      bgColor: 'bg-[var(--accent-indigo)]',
+      hoverColor: 'hover:bg-[var(--accent-indigo-hover)]',
     },
     {
       icon: <FaLinkedinIn />,
       url: contactInfo.socialMedia.linkedin,
-      bgColor: 'bg-blue-700',
-      hoverColor: 'hover:bg-blue-800',
+      bgColor: 'bg-[var(--accent-indigo)]',
+      hoverColor: 'hover:bg-[var(--accent-indigo-hover)]',
     },
   ]
 
