@@ -1,14 +1,11 @@
 import { useState } from 'react'
-import { FaChartLine } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { mockDashboardData } from '../../api/mocks/dashboardMock'
-import BemEstar from '../../components/BemEstar/BemEstar'
+import BemEstarDashboard from '../../components/BemEstar/BemEstarDashboard'
 import GamificationCard from '../../components/BemEstar/GamificationCard'
-import BemEstarGrid from '../../components/GraphicsDashboard/BemEstarGrid'
 import RecomendacoesCard from '../../components/GraphicsDashboard/RecomendacoesCard'
 import TrilhasCard from '../../components/GraphicsDashboard/TrilhasCard'
 import { useAuth } from '../../contexts/useAuth'
-import { useBemEstarCards } from '../../hooks/useBemEstarCards'
 import { useUserDashboard } from '../../hooks/useUserDashboard'
 import type { UserDashboard } from '../../types/userDashboard'
 
@@ -90,22 +87,12 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Componente Unificado de Bem-estar */}
+        <BemEstarDashboard />
+
+        {/* Trilhas e Recomendações (da API Python) */}
         {(displayData || dashboardData) && (
           <>
-            {/* Métricas de Bem-estar - Design Moderno */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <FaChartLine className="text-xl text-green-600" />
-                <h2 className="text-lg font-semibold">Evolução do Bem-estar</h2>
-              </div>
-              {displayData.bem_estar && displayData.bem_estar.length > 0 ? (
-                <BemEstarGrid cards={useBemEstarCards(displayData.bem_estar)} />
-              ) : (
-                <p className="text-sm text-gray-500">
-                  Nenhum dado de bem-estar disponível
-                </p>
-              )}
-            </div>
             <TrilhasCard
               trilhas={
                 Array.isArray(displayData.trilhas) ? displayData.trilhas : []
@@ -118,57 +105,8 @@ export default function Dashboard() {
                   : []
               }
             />
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {/* Bem-estar Summary Card */}
-              <div className="rounded-xl border bg-white p-6">
-                <div className="mb-4 flex items-center gap-2">
-                  <FaChartLine className="text-xl text-green-600" />
-                  <h3 className="text-lg font-semibold">Resumo Bem-estar</h3>
-                </div>
-                {displayData.bem_estar && displayData.bem_estar.length > 0 ? (
-                  <div className="space-y-2">
-                    {displayData.bem_estar.slice(0, 3).map((entry, idx) => (
-                      <div key={idx} className="rounded-lg border p-3 text-sm">
-                        <div className="mb-2 text-xs text-gray-500">
-                          {new Date(entry.data_registro).toLocaleDateString(
-                            'pt-BR',
-                          )}
-                        </div>
-                        <div className="grid grid-cols-3 gap-2 text-xs">
-                          <div>
-                            <div className="text-gray-600">Estresse</div>
-                            <div className="font-semibold">
-                              {entry.nivel_estresse}/10
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-gray-600">Motivação</div>
-                            <div className="font-semibold">
-                              {entry.nivel_motivacao}/10
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-gray-600">Sono</div>
-                            <div className="font-semibold">
-                              {entry.qualidade_sono}/10
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-500">
-                    Nenhum registro de bem-estar
-                  </p>
-                )}
-              </div>
-            </div>
           </>
         )}
-
-        <BemEstar />
 
         {/* Gamification Card */}
         {showGame && <GamificationCard notification={false} />}
