@@ -5,6 +5,7 @@ import BemEstarDashboard from '../../components/BemEstar/BemEstarDashboard'
 import GamificationCard from '../../components/BemEstar/GamificationCard'
 import RecomendacoesCard from '../../components/GraphicsDashboard/RecomendacoesCard'
 import TrilhasCard from '../../components/GraphicsDashboard/TrilhasCard'
+import Spinner from '../../components/Spinner/Spinner'
 import { useAuth } from '../../contexts/useAuth'
 import { useUserDashboard } from '../../hooks/useUserDashboard'
 import type { UserDashboard } from '../../types/userDashboard'
@@ -29,7 +30,6 @@ export default function Dashboard() {
 
   const displayName = String(userData?.nome_completo ?? '—')
 
-  // Use mock data if API returns no data or error
   const displayData: UserDashboard =
     dashboardData &&
     dashboardData.bem_estar &&
@@ -71,10 +71,8 @@ export default function Dashboard() {
 
         {/* API Dashboard Data */}
         {dashboardLoading && (
-          <div className="rounded-xl border bg-white p-6 text-center">
-            <div className="text-gray-600">
-              Carregando dados do dashboard...
-            </div>
+          <div className="be rounded-xl p-6 text-center">
+            <Spinner text="Carregando dados..." />
           </div>
         )}
 

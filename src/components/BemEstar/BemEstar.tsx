@@ -1,8 +1,9 @@
+import { Query } from 'appwrite'
 import { useEffect, useState } from 'react'
+import { FaFire, FaMedal } from 'react-icons/fa'
 import { useAuth } from '../../contexts/useAuth'
 import { db } from '../../shared/appwrite'
-import { Query } from 'appwrite'
-import { FaMedal, FaFire } from 'react-icons/fa'
+import Spinner from '../Spinner/Spinner'
 
 // Simple gamified panel for Bem-estar based on last 7 days of records.
 export default function BemEstar() {
@@ -280,7 +281,7 @@ export default function BemEstar() {
       </div>
 
       <div className="text-sm">
-        {bemLoading && <div>Carregando...</div>}
+        {bemLoading && <Spinner text="Carregando..." />}
         {bemError && <div className="text-red-600">Erro: {bemError}</div>}
         {Array.isArray(bemEstar) && bemEstar.length > 0 ? (
           <div className="overflow-x-auto text-xs">
