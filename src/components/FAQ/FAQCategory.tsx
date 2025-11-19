@@ -1,5 +1,5 @@
-import FAQItem from './FAQItem'
 import type { FAQItem as FAQData } from '../../data/faqData'
+import FAQItem from './FAQItem'
 
 interface FAQCategoryProps {
   category: string
@@ -22,7 +22,7 @@ export default function FAQCategory({
 
   return (
     <div>
-      <h2 className="mb-4 text-sm font-bold text-gray-700">
+      <h2 className="mb-4 text-sm font-bold text-[var(--text-secondary)]">
         --- CATEGORIA {categoryNumber}: {category} ---
       </h2>
       <div className="space-y-3">

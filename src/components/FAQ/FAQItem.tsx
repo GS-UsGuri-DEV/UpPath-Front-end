@@ -1,4 +1,4 @@
-import { FaChevronRight, FaChevronDown } from 'react-icons/fa'
+import { FaChevronDown, FaChevronRight } from 'react-icons/fa'
 
 interface FAQItemProps {
   question: string
@@ -14,31 +14,31 @@ export default function FAQItem({
   onToggle,
 }: FAQItemProps) {
   return (
-    <div className="overflow-hidden rounded-lg bg-blue-50 shadow-sm transition-all hover:shadow-md">
+    <div className="overflow-hidden rounded-lg bg-[var(--bg-secondary)] shadow-sm transition-all hover:shadow-md">
       <button
         onClick={onToggle}
         className="flex w-full items-center justify-between p-4 text-left"
       >
         <div className="flex items-center gap-3">
           {isExpanded ? (
-            <FaChevronDown className="text-blue-600" />
+            <FaChevronDown className="text-[var(--accent-indigo)]" />
           ) : (
-            <FaChevronRight className="text-blue-600" />
+            <FaChevronRight className="text-[var(--accent-indigo)]" />
           )}
           <div>
-            <p className="font-medium text-gray-800">{question}</p>
+            <p className="font-medium text-[var(--text-primary)]">{question}</p>
             {!isExpanded && (
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-[var(--text-muted)]">
                 Resposta oculta, expande ao clicar
               </p>
             )}
           </div>
         </div>
-        <FaChevronRight className="text-gray-400" />
+        <FaChevronRight className="text-[var(--text-muted)]" />
       </button>
       {isExpanded && (
-        <div className="border-t border-blue-100 bg-white p-4">
-          <p className="text-sm text-gray-700">{answer}</p>
+        <div className="border-t border-[var(--border-color)] bg-[var(--bg-secondary)] p-4">
+          <p className="text-sm text-[var(--text-secondary)]">{answer}</p>
         </div>
       )}
     </div>
