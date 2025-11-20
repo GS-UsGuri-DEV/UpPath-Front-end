@@ -8,7 +8,6 @@ import {
 import { account, db } from '../shared/appwrite'
 import type { Models } from 'appwrite'
 
-// userData will be the raw document returned from the users collection
 type UserData = Models.Document & Record<string, unknown>
 
 interface AuthContextType {
@@ -46,7 +45,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }) as UserData | undefined
 
       if (userDoc) {
-        // return the raw document so callers can inspect all fields
         return userDoc
       }
     } catch (error) {
@@ -74,7 +72,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await account.createEmailPasswordSession(email, password)
     } catch (err) {
       const msg = String((err as Error)?.message ?? String(err ?? ''))
-      // Appwrite returns an error when a session is already active in this client
       if (
         msg.includes(
           'Creation of a session is prohibited when a session is active',

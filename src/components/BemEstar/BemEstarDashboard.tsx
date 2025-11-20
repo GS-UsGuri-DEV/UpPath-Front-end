@@ -66,7 +66,6 @@ export default function BemEstarDashboard() {
     if (userData) fetchBemEstar()
   }, [userData])
 
-  // ----- Helper functions -----
   const num = (v: unknown) => {
     if (v === null || v === undefined) return NaN
     if (typeof v === 'number') return v
@@ -91,7 +90,6 @@ export default function BemEstarDashboard() {
   const avg = (arr: number[]) =>
     arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN
 
-  // Extract metrics
   const stressValues = records7.map((r) =>
     num(r.nivel_estresse ?? r.NIVEL_ESTRESSE),
   )
@@ -106,7 +104,6 @@ export default function BemEstarDashboard() {
   const avgMotivation = avg(motivationValues.filter((v) => !isNaN(v)))
   const avgSleep = avg(sleepValues.filter((v) => !isNaN(v)))
 
-  // Calculate trends
   const calculateTrend = (values: number[]): 'up' | 'down' | 'neutral' => {
     const validValues = values.filter((v) => !isNaN(v))
     if (validValues.length < 2) return 'neutral'
@@ -123,7 +120,6 @@ export default function BemEstarDashboard() {
   const motivationTrend = calculateTrend(motivationValues)
   const sleepTrend = calculateTrend(sleepValues)
 
-  // Calculate status
   const getStatus = (
     trend: 'up' | 'down' | 'neutral',
     isInverted = false,
@@ -135,7 +131,6 @@ export default function BemEstarDashboard() {
     return trend === 'up' ? 'Melhorando' : 'Piorando'
   }
 
-  // Score calculation
   const computeScore = () => {
     const s = isNaN(avgStress) ? 0 : avgStress
     const m = isNaN(avgMotivation) ? 0 : avgMotivation
@@ -154,7 +149,6 @@ export default function BemEstarDashboard() {
         ? { label: 'Prata', color: 'text-[var(--text-muted)]' }
         : { label: 'Bronze', color: 'text-[var(--accent-warning-dark)]' }
 
-  // Streak calculation
   const computeStreak = () => {
     if (!Array.isArray(bemEstar) || bemEstar.length === 0) return 0
     const days = new Set<string>()
@@ -180,7 +174,6 @@ export default function BemEstarDashboard() {
 
   const recordCount = Array.isArray(bemEstar) ? bemEstar.length : 0
 
-  // Prepare cards data for BemEstarGrid
   const cards: BemEstarCardProps[] = [
     {
       label: 'Qualidade do Sono',
@@ -221,7 +214,6 @@ export default function BemEstarDashboard() {
 
   return (
     <section className="space-y-6">
-      {/* Header with Gamification */}
       <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -232,7 +224,6 @@ export default function BemEstarDashboard() {
           </div>
         </div>
 
-        {/* Gamification Score */}
         <div className="mb-6 flex flex-wrap items-center gap-6">
           <div className="flex items-center gap-4">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-yellow-300 to-red-400 text-4xl">
@@ -261,7 +252,6 @@ export default function BemEstarDashboard() {
           </div>
         </div>
 
-        {/* Filters */}
         <div className="border-t pt-4">
           <form
             onSubmit={(e) => {
@@ -329,7 +319,6 @@ export default function BemEstarDashboard() {
         </div>
       </div>
 
-      {/* Loading & Error States */}
       {bemLoading && (
         <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-6 text-center">
           <div className="text-[var(--text-muted)]">Carregando...</div>
@@ -341,10 +330,8 @@ export default function BemEstarDashboard() {
         </div>
       )}
 
-      {/* Visual Cards */}
       {!bemLoading && !bemError && <BemEstarGrid cards={cards} />}
 
-      {/* Detailed Table (collapsible) */}
       {showDetails && Array.isArray(bemEstar) && bemEstar.length > 0 && (
         <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-6">
           <h3 className="mb-4 font-semibold text-[var(--text-primary)]">

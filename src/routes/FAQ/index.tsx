@@ -28,7 +28,6 @@ export default function FAQ() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] py-12">
       <div className="mx-auto max-w-4xl px-6">
-        {/* Header */}
         <div className="mb-8 text-center">
           <div className="mb-4 flex items-center justify-center gap-2">
             <FaQuestionCircle className="text-3xl text-[var(--accent-indigo)]" />
@@ -38,7 +37,6 @@ export default function FAQ() {
           </div>
         </div>
 
-        {/* Search Bar */}
         <div className="mb-8">
           <SearchBar
             value={searchTerm}
@@ -47,7 +45,6 @@ export default function FAQ() {
           />
         </div>
 
-        {/* FAQ Content */}
         <div className="space-y-6">
           {categories.map((category) => {
             const categoryItems = filteredFAQ.filter(
@@ -68,7 +65,6 @@ export default function FAQ() {
           })}
         </div>
 
-        {/* Contact Section */}
         <div className="mt-12 rounded-lg border-t-4 border-[var(--accent-indigo)] bg-[var(--bg-secondary)] p-8 text-center shadow-sm">
           <h3 className="mb-2 text-xl font-bold text-[var(--text-primary)]">
             Precisa de ajuda?

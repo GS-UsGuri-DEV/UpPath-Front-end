@@ -19,7 +19,6 @@ export default function Dashboard() {
   const { userData } = useAuth()
   const [showGame, setShowGame] = useState(false)
 
-  // Fetch dashboard data from Python API
   const userId = (userData as unknown as Record<string, unknown>)
     ?.id_usuario as number | string | null | undefined
   const {
@@ -71,7 +70,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* API Dashboard Data */}
         {dashboardLoading && (
           <div className="be rounded-xl p-6 text-center">
             <Spinner text="Carregando dados..." />
@@ -87,10 +85,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Componente Unificado de Bem-estar */}
         <BemEstarDashboard />
 
-        {/* Trilhas e Recomendações (da API Python) */}
         {(displayData || dashboardData) && (
           <>
             <TrilhasCard
@@ -108,7 +104,6 @@ export default function Dashboard() {
           </>
         )}
 
-        {/* Gamification Card */}
         {showGame && <GamificationCard notification={false} />}
       </div>
     </div>

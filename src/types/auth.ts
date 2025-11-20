@@ -26,8 +26,6 @@ export interface UserFormData {
   is_admin?: boolean
 }
 
-// SignupFormData can represent either a company signup or a user signup;
-// the form will use a `type` discriminator to choose fields.
 export type SignupFormData =
   | ({ type: 'empresa' } & CompanyFormData)
   | ({ type: 'usuario' | 'admin' } & UserFormData & {

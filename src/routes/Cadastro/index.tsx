@@ -67,9 +67,7 @@ export default function Cadastro() {
 
         try {
           await account.deleteSession('current')
-        } catch {
-          // ok
-        }
+        } catch {}
 
         await account.create(ID.unique(), company.email_contato ?? '', senha)
         await account.createEmailPasswordSession(
@@ -136,9 +134,7 @@ export default function Cadastro() {
       try {
         try {
           await account.deleteSession('current')
-        } catch {
-          // ok
-        }
+        } catch {}
 
         await account.create(ID.unique(), user.email ?? '', senha)
         await account.createEmailPasswordSession(user.email ?? '', senha)
@@ -163,7 +159,6 @@ export default function Cadastro() {
           userPayload,
         )
 
-        // Small delay to ensure document is saved before navigating
         await new Promise((resolve) => setTimeout(resolve, 300))
 
         nav('/dashboard')

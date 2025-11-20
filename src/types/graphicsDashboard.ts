@@ -16,7 +16,6 @@ export interface Trilha {
 export interface TrilhasCardProps {
   trilhas: Trilha[]
 }
-// Tipos para componentes gráficos do Dashboard
 
 export interface MiniChartProps {
   values: number[]
@@ -31,8 +30,8 @@ export interface TrendIconProps {
 
 export interface BemEstarCardProps {
   label: string
-  color: string // Ex: 'red', 'green', 'blue'
-  bgColor: string // Ex: 'bg-red-100', 'bg-green-100', 'bg-blue-100'
+  color: string
+  bgColor: string
   value: number
   values: number[]
   media: string

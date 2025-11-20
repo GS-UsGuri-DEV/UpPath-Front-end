@@ -34,7 +34,6 @@ export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
     setIsSubmitting(true)
     setSubmitMessage('')
 
-    // Simular envio
     setTimeout(() => {
       setSubmitMessage(
         'Mensagem enviada com sucesso! Entraremos em contato em breve.',

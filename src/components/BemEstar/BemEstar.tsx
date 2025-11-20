@@ -5,7 +5,6 @@ import { useAuth } from '../../contexts/useAuth'
 import { db } from '../../shared/appwrite'
 import Spinner from '../Spinner/Spinner'
 
-// Simple gamified panel for Bem-estar based on last 7 days of records.
 export default function BemEstar() {
   const { userData } = useAuth()
   const [bemEstar, setBemEstar] = useState<Array<
@@ -61,8 +60,6 @@ export default function BemEstar() {
     if (userData) fetchBemEstar()
   }, [userData])
 
-  // ----- Gamification calculations -----
-  // Helper to parse numeric fields safely
   const num = (v: unknown) => {
     if (v === null || v === undefined) return NaN
     if (typeof v === 'number') return v
@@ -71,7 +68,6 @@ export default function BemEstar() {
     return Number.isFinite(n) ? n : NaN
   }
 
-  // Return last N records (by data_registro)
   const lastNRecords = (n = 7) => {
     if (!Array.isArray(bemEstar)) return [] as Array<Record<string, unknown>>
     const copy = [...bemEstar]
@@ -98,13 +94,11 @@ export default function BemEstar() {
     records7.map((r) => num(r.qualidade_sono ?? r.QUALIDADE_SONO)),
   )
 
-  // Score formula, assuming scale 0-10 for each metric
   const computeScore = () => {
     const s = isNaN(avgStress) ? 0 : avgStress
     const m = isNaN(avgMotivation) ? 0 : avgMotivation
     const q = isNaN(avgSleep) ? 0 : avgSleep
-    // normalize to 0-100
-    const raw = (10 - s + m + q) / 30 // value 0..1
+    const raw = (10 - s + m + q) / 30
     const score = Math.round(Math.max(0, Math.min(1, raw)) * 100)
     return score
   }
@@ -118,10 +112,8 @@ export default function BemEstar() {
         ? { label: 'Prata', color: 'text-[var(--text-muted)]' }
         : { label: 'Bronze', color: 'text-[var(--accent-warning-dark)]' }
 
-  // compute streak: count consecutive days from latest record backwards where there is a record per day
   const computeStreak = () => {
     if (!Array.isArray(bemEstar) || bemEstar.length === 0) return 0
-    // build set of dates (YYYY-MM-DD)
     const days = new Set<string>()
     bemEstar.forEach((r) => {
       const d = String(r.data_registro ?? r.DATA_REGISTRO ?? '')
@@ -143,7 +135,6 @@ export default function BemEstar() {
 
   const streak = computeStreak()
 
-  // helper for progress ring percent (0..100) assuming 0-10 scale
   const pct = (v: number) => {
     if (isNaN(v)) return 0
     return Math.round((Math.max(0, Math.min(10, v)) / 10) * 100)
@@ -151,11 +142,10 @@ export default function BemEstar() {
 
   const sleepPct = pct(avgSleep)
   const motPct = pct(avgMotivation)
-  const stressPct = 100 - pct(avgStress) // invert stress
+  const stressPct = 100 - pct(avgStress)
 
   const recordCount = Array.isArray(bemEstar) ? bemEstar.length : 0
 
-  // small SVG ring component
   const Ring = ({ label, percent }: { label: string; percent: number }) => {
     const size = 64
     const stroke = 8

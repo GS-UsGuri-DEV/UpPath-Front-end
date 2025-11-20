@@ -26,11 +26,8 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       localStorage.setItem('theme', isDark ? 'dark' : 'light')
-    } catch {
-      // ignore write errors (e.g., storage disabled)
-    }
+    } catch {}
     if (typeof document !== 'undefined' && document.documentElement) {
-      // Ensure only the active theme class is present on the root element
       document.documentElement.classList.remove('dark-mode', 'light-mode')
       document.documentElement.classList.add(
         isDark ? 'dark-mode' : 'light-mode',

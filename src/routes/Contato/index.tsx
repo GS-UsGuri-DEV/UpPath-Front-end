@@ -7,7 +7,6 @@ export default function Contato() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] py-12">
       <div className="mx-auto max-w-7xl px-6">
-        {/* Header */}
         <div className="mb-12 text-center">
           <h1 className="mb-4 text-4xl font-bold text-[var(--text-primary)]">
             Entre em Contato
@@ -18,7 +17,6 @@ export default function Contato() {
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {/* Form Section */}
           <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-8 shadow-lg">
             <div className="mb-6 flex items-center gap-3">
               <div className="rounded-full bg-[var(--bg-tertiary)] p-3">
@@ -36,7 +34,6 @@ export default function Contato() {
 
             <ContactForm />
 
-            {/* Social Media */}
             <div className="mt-8">
               <p className="mb-4 text-center text-sm font-medium text-[var(--text-muted)]">
                 Siga-nos nas redes sociais
@@ -45,11 +42,9 @@ export default function Contato() {
             </div>
           </div>
 
-          {/* Contact Info Section */}
           <div className="flex flex-col justify-center space-y-6">
             <ContactInfo />
 
-            {/* Info Card */}
             <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-8 text-[var(--text-secondary)] shadow-lg">
               <h3 className="mb-4 text-2xl font-bold text-[var(--text-primary)]">
                 Por que escolher o UpPath?

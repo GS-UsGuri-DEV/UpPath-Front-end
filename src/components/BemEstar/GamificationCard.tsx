@@ -26,7 +26,7 @@ export default function GamificationCard({
   const [sleepQuality, setSleepQuality] = useState<number | ''>('')
   const [observation, setObservation] = useState<string>('')
   const [registeredOnce, setRegisteredOnce] = useState(false)
-  const [hideCard, setHideCard] = useState(false) // New state to hide the card
+  const [hideCard, setHideCard] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -67,7 +67,6 @@ export default function GamificationCard({
     if (userData) fetchLatest()
   }, [userData])
 
-  // Register a new bem_estar entry (quick add from Home)
   async function registerToday() {
     setSubmitMessage(null)
     setSubmitLoading(true)
@@ -81,7 +80,6 @@ export default function GamificationCard({
           (userData as unknown as Record<string, unknown>)?.email ??
           '',
       )
-      // Validate required numeric fields
       if (stress === '' || motivation === '' || sleepQuality === '') {
         throw new Error('Preencha Estresse, Motivação e Sono antes de salvar.')
       }
@@ -103,7 +101,6 @@ export default function GamificationCard({
         observacao: observation ?? '',
       }
 
-      // Appwrite permissions: use Permission helpers with Role
       const permissions = [
         Permission.read(Role.any()),
         Permission.write(Role.users()),
@@ -122,8 +119,8 @@ export default function GamificationCard({
       setSleepQuality('')
       setObservation('')
       setRegisteredOnce(true)
-      setHideCard(true) // Hide the card after successful submission
-      sessionStorage.setItem('hasSeenGame', 'true') // Mark as seen in session storage
+      setHideCard(true)
+      sessionStorage.setItem('hasSeenGame', 'true')
       await fetchLatest()
     } catch (err) {
       setSubmitMessage(String((err as Error)?.message ?? err))
@@ -144,7 +141,6 @@ export default function GamificationCard({
     arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN
 
   const records7 = Array.isArray(records) ? records : []
-  // Calcular médias (útil se quiser exibir futuramente)
   const avgStress = avg(
     records7.map((r) => num(r.nivel_estresse ?? r.NIVEL_ESTRESSE)),
   )
@@ -155,7 +151,6 @@ export default function GamificationCard({
     records7.map((r) => num(r.qualidade_sono ?? r.QUALIDADE_SONO)),
   )
 
-  // Pode usar as médias acima para calcular score/badge se quiser mostrar no futuro
   void avgStress
   void avgMotivation
   void avgSleep
@@ -164,7 +159,7 @@ export default function GamificationCard({
     ? `fixed bottom-6 right-6 z-50 transition-transform duration-600 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`
     : `max-w-md mx-auto transition-transform duration-600 ease-out ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`
 
-  if (!userData || hideCard) return null // Hide component if user is not logged in or card is hidden
+  if (!userData || hideCard) return null
 
   return (
     <div className={containerClass}>

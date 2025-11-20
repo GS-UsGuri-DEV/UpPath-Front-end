@@ -26,7 +26,6 @@ export default function Login() {
   function formatCPFOrEmail(value: string) {
     const raw = value.trim()
 
-    // Considera email apenas se houver '@' ou letras — não trate um ponto '.' isolado como email
     if (/@/.test(raw) || /[A-Za-z]/.test(raw)) return raw
 
     const digits = raw.replace(/\D/g, '').slice(0, 11)
