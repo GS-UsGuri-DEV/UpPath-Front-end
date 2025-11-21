@@ -1,3 +1,19 @@
+/* ===========================================
+   NAVBAR BUTTONS - Light/Dark Mode
+   =========================================== */
+.nav-btn {
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+  color: var(--text-primary);
+}
+.nav-btn:hover {
+  background-color: rgb(243 244 246); /* gray-100 */
+}
+.dark-mode .nav-btn:hover {
+  background-color: rgb(31 41 55); /* gray-800 */
+}
 @import "tailwindcss";
 
 /* ===========================================

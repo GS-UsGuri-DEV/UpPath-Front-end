@@ -30,38 +30,38 @@ export default function NavBar() {
             {!user && (
               <Link
                 to="/cadastro"
-                className="rounded px-3 py-1 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+                className="nav-btn"
               >
                 Cadastro
               </Link>
             )}
             <Link
               to="/"
-              className="rounded px-3 py-1 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+              className="nav-btn"
             >
               Home
             </Link>
             <Link
               to="/dashboard"
-              className="rounded px-3 py-1 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+              className="nav-btn"
             >
               Dashboard
             </Link>
             <Link
               to="/perfil"
-              className="rounded px-3 py-1 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+              className="nav-btn"
             >
               Perfil
             </Link>
             <Link
               to="/faq"
-              className="rounded px-3 py-1 text-sm hover:bg-gray-100"
+              className="nav-btn"
             >
               FAQ
             </Link>
             <Link
               to="/contato"
-              className="rounded px-3 py-1 text-sm hover:bg-gray-100"
+              className="nav-btn"
             >
               Contato
             </Link>
