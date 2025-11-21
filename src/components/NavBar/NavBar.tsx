@@ -51,9 +51,6 @@ export default function NavBar() {
             <Link to="/dashboard" className="nav-btn">
               Dashboard
             </Link>
-            <Link to="/perfil" className="nav-btn">
-              Perfil
-            </Link>
             <Link to="/cursos" className="nav-btn">
               Cursos
             </Link>
@@ -127,13 +124,6 @@ export default function NavBar() {
               onClick={closeMenu}
             >
               Dashboard
-            </Link>
-            <Link
-              to="/perfil"
-              className="rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
-              onClick={closeMenu}
-            >
-              Perfil
             </Link>
             <Link
               to="/cursos"
