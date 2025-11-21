@@ -1,9 +1,7 @@
 import { FaChartBar, FaUser, FaUsers } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
-interface QuickAccessSectionProps {
-  showCadastro: boolean
-}
+import type { QuickAccessSectionProps } from '../../types/profile'
 
 export default function QuickAccessSection({
   showCadastro,

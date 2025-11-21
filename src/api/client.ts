@@ -1,10 +1,6 @@
 export const API_URL = import.meta.env.VITE_API_URL
 
-type RequestOptions = {
-  method?: string
-  body?: unknown
-  headers?: Record<string, string>
-}
+import type { RequestOptions } from '../types/request'
 
 export async function request<T = unknown>(
   path: string,

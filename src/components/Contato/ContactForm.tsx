@@ -1,15 +1,6 @@
 import { useState } from 'react'
 
-interface FormData {
-  nome: string
-  email: string
-  assunto: string
-  mensagem: string
-}
-
-interface ContactFormProps {
-  onSubmitSuccess?: () => void
-}
+import type { ContactFormProps, FormData } from '../../types/contact'
 
 export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
   const [formData, setFormData] = useState<FormData>({

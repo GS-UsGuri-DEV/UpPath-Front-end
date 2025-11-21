@@ -1,8 +1,4 @@
-export interface ContactInfoItem {
-  icon: string
-  title: string
-  content: string | string[]
-}
+import type { ContactInfoItem } from '../types/contact'
 
 export const contactInfo = {
   companyName: 'UpPath',

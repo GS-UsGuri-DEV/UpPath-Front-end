@@ -1,23 +1,13 @@
+import type { Models } from 'appwrite'
 import {
   createContext,
-  useState,
-  useEffect,
   useCallback,
+  useEffect,
+  useState,
   type ReactNode,
 } from 'react'
 import { account, db } from '../shared/appwrite'
-import type { Models } from 'appwrite'
-
-type UserData = Models.Document & Record<string, unknown>
-
-interface AuthContextType {
-  user: Models.User<Models.Preferences> | null
-  userData: UserData | null
-  loading: boolean
-  login: (email: string, password: string) => Promise<void>
-  logout: () => Promise<void>
-  checkAuth: () => Promise<void>
-}
+import type { AuthContextType, UserData } from '../types/auth'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 

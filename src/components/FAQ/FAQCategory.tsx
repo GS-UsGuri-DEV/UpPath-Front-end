@@ -1,14 +1,6 @@
-import type { FAQItem as FAQData } from '../../data/faqData'
 import FAQItem from './FAQItem'
 
-interface FAQCategoryProps {
-  category: string
-  categoryNumber: number
-  items: FAQData[]
-  expandedItems: number[]
-  onToggleItem: (index: number) => void
-  allItems: FAQData[]
-}
+import type { FAQCategoryProps } from '../../types/faq'
 
 export default function FAQCategory({
   category,
