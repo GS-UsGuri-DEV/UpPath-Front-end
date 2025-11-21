@@ -1,4 +1,4 @@
-
+import type { FormInputProps } from '../../types/form'
 
 export default function FormInput({
   label,
@@ -8,7 +8,7 @@ export default function FormInput({
   onRightIconClick,
   isValid,
   ...rest
-}: Props) {
+}: FormInputProps) {
   const inputClassName = `input-field ${
     error ? 'input-error' : isValid ? 'input-success' : ''
   } ${rightIcon ? 'pr-10' : ''}`
