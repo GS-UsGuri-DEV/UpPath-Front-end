@@ -89,6 +89,14 @@ export default function Footer() {
               </li>
               <li>
                 <Link
+                  to="/cursos"
+                  className="text-[var(--text-muted)] transition-colors hover:text-[var(--text-primary)]"
+                >
+                  Cursos e Trilhas
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/faq"
                   className="text-[var(--text-muted)] transition-colors hover:text-[var(--text-primary)]"
                 >

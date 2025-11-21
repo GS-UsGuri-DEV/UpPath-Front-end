@@ -38,7 +38,6 @@ export default function NavBar() {
               className="h-24 w-auto"
             />
           </Link>
-          
           {/* Desktop Menu */}
           <div className="hidden gap-2 md:flex">
             {!user && (
@@ -55,6 +54,9 @@ export default function NavBar() {
             <Link to="/perfil" className="nav-btn">
               Perfil
             </Link>
+            <Link to="/cursos" className="nav-btn">
+              Cursos
+            </Link>
             <Link to="/faq" className="nav-btn">
               FAQ
             </Link>
@@ -66,7 +68,6 @@ export default function NavBar() {
 
         <div className="flex items-center gap-3">
           <DarkLightMode />
-          
           {user && (
             <>
               <div className="hidden text-sm text-[var(--text-secondary)] sm:block">
@@ -89,7 +90,6 @@ export default function NavBar() {
               </div>
             </>
           )}
-          
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
@@ -136,6 +136,13 @@ export default function NavBar() {
               Perfil
             </Link>
             <Link
+              to="/cursos"
+              className="rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
+              onClick={closeMenu}
+            >
+              Cursos
+            </Link>
+            <Link
               to="/faq"
               className="rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
               onClick={closeMenu}
@@ -149,7 +156,6 @@ export default function NavBar() {
             >
               Contato
             </Link>
-            
             {user && (
               <>
                 <div className="border-t border-[var(--border-color)] pt-3 text-sm text-[var(--text-secondary)]">
