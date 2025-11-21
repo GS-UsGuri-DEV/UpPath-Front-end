@@ -27,8 +27,8 @@ export default function FAQ() {
   const categories = Array.from(new Set(faqData.map((item) => item.category)))
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] py-12">
-      <div className="mx-auto max-w-4xl px-6">
+    <div className="min-h-screen bg-[var(--bg-primary)]">
+      <div className="mx-auto max-w-4xl px-6 py-12 pb-24">
         <div className="mb-8 text-center">
           <div className="mb-4 flex items-center justify-center gap-2">
             <FaQuestionCircle className="text-3xl text-[var(--accent-indigo)]" />

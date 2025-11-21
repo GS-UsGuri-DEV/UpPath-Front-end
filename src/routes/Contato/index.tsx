@@ -6,8 +6,8 @@ import Footer from '../../components/Footer'
 
 export default function Contato() {
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] py-12">
-      <div className="mx-auto max-w-7xl px-6">
+    <div className="min-h-screen bg-[var(--bg-primary)]">
+      <div className="mx-auto max-w-7xl px-6 py-12 pb-24">
         <div className="mb-12 text-center">
           <h1 className="mb-4 text-4xl font-bold text-[var(--text-primary)]">
             Entre em Contato
