@@ -40,8 +40,7 @@ export default function CursoCard({ curso, onClick }: CursoCardProps) {
         {curso.tags.slice(0, 3).map((tag, idx) => (
           <span
             key={idx}
-            className="rounded-full px-3 py-1 text-xs font-semibold"
-            style={{ backgroundColor: '#e5e7eb', color: '#000' }}
+            className="rounded-full bg-gray-300 px-3 py-1 text-xs font-semibold text-black dark:bg-gray-600 dark:text-white"
           >
             {tag}
           </span>

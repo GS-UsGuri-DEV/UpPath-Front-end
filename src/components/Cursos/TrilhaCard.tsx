@@ -38,8 +38,7 @@ export default function TrilhaCard({ trilha, onClick }: TrilhaCardProps) {
         {trilha.tags.slice(0, 4).map((tag, idx) => (
           <span
             key={idx}
-            className="rounded-full px-3 py-1 text-xs font-semibold"
-            style={{ backgroundColor: '#e5e7eb', color: '#000' }}
+            className="rounded-full bg-gray-300 px-3 py-1 text-xs font-semibold text-black dark:bg-gray-600 dark:text-white"
           >
             {tag}
           </span>
@@ -47,21 +46,21 @@ export default function TrilhaCard({ trilha, onClick }: TrilhaCardProps) {
       </div>
 
       <div className="mb-4 grid grid-cols-3 gap-2 text-xs">
-        <div className="flex flex-col items-center rounded-lg p-2.5" style={{ backgroundColor: 'var(--bg-primary, #f3f4f6)' }}>
+        <div className="flex flex-col items-center rounded-lg bg-gray-300 p-2.5 dark:bg-gray-600">
           <FaClock className="mb-1 text-indigo-600 dark:text-indigo-400" />
-          <span className="font-bold" style={{ color: 'var(--text-primary, #000)' }}>
+          <span className="font-bold text-black dark:text-white">
             {trilha.duracao_total}
           </span>
         </div>
-        <div className="flex flex-col items-center rounded-lg p-2.5" style={{ backgroundColor: 'var(--bg-primary, #f3f4f6)' }}>
+        <div className="flex flex-col items-center rounded-lg bg-gray-300 p-2.5 dark:bg-gray-600">
           <FaBook className="mb-1 text-indigo-600 dark:text-indigo-400" />
-          <span className="font-bold" style={{ color: 'var(--text-primary, #000)' }}>
+          <span className="font-bold text-black dark:text-white">
             {trilha.num_cursos} cursos
           </span>
         </div>
-        <div className="flex flex-col items-center rounded-lg p-2.5" style={{ backgroundColor: 'var(--bg-primary, #f3f4f6)' }}>
+        <div className="flex flex-col items-center rounded-lg bg-gray-300 p-2.5 dark:bg-gray-600">
           <FaChartLine className={`mb-1 ${getNivelColor(trilha.nivel)}`} />
-          <span className="font-bold" style={{ color: 'var(--text-primary, #000)' }}>
+          <span className="font-bold text-black dark:text-white">
             {trilha.nivel}
           </span>
         </div>
