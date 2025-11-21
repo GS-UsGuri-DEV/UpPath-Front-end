@@ -1,11 +1,6 @@
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa'
 
-interface FAQItemProps {
-  question: string
-  answer: string
-  isExpanded: boolean
-  onToggle: () => void
-}
+import type { FAQItemProps } from '../../types/faq'
 
 export default function FAQItem({
   question,

@@ -1,13 +1,4 @@
-import React from 'react'
 
-type Props = React.InputHTMLAttributes<HTMLInputElement> & {
-  label?: string
-  name?: string
-  error?: string | undefined
-  rightIcon?: React.ReactNode
-  onRightIconClick?: () => void
-  isValid?: boolean
-}
 
 export default function FormInput({
   label,

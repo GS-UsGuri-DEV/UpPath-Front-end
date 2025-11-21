@@ -1,3 +1,15 @@
+import type { Models } from 'appwrite'
+
+export type UserData = Models.Document & Record<string, unknown>
+
+export interface AuthContextType {
+  user: Models.User<Models.Preferences> | null
+  userData: UserData | null
+  loading: boolean
+  login: (email: string, password: string) => Promise<void>
+  logout: () => Promise<void>
+  checkAuth: () => Promise<void>
+}
 export interface LoginFormData {
   email: string
   password: string

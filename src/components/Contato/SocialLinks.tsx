@@ -6,12 +6,7 @@ import {
 } from 'react-icons/fa'
 import { contactInfo } from '../../data/contactData'
 
-interface SocialLink {
-  icon: React.ReactNode
-  url: string
-  bgColor: string
-  hoverColor: string
-}
+import type { SocialLink } from '../../types/social'
 
 export default function SocialLinks() {
   const socialLinks: SocialLink[] = [

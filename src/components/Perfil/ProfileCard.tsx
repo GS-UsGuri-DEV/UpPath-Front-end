@@ -2,11 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '../../contexts/useAuth'
 import { db } from '../../shared/appwrite'
 
-interface ProfileCardProps {
-  profileImage: string
-  displayName: string
-  displayEmail: string
-}
+import type { ProfileCardProps } from '../../types/profile'
 
 export default function ProfileCard({
   profileImage,

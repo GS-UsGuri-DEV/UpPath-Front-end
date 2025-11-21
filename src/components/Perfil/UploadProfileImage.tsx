@@ -2,9 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../../contexts/useAuth'
 import { BUCKET_PUBLIC, ID, db, storage } from '../../shared/appwrite'
 
-interface UploadProfileImageProps {
-  onUploadSuccess: (url: string) => void
-}
+import type { UploadProfileImageProps } from '../../types/profile'
 
 export default function UploadProfileImage({
   onUploadSuccess,

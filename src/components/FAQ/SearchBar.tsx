@@ -1,10 +1,6 @@
 import { FaSearch } from 'react-icons/fa'
 
-interface SearchBarProps {
-  value: string
-  onChange: (value: string) => void
-  placeholder?: string
-}
+import type { SearchBarProps } from '../../types/faq'
 
 export default function SearchBar({
   value,
