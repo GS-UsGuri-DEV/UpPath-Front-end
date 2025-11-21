@@ -2,6 +2,7 @@ import { FaPhoneAlt } from 'react-icons/fa'
 import ContactForm from '../../components/Contato/ContactForm'
 import ContactInfo from '../../components/Contato/ContactInfo'
 import SocialLinks from '../../components/Contato/SocialLinks'
+import Footer from '../../components/Footer'
 
 export default function Contato() {
   return (
@@ -71,6 +72,8 @@ export default function Contato() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   )
 }

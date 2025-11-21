@@ -3,6 +3,7 @@ import { FaQuestionCircle } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import FAQCategory from '../../components/FAQ/FAQCategory'
 import SearchBar from '../../components/FAQ/SearchBar'
+import Footer from '../../components/Footer'
 import { faqData } from '../../data/faqData'
 
 export default function FAQ() {
@@ -85,6 +86,8 @@ export default function FAQ() {
           </button>
         </div>
       </div>
+
+      <Footer />
     </div>
   )
 }
