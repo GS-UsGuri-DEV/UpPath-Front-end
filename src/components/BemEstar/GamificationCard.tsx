@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { FaTimes } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/useAuth'
+import useTheme from '../../hooks/useTheme'
 import { db, ID, Permission, Role } from '../../shared/appwrite'
 import Spinner from '../Spinner/Spinner'
 
@@ -27,6 +28,7 @@ export default function GamificationCard({
   const [observation, setObservation] = useState<string>('')
   const [registeredOnce, setRegisteredOnce] = useState(false)
   const [hideCard, setHideCard] = useState(false)
+  const { isDark } = useTheme()
 
   useEffect(() => {
     setMounted(true)
@@ -169,9 +171,14 @@ export default function GamificationCard({
         <div className="mb-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
-            <div className="text-sm font-semibold text-[var(--text-primary)]">
+            <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
               Registre seu bem-estar hoje
             </div>
+            <img
+              src={isDark ? '/icon/icon-dark.svg' : '/icon/icon-light.svg'}
+              alt="UpPath Icon"
+              className="h-6 w-6"
+            />
           </div>
           <button
             onClick={() => setHideCard(true)}

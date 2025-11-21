@@ -1,10 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/useAuth'
+import useTheme from '../../hooks/useTheme'
 import DarkLightMode from '../Buttons/DarkLightMode'
 
 export default function NavBar() {
   const { user, userData, logout } = useAuth()
   const nav = useNavigate()
+  const { isDark } = useTheme()
 
   async function handleLogout() {
     await logout()
@@ -19,7 +21,7 @@ export default function NavBar() {
         <div className="flex items-center gap-4">
           <Link to="/" className="text-lg font-bold text-[var(--text-primary)]">
             <img
-              src="/icon/logo.svg"
+              src={isDark ? '/icon/logo-dark.svg' : '/icon/logo-light.svg'}
               alt="UpPath Logo"
               className="h-24 w-auto"
             />
