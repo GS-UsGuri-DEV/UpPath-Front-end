@@ -65,15 +65,15 @@ export default function ResourcesSection() {
         </button>
 
         <button
-          onClick={() => navigate('/objetivos')}
+          onClick={() => navigate('/cursos')}
           className="group block rounded-lg border border-[var(--border-color)] p-3 text-left transition duration-150 ease-in-out hover:border-indigo-600 hover:bg-indigo-600/10 hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-300/30 cursor-pointer opacity-95 hover:opacity-100"
-          aria-label="Abrir objetivos"
+          aria-label="Abrir cursos e trilhas"
         >
           <div className="mb-1 flex items-center gap-2 text-sm font-medium">
             <FaBullseye className="text-indigo-400 transition-colors group-hover:text-indigo-300" />
-            <span className="text-[var(--text-primary)] transition-colors group-hover:text-[var(--text-primary)]">Objetivos</span>
+            <span className="text-[var(--text-primary)] transition-colors group-hover:text-[var(--text-primary)]">Cursos e Trilhas</span>
           </div>
-          <p className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-primary)]">Defina e acompanhe metas</p>
+          <p className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-primary)]">Explore cursos e trilhas de aprendizado</p>
         </button>
       </div>
     </section>
