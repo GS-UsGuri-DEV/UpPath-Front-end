@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
+import { FaUser } from 'react-icons/fa'
 import { useAuth } from '../../contexts/useAuth'
 import useTheme from '../../hooks/useTheme'
 import DarkLightMode from '../Buttons/DarkLightMode'
@@ -28,41 +29,23 @@ export default function NavBar() {
           </Link>
           <div className="hidden gap-2 sm:flex">
             {!user && (
-              <Link
-                to="/cadastro"
-                className="nav-btn"
-              >
+              <Link to="/cadastro" className="nav-btn">
                 Cadastro
               </Link>
             )}
-            <Link
-              to="/"
-              className="nav-btn"
-            >
+            <Link to="/" className="nav-btn">
               Home
             </Link>
-            <Link
-              to="/dashboard"
-              className="nav-btn"
-            >
+            <Link to="/dashboard" className="nav-btn">
               Dashboard
             </Link>
-            <Link
-              to="/perfil"
-              className="nav-btn"
-            >
+            <Link to="/perfil" className="nav-btn">
               Perfil
             </Link>
-            <Link
-              to="/faq"
-              className="nav-btn"
-            >
+            <Link to="/faq" className="nav-btn">
               FAQ
             </Link>
-            <Link
-              to="/contato"
-              className="nav-btn"
-            >
+            <Link to="/contato" className="nav-btn">
               Contato
             </Link>
           </div>
@@ -78,9 +61,10 @@ export default function NavBar() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => nav('/perfil')}
-                  className="rounded bg-[var(--bg-secondary)] px-3 py-1 text-sm text-[var(--text-primary)]"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-secondary)] text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-tertiary)]"
+                  title="Meu Perfil"
                 >
-                  Meu Perfil
+                  <FaUser />
                 </button>
                 <button
                   onClick={handleLogout}
