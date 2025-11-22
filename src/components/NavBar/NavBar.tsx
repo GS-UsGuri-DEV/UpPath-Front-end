@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { FaUser, FaBars, FaTimes } from 'react-icons/fa'
 import { useAuth } from '../../contexts/useAuth'
 import useTheme from '../../hooks/useTheme'
@@ -8,6 +8,7 @@ import DarkLightMode from '../Buttons/DarkLightMode'
 export default function NavBar() {
   const { user, userData, logout } = useAuth()
   const nav = useNavigate()
+  const location = useLocation()
   const { isDark } = useTheme()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -25,6 +26,8 @@ export default function NavBar() {
     setIsMenuOpen(false)
   }
 
+  const isActive = (path: string) => location.pathname === path
+
   const displayName = String(userData?.nome_completo ?? user?.name ?? 'Usuário')
 
   return (
@@ -41,23 +44,43 @@ export default function NavBar() {
           {/* Desktop Menu */}
           <div className="hidden gap-2 md:flex">
             {!user && (
-              <Link to="/cadastro" className="nav-btn">
+              <Link
+                to="/cadastro"
+                className={`nav-btn ${isActive('/cadastro') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
+              >
                 Cadastro
               </Link>
             )}
-            <Link to="/" className="nav-btn">
+            <Link
+              to="/"
+              className={`nav-btn ${isActive('/') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
+            >
               Home
             </Link>
-            <Link to="/dashboard" className="nav-btn">
-              Dashboard
-            </Link>
-            <Link to="/cursos" className="nav-btn">
+            {user && (
+              <Link
+                to="/dashboard"
+                className={`nav-btn ${isActive('/dashboard') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
+              >
+                Dashboard
+              </Link>
+            )}
+            <Link
+              to="/cursos"
+              className={`nav-btn ${isActive('/cursos') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
+            >
               Cursos
             </Link>
-            <Link to="/faq" className="nav-btn">
+            <Link
+              to="/faq"
+              className={`nav-btn ${isActive('/faq') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
+            >
               FAQ
             </Link>
-            <Link to="/contato" className="nav-btn">
+            <Link
+              to="/contato"
+              className={`nav-btn ${isActive('/contato') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
+            >
               Contato
             </Link>
           </div>
@@ -105,7 +128,11 @@ export default function NavBar() {
             {!user && (
               <Link
                 to="/cadastro"
-                className="rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
+                className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                  isActive('/cadastro')
+                    ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                    : ''
+                }`}
                 onClick={closeMenu}
               >
                 Cadastro
@@ -113,35 +140,57 @@ export default function NavBar() {
             )}
             <Link
               to="/"
-              className="rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
+              className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                isActive('/')
+                  ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                  : ''
+              }`}
               onClick={closeMenu}
             >
               Home
             </Link>
-            <Link
-              to="/dashboard"
-              className="rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
-              onClick={closeMenu}
-            >
-              Dashboard
-            </Link>
+            {user && (
+              <Link
+                to="/dashboard"
+                className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                  isActive('/dashboard')
+                    ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                    : ''
+                }`}
+                onClick={closeMenu}
+              >
+                Dashboard
+              </Link>
+            )}
             <Link
               to="/cursos"
-              className="rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
+              className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                isActive('/cursos')
+                  ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                  : ''
+              }`}
               onClick={closeMenu}
             >
               Cursos
             </Link>
             <Link
               to="/faq"
-              className="rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
+              className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                isActive('/faq')
+                  ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                  : ''
+              }`}
               onClick={closeMenu}
             >
               FAQ
             </Link>
             <Link
               to="/contato"
-              className="rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
+              className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                isActive('/contato')
+                  ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                  : ''
+              }`}
               onClick={closeMenu}
             >
               Contato

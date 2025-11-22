@@ -53,7 +53,7 @@ export default function UploadProfileImage({
         type="file"
         accept="image/*"
         onChange={upload}
-        className="block w-full text-sm text-[var(--text-secondary)] file:mr-4 file:rounded file:border-0 file:bg-[var(--bg-secondary)] file:px-4 file:py-2 file:text-sm file:text-indigo-700 hover:file:bg-[var(--bg-secondary)]"
+        className="block w-full text-sm text-[var(--text-secondary)] file:mr-4 file:rounded-lg file:border-2 file:border-indigo-500 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 file:transition-all hover:file:border-indigo-600 hover:file:bg-indigo-100 dark:file:bg-indigo-950/30 dark:file:text-indigo-400 dark:hover:file:bg-indigo-950/50"
       />
       {uploadError && (
         <div className="mt-2 text-sm text-[var(--accent-danger)]">
