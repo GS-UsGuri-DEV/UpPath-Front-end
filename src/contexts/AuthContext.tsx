@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from 'react'
 import { account, db } from '../shared/appwrite'
+import { post } from '../api/client'
 import type { AuthContextType, UserData } from '../types/auth'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -30,23 +31,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await db.listDocuments(DB_ID, COLLECTION_USERS)
       const userDoc = response.documents.find((doc: Models.Document) => {
-        const d = doc as unknown as Record<string, unknown>
-        return typeof d.email === 'string' && d.email === email
+        const d = doc as any
+        return d.email === email
       }) as UserData | undefined
 
-      if (userDoc) {
-        return userDoc
-      }
+      return userDoc ?? null
     } catch (error) {
       console.error('Error fetching user data:', error)
+      return null
     }
-    return null
   }
 
   const checkAuth = useCallback(async () => {
     try {
       const currentUser = await account.get()
       setUser(currentUser)
+
       const data = await fetchUserData(currentUser.email)
       setUserData(data)
     } catch {
@@ -59,29 +59,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     try {
-      await account.createEmailPasswordSession(email, password)
-    } catch (err) {
-      const msg = String((err as Error)?.message ?? String(err ?? ''))
-      if (
-        msg.includes(
-          'Creation of a session is prohibited when a session is active',
-        )
-      ) {
-        await account.deleteSession('current')
-        await account.createEmailPasswordSession(email, password)
-      } else {
-        throw err
-      }
-    }
+      const res = await post('https://uppath.onrender.com/login', {
+        email,
+        password,
+      })
 
-    const currentUser = await account.get()
-    setUser(currentUser)
-    const data = await fetchUserData(email)
-    setUserData(data)
+      const r = res as any
+      const token =
+        r?.token ?? r?.accessToken ?? r?.access_token ?? null
+
+      const externalUser = r?.user ?? r?.data ?? null
+
+      if (token) {
+        localStorage.setItem('authToken', String(token))
+      }
+
+  
+      await account.createEmailPasswordSession(email, password)
+
+      const currentUser = await account.get()
+      setUser(currentUser)
+
+      const data = await fetchUserData(email)
+      setUserData(data ?? externalUser ?? null)
+
+    } catch (err) {
+      throw err
+    }
   }
 
   async function logout() {
-    await account.deleteSession('current')
+    try {
+      await account.deleteSession('current')
+    } catch {}
+
+    localStorage.removeItem('authToken')
+
     setUser(null)
     setUserData(null)
   }

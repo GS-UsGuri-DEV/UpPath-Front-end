@@ -64,7 +64,7 @@ export default function Login() {
         localStorage.removeItem('rememberedPassword')
       }
 
-      nav('/dashboard')
+      nav('/')
     } catch (e: unknown) {
       const msgText = e instanceof Error ? e.message : String(e)
       setMsg(msgText)
