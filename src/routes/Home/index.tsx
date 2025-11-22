@@ -11,7 +11,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
-      <div className="p-4">
+      <div className="p-4 sm:p-6">
         <div className="mx-auto max-w-7xl">
           <WelcomeSection />
 

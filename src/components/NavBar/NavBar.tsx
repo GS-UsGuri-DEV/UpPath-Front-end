@@ -38,7 +38,7 @@ export default function NavBar() {
             <img
               src={isDark ? '/icon/logo-dark.svg' : '/icon/logo-light.svg'}
               alt="UpPath Logo"
-              className="h-24 w-auto"
+              className="h-16 w-auto sm:h-20 md:h-24"
             />
           </Link>
           {/* Desktop Menu */}

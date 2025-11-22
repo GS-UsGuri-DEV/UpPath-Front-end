@@ -40,7 +40,7 @@ export default function Cursos() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
-      <div className="mx-auto max-w-7xl px-6 py-12 pb-24">
+      <div className="mx-auto max-w-7xl px-4 py-8 pb-16 sm:px-6 sm:py-12 sm:pb-24">
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="mb-4 text-4xl font-bold text-[var(--text-primary)]">
@@ -134,7 +134,6 @@ export default function Cursos() {
                 key={trilha.id}
                 trilha={trilha}
                 onClick={() => {
-                  // TODO: Navegar para página de detalhes
                   console.log('Trilha clicada:', trilha.id)
                 }}
               />
@@ -147,7 +146,6 @@ export default function Cursos() {
                 key={curso.id}
                 curso={curso}
                 onClick={() => {
-                  // TODO: Navegar para página de detalhes
                   console.log('Curso clicado:', curso.id)
                 }}
               />

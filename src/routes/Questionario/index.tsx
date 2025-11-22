@@ -104,11 +104,11 @@ export default function Questionario() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] py-8">
-      <div className="mx-auto max-w-3xl px-4">
+    <div className="min-h-screen bg-[var(--bg-primary)] py-4 sm:py-8">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-3xl font-bold text-[var(--text-primary)]">
+          <h1 className="mb-2 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
             Personalize sua jornada
           </h1>
           <p className="text-[var(--text-muted)]">

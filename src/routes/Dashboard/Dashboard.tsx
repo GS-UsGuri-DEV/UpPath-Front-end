@@ -46,7 +46,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
-      <div className="mx-auto max-w-7xl space-y-6 p-6">
+      <div className="mx-auto max-w-7xl space-y-4 p-4 sm:space-y-6 sm:p-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">

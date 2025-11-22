@@ -28,7 +28,7 @@ export default function FAQ() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
-      <div className="mx-auto max-w-4xl px-6 py-12 pb-24">
+      <div className="mx-auto max-w-4xl px-4 py-8 pb-16 sm:px-6 sm:py-12 sm:pb-24">
         <div className="mb-8 text-center">
           <div className="mb-4 flex items-center justify-center gap-2">
             <FaQuestionCircle className="text-3xl text-[var(--accent-indigo)]" />
@@ -71,8 +71,8 @@ export default function FAQ() {
             Precisa de ajuda?
           </h3>
           <div className="mb-4 flex items-center justify-center gap-2">
-            <p className="text-2xl font-bold text-[var(--accent-indigo)]">
-              AINDA TEM DÚVIDAS?
+            <p className="text-xl font-semibold text-[var(--accent-indigo)] sm:text-2xl">
+              Ainda tem dúvidas?
             </p>
           </div>
           <p className="mb-6 text-sm text-[var(--text-muted)]">

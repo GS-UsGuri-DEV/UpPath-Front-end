@@ -217,7 +217,7 @@ export default function Cadastro() {
           <>
             <FormInput
               label="Nome da empresa"
-              placeholder="nome da empresa"
+              placeholder="Nome da Empresa"
               {...register('nome_empresa', {
                 required: 'Nome da empresa é obrigatório',
               })}
@@ -237,8 +237,8 @@ export default function Cadastro() {
               required
             />
             <FormInput
-              label="Email de contato"
-              placeholder="email de contato"
+              label="E-mail de Contato"
+              placeholder="E-mail de Contato"
               {...register('email_contato', {
                 required: 'Email é obrigatório',
                 pattern: {
@@ -250,7 +250,7 @@ export default function Cadastro() {
             />
             <FormInput
               label="Senha"
-              placeholder="senha"
+              placeholder="Sua Senha"
               type="password"
               {...register('senha', {
                 required: 'Senha é obrigatória',
@@ -265,7 +265,7 @@ export default function Cadastro() {
             />
             <FormInput
               label="Confirmar senha"
-              placeholder="confirme a senha"
+              placeholder="Confirme a Senha"
               type="password"
               {...register('confirmPassword', {
                 validate: (v) =>
@@ -277,8 +277,8 @@ export default function Cadastro() {
         ) : (
           <>
             <FormInput
-              label="Nome completo"
-              placeholder="nome completo"
+              label="Nome Completo"
+              placeholder="Nome Completo"
               {...register('nome_completo', { required: 'Nome é obrigatório' })}
               required
             />
@@ -297,7 +297,7 @@ export default function Cadastro() {
             />
             <FormInput
               label="Email"
-              placeholder="email"
+              placeholder="E-mail"
               {...register('email', {
                 required: 'Email é obrigatório',
                 pattern: {
@@ -309,7 +309,7 @@ export default function Cadastro() {
             />
             <FormInput
               label="Senha"
-              placeholder="senha"
+              placeholder="Sua Senha"
               type="password"
               {...register('senha', {
                 required: 'Senha é obrigatória',
@@ -324,7 +324,7 @@ export default function Cadastro() {
             />
             <FormInput
               label="Confirmar senha"
-              placeholder="confirme a senha"
+              placeholder="Confirme a Senha"
               type="password"
               {...register('confirmPassword', {
                 validate: (v) =>
@@ -334,7 +334,7 @@ export default function Cadastro() {
             />
             <FormInput
               label="ID da empresa (opcional)"
-              placeholder="id_empresa"
+              placeholder="ID da Empresa"
               {...register('id_empresa')}
             />
             <FormInput
@@ -353,12 +353,12 @@ export default function Cadastro() {
             />
             <FormInput
               label="Ocupação"
-              placeholder="ocupação"
+              placeholder="Ocupação"
               {...register('ocupacao')}
             />
             <FormInput
               label="Gênero"
-              placeholder="gênero"
+              placeholder="Gênero"
               {...register('genero')}
             />
           </>
