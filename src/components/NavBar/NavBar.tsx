@@ -129,7 +129,9 @@ export default function NavBar() {
               <Link
                 to="/cadastro"
                 className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
-                  isActive('/cadastro') ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''
+                  isActive('/cadastro')
+                    ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                    : ''
                 }`}
                 onClick={closeMenu}
               >
@@ -139,7 +141,9 @@ export default function NavBar() {
             <Link
               to="/"
               className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
-                isActive('/') ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''
+                isActive('/')
+                  ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                  : ''
               }`}
               onClick={closeMenu}
             >
@@ -149,7 +153,9 @@ export default function NavBar() {
               <Link
                 to="/dashboard"
                 className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
-                  isActive('/dashboard') ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''
+                  isActive('/dashboard')
+                    ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                    : ''
                 }`}
                 onClick={closeMenu}
               >
@@ -159,7 +165,9 @@ export default function NavBar() {
             <Link
               to="/cursos"
               className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
-                isActive('/cursos') ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''
+                isActive('/cursos')
+                  ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                  : ''
               }`}
               onClick={closeMenu}
             >
@@ -168,7 +176,9 @@ export default function NavBar() {
             <Link
               to="/faq"
               className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
-                isActive('/faq') ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''
+                isActive('/faq')
+                  ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                  : ''
               }`}
               onClick={closeMenu}
             >
@@ -177,7 +187,9 @@ export default function NavBar() {
             <Link
               to="/contato"
               className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
-                isActive('/contato') ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''
+                isActive('/contato')
+                  ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                  : ''
               }`}
               onClick={closeMenu}
             >

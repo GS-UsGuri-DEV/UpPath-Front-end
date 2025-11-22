@@ -2,7 +2,10 @@ import { FaUserGraduate } from 'react-icons/fa'
 import RadioGroup from '../../../components/Form/RadioGroup'
 import Input from '../../../components/Form/Input'
 import type { QuestionarioData, StepProps } from '../../../types/quest'
-import { MOMENTOS_OPTIONS, ATUA_NA_AREA_OPTIONS } from '../../../types/constants'
+import {
+  MOMENTOS_OPTIONS,
+  ATUA_NA_AREA_OPTIONS,
+} from '../../../types/constants'
 
 type DadosBasicosData = Pick<
   QuestionarioData,
