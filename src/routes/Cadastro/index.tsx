@@ -161,7 +161,7 @@ export default function Cadastro() {
 
         await new Promise((resolve) => setTimeout(resolve, 300))
 
-        nav('/dashboard')
+        nav('/questionario')
       } catch (e: unknown) {
         const msgText = e instanceof Error ? e.message : String(e)
         setMsg(msgText)
