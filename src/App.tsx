@@ -11,6 +11,7 @@ import Login from './routes/Login/Login'
 import Perfil from './routes/Perfil/Perfil'
 import Protected from './routes/Protected/Protected'
 import ProtectedAdmin from './routes/ProtectedAdmin/ProtectedAdmin'
+import Questionario from './routes/Questionario'
 
 export default function App() {
   const location = useLocation()
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/contato" element={<Contato />} />
         <Route path="/cursos" element={<Cursos />} />
+        <Route path="/questionario" element={<Questionario />} />
         <Route element={<Protected />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/perfil" element={<Perfil />} />
