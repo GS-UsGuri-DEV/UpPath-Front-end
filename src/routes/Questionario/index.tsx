@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import SuccessMessage from '../../components/SuccessMessage'
 import { FaArrowRight, FaArrowLeft } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import DadosBasicos from './steps/DadosBasicos'
@@ -13,6 +14,7 @@ import type { QuestionarioData } from '../../types/quest'
 export default function Questionario() {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
+  const [showSuccess, setShowSuccess] = useState(false)
   const totalSteps = 7
 
   const [formData, setFormData] = useState<QuestionarioData>({
@@ -72,8 +74,11 @@ export default function Questionario() {
   const handleFinish = () => {
     // Aqui você pode enviar os dados para o backend
     console.log('Dados do questionário:', formData)
-    // Redirecionar para o dashboard
-    navigate('/dashboard')
+    setShowSuccess(true)
+    setTimeout(() => {
+      setShowSuccess(false)
+      navigate('/login')
+    }, 1800)
   }
 
   const renderStep = () => {
@@ -105,6 +110,12 @@ export default function Questionario() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] py-4 sm:py-8">
+      {showSuccess && (
+        <SuccessMessage
+          message="Questionário finalizado com sucesso!"
+          onClose={() => setShowSuccess(false)}
+        />
+      )}
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         {/* Header */}
         <div className="mb-8 text-center">
