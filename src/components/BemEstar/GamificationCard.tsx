@@ -210,6 +210,7 @@ export default function GamificationCard({
                   setStress(e.target.value === '' ? '' : Number(e.target.value))
                 }
                 className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 sm:p-2 text-xs sm:text-sm"
+                placeholder="0 = bom, 10 = ruim"
                 required
               />
             </label>
@@ -227,14 +228,15 @@ export default function GamificationCard({
                   )
                 }
                 className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 sm:p-2 text-xs sm:text-sm"
+                placeholder="0 = ruim, 10 = bom"
                 required
               />
             </label>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <label className="text-xs">
-              <span className="hidden sm:inline">Sono (0-10)</span>
-              <span className="sm:hidden">Sono</span>
+              <span className="hidden sm:inline">Qualidade do Sono (0-10)</span>
+              <span className="sm:hidden">Qualidade do Sono</span>
               <input
                 type="number"
                 min={0}
@@ -246,6 +248,7 @@ export default function GamificationCard({
                   )
                 }
                 className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 sm:p-2 text-xs sm:text-sm"
+                placeholder="0 = ruim, 10 = bom"
                 required
               />
             </label>
