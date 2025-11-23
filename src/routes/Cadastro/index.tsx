@@ -10,6 +10,7 @@ import type { SignupFormData } from '../../types/auth'
 
 export default function Cadastro() {
   const [msg, setMsg] = useState('')
+    const [submitError, setSubmitError] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
   const nav = useNavigate()
 
@@ -199,7 +200,8 @@ export default function Cadastro() {
         }
 
         console.debug('POST /users payload:', userPayload)
-        const createdUser = await post('https://uppath.onrender.com/users', userPayload)
+          const createdUser = await post('https://uppath.onrender.com/users', userPayload)
+          setSubmitError('')
         console.debug('POST /users response:', createdUser)
 
         try {
@@ -234,6 +236,7 @@ export default function Cadastro() {
       } catch (e: unknown) {
         const msgText = e instanceof Error ? e.message : String(e)
         setMsg(msgText)
+          setSubmitError('Erro ao cadastrar usuário: ')
       }
     }
   }
@@ -472,19 +475,28 @@ export default function Cadastro() {
               required
             />
             <FormInput
-              label="Nível de carreira"
+              label="Nível de carreira "
               placeholder="ex: Junior, Senior"
-              {...register('nivel_carreira')}
+              {...register('nivel_carreira', { required: 'Nível de carreira é obrigatório' })}
+              error={(formState.errors as any).nivel_carreira?.message as string | undefined}
+              isValid={!(formState.errors as any).nivel_carreira && !!watch('nivel_carreira')}
+              required
             />
             <FormInput
-              label="Ocupação"
+              label="Ocupação "
               placeholder="Ocupação"
-              {...register('ocupacao')}
+              {...register('ocupacao', { required: 'Ocupação é obrigatória' })}
+              error={(formState.errors as any).ocupacao?.message as string | undefined}
+              isValid={!(formState.errors as any).ocupacao && !!watch('ocupacao')}
+              required
             />
             <FormInput
-              label="Gênero"
+              label="Gênero "
               placeholder="Gênero"
-              {...register('genero')}
+              {...register('genero', { required: 'Gênero é obrigatório' })}
+              error={(formState.errors as any).genero?.message as string | undefined}
+              isValid={!(formState.errors as any).genero && !!watch('genero')}
+              required
             />
           </>
         )}
@@ -493,6 +505,11 @@ export default function Cadastro() {
           <FormButton type="submit" disabled={formState.isSubmitting}>
             {formState.isSubmitting ? 'Criando conta...' : 'Criar conta'}
           </FormButton>
+          {submitError && (
+            <div className="submit-error" style={{ color: 'rgb(220 38 38)', marginTop: '0.5rem' }}>
+              {submitError}
+            </div>
+          )}
           <p className="link-muted">
             <span className="text-[var(--text-muted)]">Já tem cadastro?</span>{' '}
             <Link
