@@ -381,17 +381,26 @@ export default function Cadastro() {
             <FormInput
               label="Nível de carreira"
               placeholder="ex: Junior, Senior"
-              {...register('nivel_carreira')}
+              {...register('nivel_carreira', {
+                required: 'Nível de carreira é obrigatório',
+              })}
+              required
             />
             <FormInput
               label="Ocupação"
               placeholder="Ocupação"
-              {...register('ocupacao')}
+              {...register('ocupacao', {
+                required: 'Ocupação é obrigatória',
+              })}
+              required
             />
             <FormInput
               label="Gênero"
               placeholder="Gênero"
-              {...register('genero')}
+              {...register('genero', {
+                required: 'Gênero é obrigatório',
+              })}
+              required
             />
           </>
         )}
