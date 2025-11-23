@@ -65,6 +65,12 @@ export default function NavBar() {
             >
               Contato
             </Link>
+            <Link
+              to="/integrantes"
+              className="nav-btn"
+            >
+              Integrantes
+            </Link>
           </div>
         </div>
 

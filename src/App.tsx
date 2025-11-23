@@ -10,6 +10,7 @@ import Protected from './routes/Protected/Protected'
 import ProtectedAdmin from './routes/ProtectedAdmin/ProtectedAdmin'
 import Contato from './routes/Contato'
 import FAQ from './routes/FAQ'
+import Integrantes from './routes/integrantes/integrantes'
 
 export default function App() {
   const location = useLocation()
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/admin" element={<AdminPanel />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/integrantes*" element={<Integrantes />} />
       </Routes>
     </div>
   )
