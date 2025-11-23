@@ -225,6 +225,15 @@ export default function NavBar() {
                   {displayName}
                 </div>
                 <button
+                  onClick={() => {
+                    closeMenu();
+                    nav('/perfil');
+                  }}
+                  className="mb-2 mt-2 flex w-full items-center gap-2 rounded bg-[var(--bg-secondary)] px-3 py-2 text-left text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-tertiary)]"
+                >
+                  <FaUser className="mr-2" /> Meu Perfil
+                </button>
+                <button
                   onClick={handleLogout}
                   className="rounded bg-[var(--bg-tertiary)] px-3 py-2 text-left text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-secondary)]"
                 >
