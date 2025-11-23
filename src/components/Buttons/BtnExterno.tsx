@@ -1,5 +1,4 @@
-import type { BtnExternoProps } from "../../types/button";
-
+import type { BtnExternoProps } from '../../types/button'
 
 /**
  * Botão para links externos
@@ -18,17 +17,9 @@ export default function BtnExterno({
       target={target}
       rel={target === '_blank' ? 'noopener noreferrer' : undefined}
       aria-label={ariaLabel}
-      className={`
-        inline-flex items-center justify-center
-        px-3 py-1.5
-        text-sm sm:text-base
-        bg-backBtn text-white font-bold rounded-md
-        transition-colors duration-300 hover:bg-hoverBtn
-        break-words whitespace-normal
-        ${className}
-      `}
+      className={`bg-backBtn hover:bg-hoverBtn inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-bold break-words whitespace-normal text-white transition-colors duration-300 sm:text-base ${className} `}
     >
       {children}
     </a>
-  );
+  )
 }

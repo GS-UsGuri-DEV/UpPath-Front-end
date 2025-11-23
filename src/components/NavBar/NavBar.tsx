@@ -94,10 +94,7 @@ export default function NavBar() {
             >
               Contato
             </Link>
-            <Link
-              to="/integrantes"
-              className="nav-btn"
-            >
+            <Link to="/integrantes" className="nav-btn">
               Integrantes
             </Link>
           </div>
@@ -232,10 +229,10 @@ export default function NavBar() {
                 </div>
                 <button
                   onClick={() => {
-                    closeMenu();
-                    nav('/perfil');
+                    closeMenu()
+                    nav('/perfil')
                   }}
-                  className="mb-2 mt-2 flex w-full items-center gap-2 rounded bg-[var(--bg-secondary)] px-3 py-2 text-left text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-tertiary)]"
+                  className="mt-2 mb-2 flex w-full items-center gap-2 rounded bg-[var(--bg-secondary)] px-3 py-2 text-left text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-tertiary)]"
                 >
                   <FaUser className="mr-2" /> Meu Perfil
                 </button>
