@@ -21,6 +21,14 @@ export default function Cadastro() {
   const { login, checkAuth } = useAuth()
 
   const type = watch('type') as 'usuario' | 'empresa' | undefined
+  const senhaValue = watch('senha') as string | undefined
+  const _senhaValue = senhaValue ?? ''
+  const senhaValidAll =
+    _senhaValue.length >= 8 &&
+    /[A-Z]/.test(_senhaValue) &&
+    /[a-z]/.test(_senhaValue) &&
+    /[0-9]/.test(_senhaValue) &&
+    /[^A-Za-z0-9]/.test(_senhaValue)
 
 
   function formatCNPJ(v: string) {
@@ -30,6 +38,18 @@ export default function Cadastro() {
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d)/, '$1/$2')
       .replace(/(\d{4})(\d{1,2})$/, '$1-$2')
+  }
+
+  function validatePassword(v?: string) {
+    if (!v) return 'Senha é obrigatória'
+    const misses: string[] = []
+    if (v.length < 8) misses.push('mínimo 8 caracteres')
+    if (!/[A-Z]/.test(v)) misses.push('uma letra maiúscula')
+    if (!/[a-z]/.test(v)) misses.push('uma letra minúscula')
+    if (!/[0-9]/.test(v)) misses.push('um número')
+    if (!/[^A-Za-z0-9]/.test(v)) misses.push('um caractere especial')
+    if (misses.length > 0) return 'Senha deve conter: ' + misses.join(', ')
+    return true
   }
 
   async function onSubmit(data: SignupFormData) {
@@ -234,6 +254,8 @@ export default function Cadastro() {
               {...register('nome_empresa', {
                 required: 'Nome da empresa é obrigatório',
               })}
+              error={(formState.errors as any).nome_empresa?.message as string | undefined}
+              isValid={!(formState.errors as any).nome_empresa && !!watch('nome_empresa')}
               required
             />
             <FormInput
@@ -247,6 +269,8 @@ export default function Cadastro() {
                   (v ? v.replace(/\D/g, '').length === 14 : false) ||
                   'CNPJ inválido',
               })}
+              error={(formState.errors as any).cnpj?.message as string | undefined}
+              isValid={!(formState.errors as any).cnpj && !!watch('cnpj')}
               required
             />
             <FormInput
@@ -259,6 +283,8 @@ export default function Cadastro() {
                   message: 'Email inválido',
                 },
               })}
+              error={(formState.errors as any).email_contato?.message as string | undefined}
+              isValid={!(formState.errors as any).email_contato && !!watch('email_contato')}
               required
             />
             <FormInput
@@ -266,16 +292,33 @@ export default function Cadastro() {
               placeholder="Sua Senha"
               type="password"
               {...register('senha', {
-                required: 'Senha é obrigatória',
-                minLength: { value: 8, message: 'Senha mínima 8 caracteres' },
-                pattern: {
-                  value: /(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])/,
-                  message:
-                    'Senha deve conter letras maiúsculas, minúsculas e números',
-                },
+                validate: validatePassword,
               })}
+              error={(formState.errors as any).senha?.message as string | undefined}
+              isValid={!(formState.errors as any).senha && !!watch('senha')}
               required
             />
+            {!senhaValidAll && (
+              <div className="password-requirements" style={{ fontSize: '0.875rem', marginTop: '0.375rem' }}>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <div style={{ color: (senhaValue && senhaValue.length >= 8) ? 'rgb(34 197 94)' : 'rgb(148 163 184)' }}>
+                    { (senhaValue && senhaValue.length >= 8) ? '✓' : '✗' } mínimo 8 caracteres
+                  </div>
+                  <div style={{ color: (senhaValue && /[A-Z]/.test(senhaValue)) ? 'rgb(34 197 94)' : 'rgb(148 163 184)' }}>
+                    { (senhaValue && /[A-Z]/.test(senhaValue)) ? '✓' : '✗' } letra maiúscula
+                  </div>
+                  <div style={{ color: (senhaValue && /[a-z]/.test(senhaValue)) ? 'rgb(34 197 94)' : 'rgb(148 163 184)' }}>
+                    { (senhaValue && /[a-z]/.test(senhaValue)) ? '✓' : '✗' } letra minúscula
+                  </div>
+                  <div style={{ color: (senhaValue && /[0-9]/.test(senhaValue)) ? 'rgb(34 197 94)' : 'rgb(148 163 184)' }}>
+                    { (senhaValue && /[0-9]/.test(senhaValue)) ? '✓' : '✗' } número
+                  </div>
+                  <div style={{ color: (senhaValue && /[^A-Za-z0-9]/.test(senhaValue)) ? 'rgb(34 197 94)' : 'rgb(148 163 184)' }}>
+                    { (senhaValue && /[^A-Za-z0-9]/.test(senhaValue)) ? '✓' : '✗' } caractere especial
+                  </div>
+                </div>
+              </div>
+            )}
             <FormInput
               label="Confirmar senha"
               placeholder="Confirme a Senha"
@@ -284,6 +327,8 @@ export default function Cadastro() {
                 validate: (v) =>
                   v === watch('senha') || 'As senhas não coincidem',
               })}
+              error={(formState.errors as any).confirmPassword?.message as string | undefined}
+              isValid={!(formState.errors as any).confirmPassword && !!watch('confirmPassword')}
               required
             />
           </>
@@ -293,6 +338,8 @@ export default function Cadastro() {
               label="Nome Completo"
               placeholder="Nome Completo"
               {...register('nome_completo', { required: 'Nome é obrigatório' })}
+              error={(formState.errors as any).nome_completo?.message as string | undefined}
+              isValid={!(formState.errors as any).nome_completo && !!watch('nome_completo')}
               required
             />
             {/* CPF removido */}
@@ -306,6 +353,8 @@ export default function Cadastro() {
                   message: 'Email inválido',
                 },
               })}
+              error={(formState.errors as any).email?.message as string | undefined}
+              isValid={!(formState.errors as any).email && !!watch('email')}
               required
             />
             <FormInput
@@ -313,16 +362,33 @@ export default function Cadastro() {
               placeholder="Sua Senha"
               type="password"
               {...register('senha', {
-                required: 'Senha é obrigatória',
-                minLength: { value: 8, message: 'Senha mínima 8 caracteres' },
-                pattern: {
-                  value: /(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])/,
-                  message:
-                    'Senha deve conter letras maiúsculas, minúsculas e números',
-                },
+                validate: validatePassword,
               })}
+              error={(formState.errors as any).senha?.message as string | undefined}
+              isValid={!(formState.errors as any).senha && !!watch('senha')}
               required
             />
+            {!senhaValidAll && (
+              <div className="password-requirements" style={{ fontSize: '0.875rem', marginTop: '0.375rem' }}>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <div style={{ color: (senhaValue && senhaValue.length >= 8) ? 'rgb(34 197 94)' : 'rgb(148 163 184)' }}>
+                    { (senhaValue && senhaValue.length >= 8) ? '✓' : '✗' } mínimo 8 caracteres
+                  </div>
+                  <div style={{ color: (senhaValue && /[A-Z]/.test(senhaValue)) ? 'rgb(34 197 94)' : 'rgb(148 163 184)' }}>
+                    { (senhaValue && /[A-Z]/.test(senhaValue)) ? '✓' : '✗' } letra maiúscula
+                  </div>
+                  <div style={{ color: (senhaValue && /[a-z]/.test(senhaValue)) ? 'rgb(34 197 94)' : 'rgb(148 163 184)' }}>
+                    { (senhaValue && /[a-z]/.test(senhaValue)) ? '✓' : '✗' } letra minúscula
+                  </div>
+                  <div style={{ color: (senhaValue && /[0-9]/.test(senhaValue)) ? 'rgb(34 197 94)' : 'rgb(148 163 184)' }}>
+                    { (senhaValue && /[0-9]/.test(senhaValue)) ? '✓' : '✗' } número
+                  </div>
+                  <div style={{ color: (senhaValue && /[^A-Za-z0-9]/.test(senhaValue)) ? 'rgb(34 197 94)' : 'rgb(148 163 184)' }}>
+                    { (senhaValue && /[^A-Za-z0-9]/.test(senhaValue)) ? '✓' : '✗' } caractere especial
+                  </div>
+                </div>
+              </div>
+            )}
             <FormInput
               label="Confirmar senha"
               placeholder="Confirme a Senha"
@@ -331,6 +397,8 @@ export default function Cadastro() {
                 validate: (v) =>
                   v === watch('senha') || 'As senhas não coincidem',
               })}
+              error={(formState.errors as any).confirmPassword?.message as string | undefined}
+              isValid={!(formState.errors as any).confirmPassword && !!watch('confirmPassword')}
               required
             />
             <FormInput
@@ -345,6 +413,8 @@ export default function Cadastro() {
               {...register('data_nascimento', {
                 required: 'Data de nascimento é obrigatória',
               })}
+              error={(formState.errors as any).data_nascimento?.message as string | undefined}
+              isValid={!(formState.errors as any).data_nascimento && !!watch('data_nascimento')}
               required
             />
             <FormInput
