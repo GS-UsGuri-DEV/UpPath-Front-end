@@ -93,7 +93,41 @@ export default function GamificationCard({
           'Estresse, Motivação e Sono devem ser números entre 0 e 10.',
         )
       }
+      const idUserCandidate =
+        (userData as any)?.id ??
+        (userData as any)?.ID ??
+        (userData as any)?.userId ??
+        (userData as any)?.idUser ??
+        (userData as any)?.$id ??
+        undefined
 
+      const parsedId = Number(idUserCandidate)
+      const idUser = Number.isFinite(parsedId) ? parsedId : undefined
+
+      const apiPayload: Record<string, unknown> = {
+        stressLevel: s,
+        motivationLevel: m,
+        sleepQuality: q,
+        observations: observation ?? '',
+      }
+      if (idUser !== undefined) apiPayload.idUser = idUser
+
+      const token = localStorage.getItem('authToken')
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+      if (token) headers['Authorization'] = `Bearer ${token}`
+
+      const resp = await fetch('https://uppath.onrender.com/wellBeing', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(apiPayload),
+      })
+
+      if (!resp.ok) {
+        const t = await resp.text().catch(() => '')
+        throw new Error(
+          `Falha ao enviar para API externa: ${resp.status} ${resp.statusText} ${t}`,
+        )
+      }
       const payload: Record<string, unknown> = {
         id_usuario: identifier || 'unknown',
         data_registro: new Date().toISOString(),
