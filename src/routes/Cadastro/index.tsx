@@ -1,5 +1,6 @@
 import { ID } from 'appwrite'
 import { useState, type ChangeEvent } from 'react'
+import SuccessMessage from '../../components/SuccessMessage'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import FormButton from '../../components/Form/FormButton'
@@ -9,6 +10,7 @@ import type { SignupFormData } from '../../types/auth'
 
 export default function Cadastro() {
   const [msg, setMsg] = useState('')
+  const [showSuccess, setShowSuccess] = useState(false)
   const nav = useNavigate()
 
   const { register, handleSubmit, formState, watch, setValue } =
@@ -88,10 +90,11 @@ export default function Cadastro() {
           companyPayload,
         )
 
-        // Empresa não cria usuário admin automaticamente
-        // A empresa terá seu próprio dashboard separado
-
-        nav('/dashboard-empresa')
+        setShowSuccess(true)
+        setTimeout(() => {
+          setShowSuccess(false)
+          nav('/dashboard-empresa')
+        }, 1800)
       } catch (e: unknown) {
         const msgText = e instanceof Error ? e.message : String(e)
         setMsg(msgText)
@@ -142,13 +145,16 @@ export default function Cadastro() {
         await db.createDocument(
           DB_ID,
           COLLECTION_USERS,
-          ID.unique(),
-          userPayload,
+          ID.unique(), // Sempre gera um id único para o usuário
+          userPayload, // id_empresa é apenas um campo comum
         )
 
         await new Promise((resolve) => setTimeout(resolve, 300))
-
-        nav('/questionario')
+        setShowSuccess(true)
+        setTimeout(() => {
+          setShowSuccess(false)
+          nav('/questionario')
+        }, 1800)
       } catch (e: unknown) {
         const msgText = e instanceof Error ? e.message : String(e)
         setMsg(msgText)
@@ -158,6 +164,14 @@ export default function Cadastro() {
 
   return (
     <div className="cadastro-bg">
+      {showSuccess && (
+        <SuccessMessage
+          message="Cadastro realizado com sucesso!"
+          onClose={() => {
+            setShowSuccess(false)
+          }}
+        />
+      )}
       <form onSubmit={handleSubmit(onSubmit)} className="cadastro-card">
         <h1 className="cadastro-title">Cadastro</h1>
         {msg && (
