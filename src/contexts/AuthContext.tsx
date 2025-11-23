@@ -206,6 +206,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return result
     } catch (err) {
+      try {
+        const emailParam = encodeURIComponent(loginEmail)
+        const resCompanies = await get(
+          `https://uppath.onrender.com/empresas?email=${emailParam}`,
+        )
+        let items: any[] = []
+        const rc: any = resCompanies
+        if (Array.isArray(rc)) items = rc
+        else if (rc?.data && Array.isArray(rc.data)) items = rc.data
+        else if (rc?.items && Array.isArray(rc.items)) items = rc.items
+        else if (rc) items = [rc]
+
+        const company = items.find((it) => {
+          if (!it) return false
+          const emailCandidates = [it.email, it.email_contato, it.emailContact]
+          return emailCandidates.some((c: any) => c && String(c).toLowerCase() === String(loginEmail).toLowerCase())
+        })
+
+        if (company) {
+          const companyPwd = company.senha ?? company.password ?? null
+          if (companyPwd && String(companyPwd) === String(password)) {
+            const normalized = {
+              id: company.idEmpresa ?? company.id ?? company.id_empresa ?? null,
+              name: company.name ?? company.nome_empresa ?? company.companyName ?? null,
+              email: company.email ?? company.email_contato ?? null,
+              admin: false,
+              idEmpresa: company.idEmpresa ?? company.id ?? company.id_empresa ?? null,
+            }
+
+            try {
+              localStorage.setItem('userData', JSON.stringify(normalized))
+            } catch {}
+
+            const su = {
+              name: normalized.name,
+              email: normalized.email,
+            }
+
+            setUser(su)
+            setUserData(normalized as any)
+            return normalized as unknown as UserData
+          }
+        }
+      } catch (e2) {
+        console.warn('Fallback empresa login failed', e2)
+      }
       throw err
     }
   }
