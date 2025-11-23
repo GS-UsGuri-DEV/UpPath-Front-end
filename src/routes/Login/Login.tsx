@@ -10,7 +10,7 @@ import type { LoginFormData } from '../../types/auth'
 export default function Login() {
   const [msg, setMsg] = useState('')
   const nav = useNavigate()
-  const { login } = useAuth()
+  const { login, userData } = useAuth()
 
   const { register, handleSubmit, formState, setValue, watch } =
     useForm<LoginFormData>({
@@ -63,6 +63,9 @@ export default function Login() {
         localStorage.removeItem('rememberedEmail')
         localStorage.removeItem('rememberedPassword')
       }
+
+      // Aguarda userData ser carregado
+      await new Promise((resolve) => setTimeout(resolve, 500))
 
       nav('/dashboard')
     } catch (e: unknown) {

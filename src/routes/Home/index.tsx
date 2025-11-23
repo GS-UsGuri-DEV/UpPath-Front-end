@@ -25,7 +25,7 @@ export default function Home() {
 
         <GamificationCard notification={true} />
       </div>
-      
+
       <Footer />
     </div>
   )
