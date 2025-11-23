@@ -39,8 +39,11 @@ export interface UserFormData {
 }
 
 export type SignupFormData =
-  | ({ type: 'empresa' } & CompanyFormData)
-  | ({ type: 'usuario' | 'admin' } & UserFormData & {
+  | ({ type: 'empresa' } & CompanyFormData & {
+        senha?: string
+        confirmPassword?: string
+      })
+  | ({ type: 'usuario' } & UserFormData & {
         senha?: string
         confirmPassword?: string
       })
