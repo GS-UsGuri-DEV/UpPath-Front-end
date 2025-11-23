@@ -138,10 +138,10 @@ export default function Dicas() {
         titulo: 'Sono',
         cor: 'blue',
         bgClass: 'bg-blue-50 dark:bg-blue-950/30',
-        borderClass: 'border-blue-200 dark:border-blue-800',
+        borderClass: 'border-blue-500 dark:border-blue-800',
         textClass: 'text-blue-700 dark:text-blue-300',
         badgeClass:
-          'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200',
+          'bg-blue-600 text-white dark:bg-blue-900/50 dark:text-blue-200',
       }
     } else if (categoria === 'estresse') {
       return {
@@ -149,10 +149,10 @@ export default function Dicas() {
         titulo: 'Estresse',
         cor: 'red',
         bgClass: 'bg-red-50 dark:bg-red-950/30',
-        borderClass: 'border-red-200 dark:border-red-800',
+        borderClass: 'border-red-500 dark:border-red-800',
         textClass: 'text-red-700 dark:text-red-300',
         badgeClass:
-          'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200',
+          'bg-red-600 text-white dark:bg-red-900/50 dark:text-red-200',
       }
     } else {
       return {
@@ -160,10 +160,10 @@ export default function Dicas() {
         titulo: 'Motivação',
         cor: 'green',
         bgClass: 'bg-green-50 dark:bg-green-950/30',
-        borderClass: 'border-green-200 dark:border-green-800',
+        borderClass: 'border-green-500 dark:border-green-800',
         textClass: 'text-green-700 dark:text-green-300',
         badgeClass:
-          'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200',
+          'bg-green-600 text-white dark:bg-green-900/50 dark:text-green-200',
       }
     }
   }
@@ -358,9 +358,9 @@ export default function Dicas() {
             </div>
 
             {/* Conteúdo da Dica */}
-            <div className="rounded-lg bg-white/50 p-4 sm:p-5 dark:bg-gray-900/50">
+            <div className="rounded-lg bg-white p-4 shadow-sm sm:p-5 dark:bg-gray-900/50">
               <p
-                className={`text-base leading-relaxed text-[var(--text-primary)] sm:text-lg ${dicaSelecionada.tipo === 'motivacional' ? 'text-justify' : ''}`}
+                className={`text-base leading-relaxed text-gray-800 sm:text-lg dark:text-gray-100 ${dicaSelecionada.tipo === 'motivacional' ? 'text-justify' : ''}`}
               >
                 {dicaSelecionada.conteudo}
               </p>
