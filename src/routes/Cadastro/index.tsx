@@ -20,7 +20,7 @@ export default function Cadastro() {
 
   const { login, checkAuth } = useAuth()
 
-  const type = watch('type') as 'usuario' | 'admin' | 'empresa' | undefined
+  const type = watch('type') as 'usuario' | 'empresa' | undefined
 
 
   function formatCNPJ(v: string) {
@@ -68,6 +68,7 @@ export default function Cadastro() {
           occupation: 'Administrador',
           gender: null,
           birthDate: new Date().toISOString().split('T')[0],
+          // backend espera um valor numérico não-nulo
           admin: 1,
         }
 
@@ -136,7 +137,7 @@ export default function Cadastro() {
           gender: user.genero ?? null,
           birthDate: user.data_nascimento ?? '',
           dateRegistered: new Date().toISOString(),
-          admin: data.type === 'admin' ? 1 : null,
+          admin: 0,
         }
 
         console.debug('POST /users payload:', userPayload)

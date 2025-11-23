@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from 'react'
 import { post, get } from '../api/client'
+import { db } from '../shared/appwrite'
 import type { AuthContextType, UserData, SimpleUser } from '../types/auth'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -184,11 +185,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    try {
-      const res = await post('https://uppath.onrender.com/login', {
-        email,
-        password,
-      })
+      try {
+        const res = await post('https://uppath.onrender.com/login', {
+          email: loginEmail,
+          password,
+        })
 
       const r = res as any
       const token = r?.token ?? r?.accessToken ?? r?.access_token ?? null
@@ -196,7 +197,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (token) {
         localStorage.setItem('authToken', String(token))
         try {
-          const minimal = { email }
+          const minimal = { email: loginEmail }
           localStorage.setItem('userData', JSON.stringify(minimal))
         } catch {
 
@@ -204,37 +205,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       let data: any = null
       try {
-        data = await fetchUserData(email)
+        data = await fetchUserData(loginEmail)
       } catch (e) {
       }
 
-      
+      let result: UserData | null = null
 
       if (data) {
-      const normalized = {
-        id: data.idUser,
-        name: data.name,
-        email: data.email,
-        birthDate: data.birthDate,
-        occupation: data.occupation,
-        nivelCarreira: data.nivelCarreira,
-        gender: data.gender,
-        admin: data.admin === 1,
-        idEmpresa: data.idEmpresa ?? null,
-        dateRegistered: data.dateRegistered ?? null,
+        const normalized = {
+          id: data.idUser,
+          name: data.name,
+          email: data.email,
+          birthDate: data.birthDate,
+          occupation: data.occupation,
+          nivelCarreira: data.nivelCarreira,
+          gender: data.gender,
+          admin: data.admin === 1,
+          idEmpresa: data.idEmpresa ?? null,
+          dateRegistered: data.dateRegistered ?? null,
+        }
+
+        localStorage.setItem('userData', JSON.stringify(normalized))
+
+        const su: SimpleUser = {
+          name: normalized.name,
+          email: normalized.email,
+        }
+
+        setUser(su)
+        setUserData(normalized)
+        result = normalized as unknown as UserData
       }
 
-      localStorage.setItem('userData', JSON.stringify(normalized))
-
-      const su: SimpleUser = {
-        name: normalized.name,
-        email: normalized.email,
-      }
-
-      setUser(su)
-      setUserData(normalized)
-      }
-
+      return result
     } catch (err) {
       throw err
     }
