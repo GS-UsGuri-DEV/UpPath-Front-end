@@ -101,6 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(currentUser)
     const data = await fetchUserData(email)
     setUserData(data)
+    return data
   }
 
   async function logout() {

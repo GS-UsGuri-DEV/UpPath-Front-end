@@ -1,16 +1,21 @@
 import { useEffect, useState, type ChangeEvent } from 'react'
 import { useForm } from 'react-hook-form'
-import { FaArrowRight, FaEye, FaEyeSlash } from 'react-icons/fa'
+import { FaArrowRight, FaEye, FaEyeSlash, FaTimes } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
 import FormButton from '../../components/Form/FormButton'
 import FormInput from '../../components/Form/FormInput'
 import { useAuth } from '../../contexts/useAuth'
+import { account } from '../../shared/appwrite'
 import type { LoginFormData } from '../../types/auth'
 
 export default function Login() {
   const [msg, setMsg] = useState('')
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetMsg, setResetMsg] = useState('')
+  const [resetSuccess, setResetSuccess] = useState(false)
   const nav = useNavigate()
-  const { login, userData } = useAuth()
+  const { login } = useAuth()
 
   const { register, handleSubmit, formState, setValue, watch } =
     useForm<LoginFormData>({
@@ -54,7 +59,7 @@ export default function Login() {
 
   async function onSubmit(data: LoginFormData) {
     try {
-      await login(data.email, data.password)
+      const loggedUserData = await login(data.email, data.password)
 
       if (remember) {
         localStorage.setItem('rememberedEmail', data.email)
@@ -64,13 +69,40 @@ export default function Login() {
         localStorage.removeItem('rememberedPassword')
       }
 
-      // Aguarda userData ser carregado
-      await new Promise((resolve) => setTimeout(resolve, 500))
-
-      nav('/dashboard')
+      // Verifica se é empresa e redireciona apropriadamente
+      const userDataObj = loggedUserData as unknown as Record<string, unknown>
+      if (userDataObj?.tipo_conta === 'empresa') {
+        nav('/dashboard-empresa')
+      } else {
+        nav('/')
+      }
     } catch (e: unknown) {
       const msgText = e instanceof Error ? e.message : String(e)
       setMsg(msgText)
+    }
+  }
+
+  async function handlePasswordRecovery(e: React.FormEvent) {
+    e.preventDefault()
+    setResetMsg('')
+    setResetSuccess(false)
+
+    if (!resetEmail || !resetEmail.includes('@')) {
+      setResetMsg('Por favor, insira um e-mail válido')
+      return
+    }
+
+    try {
+      const redirectUrl = `${window.location.origin}/login`
+      await account.createRecovery(resetEmail, redirectUrl)
+      setResetSuccess(true)
+      setResetMsg(
+        'E-mail de recuperação enviado! Verifique sua caixa de entrada.',
+      )
+    } catch (error) {
+      setResetMsg(
+        'Erro ao enviar e-mail de recuperação. Verifique o endereço e tente novamente.',
+      )
     }
   }
 
@@ -126,12 +158,13 @@ export default function Login() {
                 />
                 Lembrar-me
               </label>
-              <Link
-                to="#"
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
                 className="text-[var(--text-muted)] hover:text-[var(--text-primary)]"
               >
                 Esqueceu a senha?
-              </Link>
+              </button>
             </div>
           </div>
 
@@ -155,6 +188,89 @@ export default function Login() {
           </div>
         </form>
       </div>
+
+      {showForgotPassword && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-lg bg-[var(--bg-secondary)] p-6 shadow-xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-[var(--text-primary)]">
+                Recuperar Senha
+              </h2>
+              <button
+                onClick={() => {
+                  setShowForgotPassword(false)
+                  setResetMsg('')
+                  setResetEmail('')
+                  setResetSuccess(false)
+                }}
+                className="rounded p-1 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]"
+              >
+                <FaTimes size={20} />
+              </button>
+            </div>
+
+            {resetMsg && (
+              <div
+                className={`mb-4 rounded-lg p-3 text-sm ${
+                  resetSuccess
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                    : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                }`}
+              >
+                {resetMsg}
+              </div>
+            )}
+
+            {!resetSuccess ? (
+              <form onSubmit={handlePasswordRecovery}>
+                <p className="mb-4 text-sm text-[var(--text-secondary)]">
+                  Digite seu e-mail cadastrado. Enviaremos um link para você
+                  redefinir sua senha.
+                </p>
+                <input
+                  type="email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  placeholder="seu@email.com"
+                  className="mb-4 w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
+                  required
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowForgotPassword(false)
+                      setResetMsg('')
+                      setResetEmail('')
+                    }}
+                    className="flex-1 rounded-lg border border-[var(--border-color)] bg-[var(--bg-tertiary)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                  >
+                    Enviar Link
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <button
+                onClick={() => {
+                  setShowForgotPassword(false)
+                  setResetMsg('')
+                  setResetEmail('')
+                  setResetSuccess(false)
+                }}
+                className="w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+              >
+                Fechar
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

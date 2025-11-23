@@ -6,7 +6,7 @@ export interface AuthContextType {
   user: Models.User<Models.Preferences> | null
   userData: UserData | null
   loading: boolean
-  login: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string) => Promise<UserData | null>
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
 }
