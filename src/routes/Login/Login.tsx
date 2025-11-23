@@ -84,13 +84,7 @@ export default function Login() {
         localStorage.removeItem('rememberedPassword')
       }
 
-      // Verifica se é empresa e redireciona apropriadamente
-      const userDataObj = loggedUserData as unknown as Record<string, unknown>
-      if (userDataObj?.tipo_conta === 'empresa') {
-        nav('/dashboard-empresa')
-      } else {
-        nav('/')
-      }
+      nav('/')
     } catch (e: unknown) {
       const msgText = e instanceof Error ? e.message : String(e)
       setMsg(msgText)

@@ -1,11 +1,11 @@
-import { ID } from 'appwrite'
 import { useState, type ChangeEvent } from 'react'
 import SuccessMessage from '../../components/SuccessMessage'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import FormButton from '../../components/Form/FormButton'
 import FormInput from '../../components/Form/FormInput'
-import { account, db } from '../../shared/appwrite'
+import { post } from '../../api/client'
+import { useAuth } from '../../contexts/useAuth'
 import type { SignupFormData } from '../../types/auth'
 
 export default function Cadastro() {
@@ -18,15 +18,10 @@ export default function Cadastro() {
       defaultValues: { type: 'usuario' } as unknown as SignupFormData,
     })
 
-  const type = watch('type') as 'usuario' | 'empresa' | undefined
+  const { login, checkAuth } = useAuth()
 
-  function formatCPF(v: string) {
-    const digits = v.replace(/\D/g, '').slice(0, 11)
-    return digits
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-  }
+  const type = watch('type') as 'usuario' | 'admin' | 'empresa' | undefined
+
 
   function formatCNPJ(v: string) {
     const digits = v.replace(/\D/g, '').slice(0, 14)
@@ -38,18 +33,6 @@ export default function Cadastro() {
   }
 
   async function onSubmit(data: SignupFormData) {
-    const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
-    const COLLECTION_USERS = import.meta.env.VITE_APPWRITE_COLLECTION_USERS
-    const COLLECTION_COMPANIES = import.meta.env
-      .VITE_APPWRITE_COLLECTION_COMPANIES
-
-    if (!DB_ID || !COLLECTION_USERS || !COLLECTION_COMPANIES) {
-      setMsg(
-        'Configure VITE_APPWRITE_DATABASE_ID, VITE_APPWRITE_COLLECTION_USERS e VITE_APPWRITE_COLLECTION_COMPANIES no .env',
-      )
-      return
-    }
-
     if (data.type === 'empresa') {
       try {
         const company = data as SignupFormData & {
@@ -67,34 +50,52 @@ export default function Cadastro() {
           return
         }
 
-        try {
-          await account.deleteSession('current')
-        } catch {}
-
-        await account.create(ID.unique(), company.email_contato ?? '', senha)
-        await account.createEmailPasswordSession(
-          company.email_contato ?? '',
-          senha,
-        )
-
         const companyPayload = {
-          nome_empresa: company.nome_empresa ?? '',
+          name: company.nome_empresa ?? '',
           cnpj: company.cnpj ?? '',
-          email_contato: company.email_contato ?? '',
-          data_cadastro: new Date().toISOString(),
+          email: company.email_contato ?? '',
         }
-        await db.createDocument(
-          DB_ID,
-          COLLECTION_COMPANIES,
-          ID.unique(),
-          companyPayload,
-        )
 
-        setShowSuccess(true)
-        setTimeout(() => {
-          setShowSuccess(false)
-          nav('/dashboard-empresa')
-        }, 1800)
+        const companyRes = await post('https://uppath.onrender.com/empresas', companyPayload)
+        const companyId = (companyRes as any)?.idEmpresa ?? (companyRes as any)?.id ?? (companyRes as any)?.id_empresa
+
+        const adminPayload = {
+          idEmpresa: companyId ?? 0,
+          name: company.nome_empresa ?? '',
+          email: company.email_contato ?? '',
+          password: senha ?? '',
+          nivelCarreira: 'Admin',
+          occupation: 'Administrador',
+          gender: null,
+          birthDate: new Date().toISOString().split('T')[0],
+          admin: 1,
+        }
+
+        await post('https://uppath.onrender.com/users', adminPayload)
+        try {
+          await login(company.email_contato ?? '', senha ?? '')
+        } catch (err) {
+          console.warn('Login automático após criar empresa falhou, tentando fallback', err)
+          try {
+            const fallback = await post('https://uppath.onrender.com/login', {
+              email: company.email_contato ?? '',
+              password: senha ?? '',
+            }) as any
+            const token = fallback?.token ?? fallback?.accessToken ?? fallback?.access_token ?? null
+            const externalUser = fallback?.user ?? fallback?.data ?? null
+            if (token) {
+              localStorage.setItem('authToken', String(token))
+            }
+            if (externalUser) {
+              try { localStorage.setItem('userData', JSON.stringify(externalUser)) } catch {}
+            }
+            try { await checkAuth() } catch (e) { console.warn('checkAuth fallback failed', e) }
+          } catch (fallbackErr) {
+            console.warn('Fallback login também falhou', fallbackErr)
+          }
+        }
+
+        nav('/dashboard')
       } catch (e: unknown) {
         const msgText = e instanceof Error ? e.message : String(e)
         setMsg(msgText)
@@ -123,31 +124,47 @@ export default function Cadastro() {
       }
 
       try {
-        try {
-          await account.deleteSession('current')
-        } catch {}
-
-        await account.create(ID.unique(), user.email ?? '', senha)
-        await account.createEmailPasswordSession(user.email ?? '', senha)
+        const idEmpresaNumber = user.id_empresa ? Number(user.id_empresa) : 0
 
         const userPayload = {
-          id_empresa: user.id_empresa ?? null,
-          nome_completo: user.nome_completo ?? '',
+          idEmpresa: Number.isFinite(idEmpresaNumber) ? idEmpresaNumber : 0,
+          name: user.nome_completo ?? '',
           email: user.email ?? '',
-          cpf: user.cpf ?? '',
-          data_nascimento: user.data_nascimento ?? '',
-          nivel_carreira: user.nivel_carreira ?? null,
-          ocupacao: user.ocupacao ?? null,
-          genero: user.genero ?? null,
-          data_cadastro: new Date().toISOString(),
+          password: senha,
+          nivelCarreira: user.nivel_carreira ?? null,
+          occupation: user.ocupacao ?? null,
+          gender: user.genero ?? null,
+          birthDate: user.data_nascimento ?? '',
+          dateRegistered: new Date().toISOString(),
+          admin: data.type === 'admin' ? 1 : null,
         }
 
-        await db.createDocument(
-          DB_ID,
-          COLLECTION_USERS,
-          ID.unique(), // Sempre gera um id único para o usuário
-          userPayload, // id_empresa é apenas um campo comum
-        )
+        console.debug('POST /users payload:', userPayload)
+        const createdUser = await post('https://uppath.onrender.com/users', userPayload)
+        console.debug('POST /users response:', createdUser)
+
+        try {
+          await login(user.email ?? '', senha ?? '')
+        } catch (err) {
+          console.warn('Login automático após criar usuário falhou, tentando fallback', err)
+          try {
+            const fallback = await post('https://uppath.onrender.com/login', {
+              email: user.email ?? '',
+              password: senha ?? '',
+            }) as any
+            const token = fallback?.token ?? fallback?.accessToken ?? fallback?.access_token ?? null
+            const externalUser = fallback?.user ?? fallback?.data ?? null
+            if (token) {
+              localStorage.setItem('authToken', String(token))
+            }
+            if (externalUser) {
+              try { localStorage.setItem('userData', JSON.stringify(externalUser)) } catch {}
+            }
+            try { await checkAuth() } catch (e) { console.warn('checkAuth fallback failed', e) }
+          } catch (fallbackErr) {
+            console.warn('Fallback login também falhou', fallbackErr)
+          }
+        }
 
         await new Promise((resolve) => setTimeout(resolve, 300))
         setShowSuccess(true)
@@ -274,19 +291,7 @@ export default function Cadastro() {
               {...register('nome_completo', { required: 'Nome é obrigatório' })}
               required
             />
-            <FormInput
-              label="CPF"
-              placeholder="000.000.000-00"
-              {...register('cpf', {
-                required: 'CPF é obrigatório',
-                onChange: (e: ChangeEvent<HTMLInputElement>) =>
-                  setValue('cpf', formatCPF(e.target.value)),
-                validate: (v) =>
-                  (v ? v.replace(/\D/g, '').length === 11 : false) ||
-                  'CPF inválido',
-              })}
-              required
-            />
+            {/* CPF removido */}
             <FormInput
               label="Email"
               placeholder="E-mail"

@@ -1,47 +1,39 @@
-import type { Models } from 'appwrite'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+
 import ChangePassword from '../../components/Perfil/ChangePassword'
 import ProfileCard from '../../components/Perfil/ProfileCard'
 import UploadProfileImage from '../../components/Perfil/UploadProfileImage'
 import Spinner from '../../components/Spinner/Spinner'
 import { useAuth } from '../../contexts/useAuth'
-import { account } from '../../shared/appwrite'
 
 export default function Perfil() {
-  const [me, setMe] = useState<Models.User<Models.Preferences> | null>(null)
-  const [loading, setLoading] = useState(true)
   const [fileUrl, setFileUrl] = useState<string | undefined>()
-  const nav = useNavigate()
-  const { userData } = useAuth()
+  const { userData, loading } = useAuth()
 
-  useEffect(() => {
-    setLoading(true)
-    account
-      .get()
-      .then((user) => {
-        setMe(user)
-        setLoading(false)
-      })
-      .catch(() => {
-        setLoading(false)
-        console.error('Erro ao carregar usuário')
-      })
-  }, [nav])
 
-  const displayName = String(
-    userData?.nome_completo ??
-      ((me as unknown as Record<string, unknown>)?.name as string) ??
-      '—',
-  )
-  const displayEmail = String(
-    ((me as unknown as Record<string, unknown>)?.email as string) ??
-      userData?.email ??
-      '—',
-  )
-  const profileImage = String(
-    (userData && (userData.profile_image as unknown)) ?? fileUrl ?? '',
-  )
+  const displayName = (userData as any)?.nome_completo ?? (userData as any)?.name ?? '—'
+  const displayEmail = String(userData?.email ?? '—')
+  const profileImage = String((userData && (userData.profile_image as unknown)) ?? fileUrl ?? '')
+
+  const nivelCarreira = (userData as any)?.nivel_carreira ?? (userData as any)?.nivelCarreira ?? '—'
+  const occupation = (userData as any)?.ocupacao ?? (userData as any)?.occupation ?? '—'
+  const gender = (userData as any)?.genero ?? (userData as any)?.gender ?? '—'
+  const dateRegistered = (userData as any)?.data_cadastro ?? (userData as any)?.dateRegistered ?? (userData as any)?.dateRegistered ?? ''
+
+  function fmtDate(d: string | undefined) {
+    if (!d) return '—'
+    try {
+      const s = String(d)
+      const iso = s.split('T')[0]
+      const parts = iso.split('-')
+      if (parts.length >= 3) return `${parts[2]}/${parts[1]}/${parts[0]}`
+      const dd = new Date(d)
+      if (Number.isNaN(dd.getTime())) return d
+      return dd.toLocaleDateString()
+    } catch {
+      return d
+    }
+  }
 
   if (loading) {
     return (
@@ -65,6 +57,16 @@ export default function Perfil() {
         />
 
         <UploadProfileImage onUploadSuccess={(url) => setFileUrl(url)} />
+
+        <section className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4">
+          <h3 className="mb-2 font-semibold text-[var(--text-primary)]">Detalhes</h3>
+          <div className="grid grid-cols-1 gap-2 text-[var(--text-secondary)]">
+            <div><strong>Carreira:</strong> {nivelCarreira}</div>
+            <div><strong>Ocupação:</strong> {occupation}</div>
+            <div><strong>Gênero:</strong> {gender}</div>
+            <div><strong>Data de cadastro:</strong> {fmtDate(dateRegistered)}</div>
+          </div>
+        </section>
 
         <ChangePassword />
       </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../contexts/useAuth'
-import { db } from '../../shared/appwrite'
+import { put, get } from '../../api/client'
 
 import type { ProfileCardProps } from '../../types/profile'
 
@@ -12,51 +12,103 @@ export default function ProfileCard({
   const { userData, checkAuth } = useAuth()
   const [editMode, setEditMode] = useState(false)
   const [editNome, setEditNome] = useState('')
+  const [editEmail, setEditEmail] = useState('')
   const [editDataNasc, setEditDataNasc] = useState('')
   const [editMessage, setEditMessage] = useState<string | null>(null)
 
   const formatDate = (dateStr: string | undefined | null) => {
     if (!dateStr) return '—'
     try {
-      return dateStr.split('T')[0]
+      const d = String(dateStr).split('T')[0]
+      const parts = d.split('-')
+      if (parts.length >= 3) return `${parts[2]}/${parts[1]}/${parts[0]}`
+      return d
     } catch {
       return dateStr
     }
   }
 
+  function findDateField(obj: any) {
+    if (!obj) return ''
+    const candidates = [
+      'data_nascimento',
+      'dataNasc',
+      'dataNascimento',
+      'birthDate',
+      'birthdate',
+      'birth_date',
+      'nascimento',
+    ]
+    for (const k of candidates) {
+      if (obj[k]) return obj[k]
+    }
+    for (const key of Object.keys(obj)) {
+      if (/birth|nasc/i.test(key) && obj[key]) return obj[key]
+    }
+    return ''
+  }
+
+  function toDateInput(value: string | undefined | null) {
+    if (!value) return ''
+    const v = String(value).trim()
+    if (/^\d{4}-\d{2}-\d{2}/.test(v)) return v.split('T')[0]
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(v)) {
+      const [d, m, y] = v.split('/')
+      return `${y}-${m}-${d}`
+    }
+    const dt = new Date(v)
+    if (!Number.isNaN(dt.getTime())) return dt.toISOString().slice(0, 10)
+    return ''
+  }
+
   useEffect(() => {
     if (userData) {
-      setEditNome(
-        String(
-          (userData as unknown as Record<string, unknown>)?.nome_completo ?? '',
-        ),
-      )
-      setEditDataNasc(
-        formatDate(
-          String(
-            (userData as unknown as Record<string, unknown>)?.data_nascimento ??
-              '',
-          ),
-        ),
-      )
+      setEditNome(String((userData as unknown as Record<string, unknown>)?.nome_completo ?? (userData as any)?.name ?? ''))
+      setEditEmail(String((userData as unknown as Record<string, unknown>)?.email ?? (userData as any)?.email ?? ''))
+      const rawDate = findDateField(userData as any)
+      setEditDataNasc(toDateInput(String(rawDate)))
     }
   }, [userData])
 
   async function handleSaveProfile(e: React.FormEvent) {
     e.preventDefault()
     setEditMessage(null)
-    if (!userData?.$id) {
-      setEditMessage('Documento do usuário não encontrado')
+    const u = userData as unknown as Record<string, any>
+    const id = u?.id_usuario ?? u?.id ?? u?._id ?? u?.idUser ?? u?.id_user
+    if (!id) {
+      setEditMessage('ID do usuário não encontrado')
       return
     }
+
     try {
-      const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
-      const COLLECTION_USERS = import.meta.env.VITE_APPWRITE_COLLECTION_USERS
-      await db.updateDocument(DB_ID, COLLECTION_USERS, userData.$id, {
-        nome_completo: editNome,
-        data_nascimento: editDataNasc,
-      })
-      setEditMessage('Perfil atualizado com sucesso!')
+      const token = localStorage.getItem('authToken')
+      const headers = token ? { Authorization: `Bearer ${token}` } : undefined
+
+      const payload: Record<string, unknown> = {
+        name: editNome,
+        email: editEmail,
+        birthDate: editDataNasc,
+      }
+
+      console.debug('PUT /users/{id} payload:', { id, payload, headers })
+      const putRes = await put(`https://uppath.onrender.com/users/${id}`, payload, headers)
+      console.debug('PUT /users/{id} response:', putRes)
+
+      try {
+        const updated = await get(`https://uppath.onrender.com/users/${id}`, headers)
+        console.debug('GET /users/{id} response:', updated)
+        if (updated) {
+          localStorage.setItem('userData', JSON.stringify(updated))
+        }
+      } catch (e) {
+        console.warn('Could not fetch updated user after save', e)
+      }
+
+      setEditMessage(
+        typeof putRes === 'object'
+          ? `Perfil atualizado com sucesso! (id: ${id})`
+          : `${String(putRes ?? 'Perfil atualizado')} (id: ${id})`,
+      )
       setEditMode(false)
       await checkAuth()
     } catch (err) {
@@ -96,9 +148,12 @@ export default function ProfileCard({
           <form onSubmit={handleSaveProfile} className="mt-3 space-y-2">
             <div>
               <label className="text-xs font-medium">Email:</label>
-              <p className="text-sm text-[var(--text-secondary)]">
-                {displayEmail}
-              </p>
+              <input
+                type="email"
+                value={editEmail}
+                onChange={(e) => setEditEmail(e.target.value)}
+                className="w-full rounded border border-[var(--input-border)] p-2 text-sm"
+              />
             </div>
             <div>
               <label className="text-xs font-medium">Nome Completo:</label>
@@ -147,12 +202,7 @@ export default function ProfileCard({
               </div>
               <div>
                 <span className="font-medium">Data de Nascimento:</span>{' '}
-                {formatDate(
-                  String(
-                    (userData as unknown as Record<string, unknown>)
-                      ?.data_nascimento ?? '',
-                  ),
-                )}
+                {formatDate(String(findDateField(userData as any) ?? ''))}
               </div>
             </div>
             <button

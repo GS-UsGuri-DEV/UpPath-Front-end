@@ -12,8 +12,10 @@ import Home from './routes/Home'
 import Login from './routes/Login/Login'
 import Perfil from './routes/Perfil/Perfil'
 import Protected from './routes/Protected/Protected'
-import ProtectedCompany from './routes/ProtectedCompany/ProtectedCompany'
-import Questionario from './routes/Questionario'
+import ProtectedAdmin from './routes/ProtectedAdmin/ProtectedAdmin'
+import Contato from './routes/Contato'
+import FAQ from './routes/FAQ'
+import Integrantes from './routes/integrantes/integrantes'
 
 export default function App() {
   const location = useLocation()
@@ -39,7 +41,8 @@ export default function App() {
         <Route element={<ProtectedCompany />}>
           <Route path="/dashboard-empresa" element={<DashboardEmpresa />} />
         </Route>
-        <Route path="*" element={<Error404 />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/integrantes*" element={<Integrantes />} />
       </Routes>
     </div>
   )
