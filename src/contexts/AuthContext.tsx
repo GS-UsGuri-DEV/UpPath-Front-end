@@ -1,4 +1,3 @@
-import type { Models } from 'appwrite'
 import {
   createContext,
   useCallback,
@@ -6,50 +5,103 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { account, db } from '../shared/appwrite'
-import { post } from '../api/client'
-import type { AuthContextType, UserData } from '../types/auth'
+import { post, get } from '../api/client'
+import type { AuthContextType, UserData, SimpleUser } from '../types/auth'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export { AuthContext }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<Models.User<Models.Preferences> | null>(null)
+  const [user, setUser] = useState<SimpleUser | null>(null)
   const [userData, setUserData] = useState<UserData | null>(null)
   const [loading, setLoading] = useState(true)
 
   async function fetchUserData(email: string) {
-    const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
-    const COLLECTION_USERS = import.meta.env.VITE_APPWRITE_COLLECTION_USERS
-
-    if (!DB_ID || !COLLECTION_USERS) {
-      console.warn('Database config missing')
-      return null
-    }
-
     try {
-      const response = await db.listDocuments(DB_ID, COLLECTION_USERS)
-      const userDoc = response.documents.find((doc: Models.Document) => {
-        const d = doc as any
-        return d.email === email
-      }) as UserData | undefined
+      const token = localStorage.getItem('authToken')
+      const headers = token ? { Authorization: `Bearer ${token}` } : undefined
 
-      return userDoc ?? null
+      const res = await get(
+        `https://uppath.onrender.com/users?email=${encodeURIComponent(email)}`,
+        headers,
+      )
+
+
+      const r: any = res
+      let items: any[] = []
+      if (Array.isArray(r)) items = r
+      else if (r?.data && Array.isArray(r.data)) items = r.data
+      else if (r?.users && Array.isArray(r.users)) items = r.users
+      else if (r) items = [r]
+
+      if (items.length === 0) return null
+
+      const lowerEmail = String(email ?? '').toLowerCase()
+      const matcher = (it: any) => {
+        if (!it) return false
+        const candidates = [it.email]
+        for (const c of candidates) {
+          if (!c) continue
+          if (String(c).toLowerCase() === lowerEmail) return true
+        }
+        return false
+      }
+
+      let first = items.find(matcher) ?? items[0]
+      const id = first.idUser
+      if (id != null) {
+        try {
+          const full = await get(`https://uppath.onrender.com/users/${id}`, headers)
+          const normalized = { ...(full as any), id: id }
+          return normalized as UserData
+        } catch (e) {
+          console.warn('Could not fetch full user by id, returning first match', e)
+          const normalizedFirst = { ...first, id }
+          return normalizedFirst as UserData
+        }
+      }
+
+      return {
+      ...first,
+      id: first.idUser ?? null
+      } as UserData
+
     } catch (error) {
-      console.error('Error fetching user data:', error)
       return null
     }
   }
 
   const checkAuth = useCallback(async () => {
     try {
-      const currentUser = await account.get()
-      setUser(currentUser)
-
-      const data = await fetchUserData(currentUser.email)
-      setUserData(data)
-    } catch {
+      const token = localStorage.getItem('authToken')
+      const stored = localStorage.getItem('userData')
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored) as UserData
+          setUserData(parsed)
+          const su: SimpleUser = {
+            name: (parsed as any)?.nome_completo ?? (parsed as any)?.name,
+            email: (parsed as any)?.email ?? undefined,
+          }
+          setUser(su)
+        } catch (e) {
+          if (token) {
+            setUser({ name: undefined, email: undefined })
+            setUserData(null)
+          } else {
+            setUser(null)
+            setUserData(null)
+          }
+        }
+      } else if (token) {
+        setUser({ name: undefined, email: undefined })
+        setUserData(null)
+      } else {
+        setUser(null)
+        setUserData(null)
+      }
+    } catch (e) {
       setUser(null)
       setUserData(null)
     } finally {
@@ -65,23 +117,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
 
       const r = res as any
-      const token =
-        r?.token ?? r?.accessToken ?? r?.access_token ?? null
-
-      const externalUser = r?.user ?? r?.data ?? null
+      const token = r?.token ?? r?.accessToken ?? r?.access_token ?? null
 
       if (token) {
         localStorage.setItem('authToken', String(token))
+        try {
+          const minimal = { email }
+          localStorage.setItem('userData', JSON.stringify(minimal))
+        } catch {
+
+        }
+      }
+      let data: any = null
+      try {
+        data = await fetchUserData(email)
+      } catch (e) {
       }
 
-  
-      await account.createEmailPasswordSession(email, password)
+      
 
-      const currentUser = await account.get()
-      setUser(currentUser)
+      if (data) {
+      const normalized = {
+        id: data.idUser,
+        name: data.name,
+        email: data.email,
+        birthDate: data.birthDate,
+        occupation: data.occupation,
+        nivelCarreira: data.nivelCarreira,
+        gender: data.gender,
+        admin: data.admin ?? null,
+        idEmpresa: data.idEmpresa ?? null,
+        dateRegistered: data.dateRegistered ?? null,
+      }
 
-      const data = await fetchUserData(email)
-      setUserData(data ?? externalUser ?? null)
+      localStorage.setItem('userData', JSON.stringify(normalized))
+
+      const su: SimpleUser = {
+        name: normalized.name,
+        email: normalized.email,
+      }
+
+      setUser(su)
+      setUserData(normalized)
+      }
 
     } catch (err) {
       throw err
@@ -89,12 +167,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function logout() {
-    try {
-      await account.deleteSession('current')
-    } catch {}
-
     localStorage.removeItem('authToken')
-
+    localStorage.removeItem('userData')
     setUser(null)
     setUserData(null)
   }
