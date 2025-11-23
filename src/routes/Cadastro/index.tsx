@@ -1,5 +1,6 @@
 import { ID } from 'appwrite'
 import { useState, type ChangeEvent } from 'react'
+import SuccessMessage from '../../components/SuccessMessage'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import FormButton from '../../components/Form/FormButton'
@@ -9,6 +10,7 @@ import type { SignupFormData } from '../../types/auth'
 
 export default function Cadastro() {
   const [msg, setMsg] = useState('')
+  const [showSuccess, setShowSuccess] = useState(false)
   const nav = useNavigate()
 
   const { register, handleSubmit, formState, watch, setValue } =
@@ -16,7 +18,7 @@ export default function Cadastro() {
       defaultValues: { type: 'usuario' } as unknown as SignupFormData,
     })
 
-  const type = watch('type') as 'usuario' | 'admin' | 'empresa' | undefined
+  const type = watch('type') as 'usuario' | 'empresa' | undefined
 
   function formatCPF(v: string) {
     const digits = v.replace(/\D/g, '').slice(0, 11)
@@ -81,29 +83,18 @@ export default function Cadastro() {
           email_contato: company.email_contato ?? '',
           data_cadastro: new Date().toISOString(),
         }
-        const companyDoc = await db.createDocument(
+        await db.createDocument(
           DB_ID,
           COLLECTION_COMPANIES,
           ID.unique(),
           companyPayload,
         )
 
-        const adminPayload = {
-          id_empresa: companyDoc.$id,
-          nome_completo: company.nome_empresa ?? '',
-          email: company.email_contato ?? '',
-          cpf: '',
-          is_admin: true,
-          data_cadastro: new Date().toISOString(),
-        }
-        await db.createDocument(
-          DB_ID,
-          COLLECTION_USERS,
-          ID.unique(),
-          adminPayload,
-        )
-
-        nav('/dashboard')
+        setShowSuccess(true)
+        setTimeout(() => {
+          setShowSuccess(false)
+          nav('/dashboard-empresa')
+        }, 1800)
       } catch (e: unknown) {
         const msgText = e instanceof Error ? e.message : String(e)
         setMsg(msgText)
@@ -111,7 +102,7 @@ export default function Cadastro() {
       return
     }
 
-    if (data.type === 'usuario' || data.type === 'admin') {
+    if (data.type === 'usuario') {
       const user = data as SignupFormData & {
         email?: string
         senha?: string
@@ -144,7 +135,6 @@ export default function Cadastro() {
           nome_completo: user.nome_completo ?? '',
           email: user.email ?? '',
           cpf: user.cpf ?? '',
-          is_admin: data.type === 'admin',
           data_nascimento: user.data_nascimento ?? '',
           nivel_carreira: user.nivel_carreira ?? null,
           ocupacao: user.ocupacao ?? null,
@@ -155,13 +145,16 @@ export default function Cadastro() {
         await db.createDocument(
           DB_ID,
           COLLECTION_USERS,
-          ID.unique(),
-          userPayload,
+          ID.unique(), // Sempre gera um id único para o usuário
+          userPayload, // id_empresa é apenas um campo comum
         )
 
         await new Promise((resolve) => setTimeout(resolve, 300))
-
-        nav('/questionario')
+        setShowSuccess(true)
+        setTimeout(() => {
+          setShowSuccess(false)
+          nav('/questionario')
+        }, 1800)
       } catch (e: unknown) {
         const msgText = e instanceof Error ? e.message : String(e)
         setMsg(msgText)
@@ -171,6 +164,14 @@ export default function Cadastro() {
 
   return (
     <div className="cadastro-bg">
+      {showSuccess && (
+        <SuccessMessage
+          message="Cadastro realizado com sucesso!"
+          onClose={() => {
+            setShowSuccess(false)
+          }}
+        />
+      )}
       <form onSubmit={handleSubmit(onSubmit)} className="cadastro-card">
         <h1 className="cadastro-title">Cadastro</h1>
         {msg && (
@@ -192,15 +193,6 @@ export default function Cadastro() {
               defaultChecked
             />
             Usuário
-          </label>
-          <label className="radio-label">
-            <input
-              type="radio"
-              value="admin"
-              className="radio-input"
-              {...register('type')}
-            />
-            Admin
           </label>
           <label className="radio-label">
             <input

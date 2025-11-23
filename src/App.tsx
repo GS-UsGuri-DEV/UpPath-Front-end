@@ -1,17 +1,18 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import NavBar from './components/NavBar/NavBar'
-import AdminPanel from './routes/AdminPanel'
 import Cadastro from './routes/Cadastro'
 import Contato from './routes/Contato'
 import Cursos from './routes/Cursos'
 import Dashboard from './routes/Dashboard/Dashboard'
+import DashboardEmpresa from './routes/DashboardEmpresa'
 import Dicas from './routes/Dicas'
+import Error404 from './routes/Error'
 import FAQ from './routes/FAQ'
 import Home from './routes/Home'
 import Login from './routes/Login/Login'
 import Perfil from './routes/Perfil/Perfil'
 import Protected from './routes/Protected/Protected'
-import ProtectedAdmin from './routes/ProtectedAdmin/ProtectedAdmin'
+import ProtectedCompany from './routes/ProtectedCompany/ProtectedCompany'
 import Questionario from './routes/Questionario'
 
 export default function App() {
@@ -35,10 +36,10 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/perfil" element={<Perfil />} />
         </Route>
-        <Route element={<ProtectedAdmin />}>
-          <Route path="/admin" element={<AdminPanel />} />
+        <Route element={<ProtectedCompany />}>
+          <Route path="/dashboard-empresa" element={<DashboardEmpresa />} />
         </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Error404 />} />
       </Routes>
     </div>
   )
