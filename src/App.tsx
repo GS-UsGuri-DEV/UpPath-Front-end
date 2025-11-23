@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import NavBar from './components/NavBar/NavBar'
 import Cadastro from './routes/Cadastro'
 import Contato from './routes/Contato'
