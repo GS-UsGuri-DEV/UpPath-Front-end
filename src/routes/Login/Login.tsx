@@ -5,15 +5,21 @@ import { Link, useNavigate } from 'react-router-dom'
 import FormButton from '../../components/Form/FormButton'
 import FormInput from '../../components/Form/FormInput'
 import { useAuth } from '../../contexts/useAuth'
-import { account } from '../../shared/appwrite'
+import { account, db } from '../../shared/appwrite'
 import type { LoginFormData } from '../../types/auth'
 
 export default function Login() {
   const [msg, setMsg] = useState('')
   const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [accountType, setAccountType] = useState<'usuario' | 'empresa'>('usuario')
   const [resetEmail, setResetEmail] = useState('')
+  const [resetCpf, setResetCpf] = useState('')
+  const [resetBirthdate, setResetBirthdate] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [resetMsg, setResetMsg] = useState('')
   const [resetSuccess, setResetSuccess] = useState(false)
+  const [verificationStep, setVerificationStep] = useState(1)
   const nav = useNavigate()
   const { login } = useAuth()
 
@@ -33,13 +39,22 @@ export default function Login() {
 
     if (/@/.test(raw) || /[A-Za-z]/.test(raw)) return raw
 
-    const digits = raw.replace(/\D/g, '').slice(0, 11)
+    const digits = raw.replace(/\D/g, '').slice(0, 14)
     if (digits.length === 0) return ''
 
-    return digits
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+    // Formata como CPF (11 dígitos) ou CNPJ (14 dígitos)
+    if (digits.length <= 11) {
+      return digits
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+    } else {
+      return digits
+        .replace(/(\d{2})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1/$2')
+        .replace(/(\d{4})(\d{1,2})$/, '$1-$2')
+    }
   }
 
   function handleEmailChange(e: ChangeEvent<HTMLInputElement>) {
@@ -82,27 +97,137 @@ export default function Login() {
     }
   }
 
-  async function handlePasswordRecovery(e: React.FormEvent) {
+  async function handleVerifyData(e: React.FormEvent) {
     e.preventDefault()
     setResetMsg('')
-    setResetSuccess(false)
 
     if (!resetEmail || !resetEmail.includes('@')) {
       setResetMsg('Por favor, insira um e-mail válido')
       return
     }
 
+    const cpfCnpjClean = resetCpf.replace(/\D/g, '')
+    if (!resetCpf || (cpfCnpjClean.length !== 11 && cpfCnpjClean.length !== 14)) {
+      setResetMsg('Por favor, insira um CPF ou CNPJ válido')
+      return
+    }
+
+    if (accountType === 'usuario' && !resetBirthdate) {
+      setResetMsg('Por favor, insira sua data de nascimento')
+      return
+    }
+
     try {
-      const redirectUrl = `${window.location.origin}/login`
-      await account.createRecovery(resetEmail, redirectUrl)
-      setResetSuccess(true)
-      setResetMsg(
-        'E-mail de recuperação enviado! Verifique sua caixa de entrada.',
-      )
+      const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
+
+      if (accountType === 'empresa') {
+        const COLLECTION_COMPANIES = import.meta.env.VITE_APPWRITE_COLLECTION_COMPANIES
+        const response = await db.listDocuments(DB_ID, COLLECTION_COMPANIES)
+        const companyDoc = response.documents.find((doc) => {
+          const d = doc as unknown as Record<string, unknown>
+          return (
+            d.email_contato === resetEmail &&
+            d.cnpj === cpfCnpjClean
+          )
+        })
+
+        if (companyDoc) {
+          setVerificationStep(2)
+          setResetMsg('')
+        } else {
+          setResetMsg('Dados não conferem. Verifique as informações e tente novamente.')
+        }
+      } else {
+        const COLLECTION_USERS = import.meta.env.VITE_APPWRITE_COLLECTION_USERS
+        const response = await db.listDocuments(DB_ID, COLLECTION_USERS)
+        
+        console.log('Total documentos:', response.documents.length)
+        console.log('Buscando:', JSON.stringify({ 
+          email: resetEmail, 
+          cpf: cpfCnpjClean, 
+          data: resetBirthdate 
+        }))
+        
+        const userDoc = response.documents.find((doc) => {
+          const d = doc as unknown as Record<string, unknown>
+          const docDate = typeof d.data_nascimento === 'string'
+            ? d.data_nascimento.split('T')[0]
+            : d.data_nascimento
+
+          // Normaliza CPF para comparar só números
+          const docCpf = typeof d.cpf === 'string' ? d.cpf.replace(/\D/g, '') : d.cpf
+
+          console.log('Comparando:', JSON.stringify({
+            doc_email: d.email,
+            doc_cpf: d.cpf,
+            doc_cpf_normalizado: docCpf,
+            doc_data: docDate,
+            match_email: d.email === resetEmail,
+            match_cpf: docCpf === cpfCnpjClean,
+            match_data: docDate === resetBirthdate
+          }))
+
+          return (
+            d.email === resetEmail &&
+            docCpf === cpfCnpjClean &&
+            docDate === resetBirthdate
+          )
+        })
+
+        console.log('Encontrou?', !!userDoc)
+
+        if (userDoc) {
+          setVerificationStep(2)
+          setResetMsg('')
+        } else {
+          setResetMsg('Dados não conferem. Verifique as informações e tente novamente.')
+        }
+      }
     } catch (error) {
-      setResetMsg(
-        'Erro ao enviar e-mail de recuperação. Verifique o endereço e tente novamente.',
-      )
+      setResetMsg('Erro ao verificar dados. Tente novamente.')
+    }
+  }
+
+  async function handleChangePassword(e: React.FormEvent) {
+    e.preventDefault()
+    setResetMsg('')
+
+    if (newPassword.length < 8) {
+      setResetMsg('A senha deve ter no mínimo 8 caracteres')
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      setResetMsg('As senhas não conferem')
+      return
+    }
+
+    try {
+      const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
+
+      if (accountType === 'empresa') {
+        const COLLECTION_COMPANIES = import.meta.env.VITE_APPWRITE_COLLECTION_COMPANIES
+        const response = await db.listDocuments(DB_ID, COLLECTION_COMPANIES)
+        const companyDoc = response.documents.find((doc) => {
+          const d = doc as unknown as Record<string, unknown>
+          return d.email_contato === resetEmail
+        })
+
+        if (companyDoc) {
+          await db.updateDocument(DB_ID, COLLECTION_COMPANIES, companyDoc.$id, {
+            senha: newPassword
+          })
+          setResetSuccess(true)
+          setResetMsg('Senha alterada com sucesso!')
+        }
+      } else {
+        // Usuário: alterar senha via Appwrite Account
+        await account.updatePassword(newPassword)
+        setResetSuccess(true)
+        setResetMsg('Senha alterada com sucesso!')
+      }
+    } catch (error) {
+      setResetMsg('Erro ao alterar senha. Tente novamente.')
     }
   }
 
@@ -120,10 +245,10 @@ export default function Login() {
           )}
 
           <FormInput
-            label="CPF ou E-mail"
-            placeholder="CPF ou e-mail"
+            label="CPF, CNPJ ou E-mail"
+            placeholder="CPF, CNPJ ou e-mail"
             {...register('email', {
-              required: 'CPF ou email é obrigatório',
+              required: 'CPF, CNPJ ou email é obrigatório',
               onChange: handleEmailChange,
             })}
             error={errors.email?.message as string | undefined}
@@ -201,7 +326,12 @@ export default function Login() {
                   setShowForgotPassword(false)
                   setResetMsg('')
                   setResetEmail('')
+                  setResetCpf('')
+                  setResetBirthdate('')
+                  setNewPassword('')
+                  setConfirmPassword('')
                   setResetSuccess(false)
+                  setVerificationStep(1)
                 }}
                 className="rounded p-1 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]"
               >
@@ -222,46 +352,169 @@ export default function Login() {
             )}
 
             {!resetSuccess ? (
-              <form onSubmit={handlePasswordRecovery}>
-                <p className="mb-4 text-sm text-[var(--text-secondary)]">
-                  Digite seu e-mail cadastrado. Enviaremos um link para você
-                  redefinir sua senha.
-                </p>
-                <input
-                  type="email"
-                  value={resetEmail}
-                  onChange={(e) => setResetEmail(e.target.value)}
-                  placeholder="seu@email.com"
-                  className="mb-4 w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
-                  required
-                />
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowForgotPassword(false)
-                      setResetMsg('')
-                      setResetEmail('')
-                    }}
-                    className="flex-1 rounded-lg border border-[var(--border-color)] bg-[var(--bg-tertiary)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
-                  >
-                    Enviar Link
-                  </button>
-                </div>
-              </form>
+              verificationStep === 1 ? (
+                <form onSubmit={handleVerifyData}>
+                  <p className="mb-4 text-sm text-[var(--text-secondary)]">
+                    Para redefinir sua senha, precisamos verificar seus dados.
+                  </p>
+                  <div className="space-y-3">
+                    <div className="flex gap-2 rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] p-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAccountType('usuario')
+                          setResetCpf('')
+                          setResetBirthdate('')
+                        }}
+                        className={`flex-1 rounded px-4 py-2 text-sm font-medium transition-colors ${
+                          accountType === 'usuario'
+                            ? 'bg-indigo-600 text-white'
+                            : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                        }`}
+                      >
+                        Usuário
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAccountType('empresa')
+                          setResetCpf('')
+                          setResetBirthdate('')
+                        }}
+                        className={`flex-1 rounded px-4 py-2 text-sm font-medium transition-colors ${
+                          accountType === 'empresa'
+                            ? 'bg-indigo-600 text-white'
+                            : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                        }`}
+                      >
+                        Empresa
+                      </button>
+                    </div>
+                    <input
+                      type="email"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      placeholder="E-mail"
+                      className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
+                      required
+                    />
+                    <input
+                      type="text"
+                      value={resetCpf}
+                      onChange={(e) => {
+                        const raw = e.target.value.replace(/\D/g, '')
+                        if (accountType === 'empresa') {
+                          const formatted = raw
+                            .replace(/(\d{2})(\d)/, '$1.$2')
+                            .replace(/(\d{3})(\d)/, '$1.$2')
+                            .replace(/(\d{3})(\d)/, '$1/$2')
+                            .replace(/(\d{4})(\d{2})$/, '$1-$2')
+                          setResetCpf(formatted)
+                        } else {
+                          const formatted = raw
+                            .replace(/(\d{3})(\d)/, '$1.$2')
+                            .replace(/(\d{3})(\d)/, '$1.$2')
+                            .replace(/(\d{3})(\d{2})$/, '$1-$2')
+                          setResetCpf(formatted)
+                        }
+                      }}
+                      placeholder={accountType === 'empresa' ? 'CNPJ' : 'CPF'}
+                      maxLength={accountType === 'empresa' ? 18 : 14}
+                      className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
+                      required
+                    />
+                    {accountType === 'usuario' && (
+                      <input
+                        type="date"
+                        value={resetBirthdate}
+                        onChange={(e) => setResetBirthdate(e.target.value)}
+                        placeholder="Data de Nascimento"
+                        className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
+                        required
+                      />
+                    )}
+                  </div>
+                  <div className="mt-4 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowForgotPassword(false)
+                        setResetMsg('')
+                        setResetEmail('')
+                        setResetCpf('')
+                        setResetBirthdate('')
+                        setVerificationStep(1)
+                      }}
+                      className="flex-1 rounded-lg border border-[var(--border-color)] bg-[var(--bg-tertiary)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                    >
+                      Verificar
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <form onSubmit={handleChangePassword}>
+                  <p className="mb-4 text-sm text-[var(--text-secondary)]">
+                    Dados verificados! Agora defina sua nova senha.
+                  </p>
+                  <div className="space-y-3">
+                    <input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Nova senha (mínimo 8 caracteres)"
+                      className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
+                      required
+                      minLength={8}
+                    />
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirmar nova senha"
+                      className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
+                      required
+                    />
+                  </div>
+                  <div className="mt-4 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setVerificationStep(1)
+                        setNewPassword('')
+                        setConfirmPassword('')
+                        setResetMsg('')
+                      }}
+                      className="flex-1 rounded-lg border border-[var(--border-color)] bg-[var(--bg-tertiary)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
+                    >
+                      Voltar
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                    >
+                      Alterar Senha
+                    </button>
+                  </div>
+                </form>
+              )
             ) : (
               <button
                 onClick={() => {
                   setShowForgotPassword(false)
                   setResetMsg('')
                   setResetEmail('')
+                  setResetCpf('')
+                  setResetBirthdate('')
+                  setNewPassword('')
+                  setConfirmPassword('')
                   setResetSuccess(false)
+                  setVerificationStep(1)
                 }}
                 className="w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
               >
