@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import NavBar from './components/NavBar/NavBar'
 import Cadastro from './routes/Cadastro'
 import Contato from './routes/Contato'
@@ -12,9 +12,8 @@ import Home from './routes/Home'
 import Login from './routes/Login/Login'
 import Perfil from './routes/Perfil/Perfil'
 import Protected from './routes/Protected/Protected'
-import ProtectedAdmin from './routes/ProtectedAdmin/ProtectedAdmin'
-import Contato from './routes/Contato'
-import FAQ from './routes/FAQ'
+import ProtectedCompany from './routes/ProtectedCompany/ProtectedCompany'
+import Questionario from './routes/Questionario'
 import Integrantes from './routes/integrantes/integrantes'
 
 export default function App() {
@@ -41,7 +40,7 @@ export default function App() {
         <Route element={<ProtectedCompany />}>
           <Route path="/dashboard-empresa" element={<DashboardEmpresa />} />
         </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Error404 />} />
         <Route path="/integrantes*" element={<Integrantes />} />
       </Routes>
     </div>
