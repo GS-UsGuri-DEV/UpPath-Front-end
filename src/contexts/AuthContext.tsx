@@ -145,7 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         occupation: data.occupation,
         nivelCarreira: data.nivelCarreira,
         gender: data.gender,
-        admin: data.admin ?? null,
+        admin: data.admin === 1,
         idEmpresa: data.idEmpresa ?? null,
         dateRegistered: data.dateRegistered ?? null,
       }

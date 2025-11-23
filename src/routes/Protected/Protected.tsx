@@ -1,20 +1,10 @@
-import { useEffect, useState } from 'react'
 import Spinner from '../../components/Spinner/Spinner'
-import { account } from '../../shared/appwrite'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { useAuth } from '../../contexts/useAuth'
 
 export default function Protected() {
-  const [loading, setLoading] = useState(true)
-  const [ok, setOk] = useState(false)
   const loc = useLocation()
-
-  useEffect(() => {
-    account
-      .get()
-      .then(() => setOk(true))
-      .catch(() => setOk(false))
-      .finally(() => setLoading(false))
-  }, [])
+  const { loading, user } = useAuth()
 
   if (loading)
     return (
@@ -22,6 +12,6 @@ export default function Protected() {
         <Spinner text="Carregando..." />
       </div>
     )
-  if (!ok) return <Navigate to="/login" state={{ from: loc }} replace />
+  if (!user) return <Navigate to="/login" state={{ from: loc }} replace />
   return <Outlet />
 }
