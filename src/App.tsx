@@ -5,6 +5,7 @@ import Cadastro from './routes/Cadastro'
 import Contato from './routes/Contato'
 import Cursos from './routes/Cursos'
 import Dashboard from './routes/Dashboard/Dashboard'
+import Dicas from './routes/Dicas'
 import FAQ from './routes/FAQ'
 import Home from './routes/Home'
 import Login from './routes/Login/Login'
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/contato" element={<Contato />} />
         <Route path="/cursos" element={<Cursos />} />
+        <Route path="/dicas" element={<Dicas />} />
         <Route path="/questionario" element={<Questionario />} />
         <Route element={<Protected />}>
           <Route path="/dashboard" element={<Dashboard />} />

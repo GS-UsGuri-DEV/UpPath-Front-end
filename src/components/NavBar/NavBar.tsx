@@ -72,6 +72,12 @@ export default function NavBar() {
               Cursos
             </Link>
             <Link
+              to="/dicas"
+              className={`nav-btn ${isActive('/dicas') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
+            >
+              Dicas
+            </Link>
+            <Link
               to="/faq"
               className={`nav-btn ${isActive('/faq') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
             >
@@ -172,6 +178,17 @@ export default function NavBar() {
               onClick={closeMenu}
             >
               Cursos
+            </Link>
+            <Link
+              to="/dicas"
+              className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                isActive('/dicas')
+                  ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                  : ''
+              }`}
+              onClick={closeMenu}
+            >
+              Dicas
             </Link>
             <Link
               to="/faq"
