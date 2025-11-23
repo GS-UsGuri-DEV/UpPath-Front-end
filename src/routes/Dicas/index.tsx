@@ -9,7 +9,9 @@ import {
   FaRedo,
   FaSmile,
   FaSyncAlt,
+  FaSignInAlt,
 } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/useAuth'
 import { db } from '../../shared/appwrite'
 import { DICAS_ESTRESSE, DICAS_MOTIVACAO, DICAS_SONO } from '../../types/dicas'
@@ -17,7 +19,7 @@ import type { Dica, NiveisBemEstar } from '../../types/dicas'
 import Spinner from '../../components/Spinner/Spinner'
 
 export default function Dicas() {
-  const { userData } = useAuth()
+  const { userData, user } = useAuth()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [niveis, setNiveis] = useState<NiveisBemEstar | null>(null)
@@ -29,8 +31,11 @@ export default function Dicas() {
   useEffect(() => {
     if (userData) {
       fetchUltimoRegistro()
+    } else if (user === null) {
+      // Usuário não está logado
+      setLoading(false)
     }
-  }, [userData])
+  }, [userData, user])
 
   async function fetchUltimoRegistro() {
     setLoading(true)
@@ -184,6 +189,34 @@ export default function Dicas() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--bg-primary)] p-4">
         <Spinner text="Carregando suas dicas..." size={40} />
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[var(--bg-primary)] p-4">
+        <div className="w-full max-w-md text-center">
+          <div className="mb-6 flex justify-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30">
+              <FaLightbulb className="h-10 w-10 text-indigo-600 dark:text-indigo-400" />
+            </div>
+          </div>
+          <h2 className="mb-3 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
+            Faça login para ver suas dicas
+          </h2>
+          <p className="mb-6 text-base text-[var(--text-secondary)] sm:text-lg">
+            As dicas personalizadas são baseadas nos seus níveis de bem-estar.
+            Entre para acessar conteúdo exclusivo!
+          </p>
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-base font-medium text-white transition-all hover:bg-indigo-700 hover:shadow-lg sm:text-lg"
+          >
+            <FaSignInAlt className="h-5 w-5" />
+            Fazer Login
+          </Link>
+        </div>
       </div>
     )
   }
