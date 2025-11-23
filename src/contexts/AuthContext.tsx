@@ -101,7 +101,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             cpf: d.cpf,
             cpf_normalizado:
               typeof d.cpf === 'string' ? d.cpf.replace(/\D/g, '') : d.cpf,
-
           })
         })
         console.log('Buscando por CPF/CNPJ:', cpfCnpjClean)
@@ -131,7 +130,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               cnpj: d.cnpj,
               cnpj_normalizado:
                 typeof d.cnpj === 'string' ? d.cnpj.replace(/\D/g, '') : d.cnpj,
-
             })
           })
           const companyDoc = responseCompanies.documents.find((doc) => {
@@ -189,7 +187,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     checkAuth()
   }, [checkAuth])
-
 
   return (
     <AuthContext.Provider
