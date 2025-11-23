@@ -29,6 +29,18 @@ export default function Cadastro() {
     /[a-z]/.test(_senhaValue) &&
     /[0-9]/.test(_senhaValue) &&
     /[^A-Za-z0-9]/.test(_senhaValue)
+  const senhaValidationMessage = validatePassword(_senhaValue)
+  const cnpjValue = watch('cnpj') as string | undefined
+  const _cnpjValue = cnpjValue ?? ''
+  const cnpjValidationResult = validateCNPJ(_cnpjValue)
+  const cnpjValidAll = _cnpjValue.length > 0 && cnpjValidationResult === true
+  const emailValue = watch('email') as string | undefined
+  const _emailValue = emailValue ?? ''
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const emailValid = emailRegex.test(_emailValue)
+  const emailContatoValue = watch('email_contato') as string | undefined
+  const _emailContatoValue = emailContatoValue ?? ''
+  const emailContatoValid = emailRegex.test(_emailContatoValue)
 
 
   function formatCNPJ(v: string) {
@@ -38,6 +50,29 @@ export default function Cadastro() {
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d)/, '$1/$2')
       .replace(/(\d{4})(\d{1,2})$/, '$1-$2')
+  }
+
+  function validateCNPJ(v?: string) {
+    if (!v) return true
+    const c = v.replace(/\D/g, '')
+    if (c.length !== 14) return 'CNPJ inválido'
+    if (/^(\d)\1+$/.test(c)) return 'CNPJ inválido'
+
+    const calc = (base: string) => {
+      const nums = base.split('').map((d) => Number(d))
+      const multipliers = base.length === 12
+        ? [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+        : [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+      const sum = nums.reduce((acc, n, i) => acc + n * multipliers[i], 0)
+      const r = sum % 11
+      return r < 2 ? 0 : 11 - r
+    }
+
+    const base12 = c.slice(0, 12)
+    const d1 = calc(base12)
+    const d2 = calc(base12 + String(d1))
+    if (Number(d1) !== Number(c[12]) || Number(d2) !== Number(c[13])) return 'CNPJ inválido'
+    return true
   }
 
   function validatePassword(v?: string) {
@@ -74,6 +109,7 @@ export default function Cadastro() {
           name: company.nome_empresa ?? '',
           cnpj: company.cnpj ?? '',
           email: company.email_contato ?? '',
+          senha: company.senha ?? '',
         }
 
         const companyRes = await post('https://uppath.onrender.com/empresas', companyPayload)
@@ -88,7 +124,6 @@ export default function Cadastro() {
           occupation: 'Administrador',
           gender: null,
           birthDate: new Date().toISOString().split('T')[0],
-          // backend espera um valor numérico não-nulo
           admin: 1,
         }
 
@@ -265,12 +300,15 @@ export default function Cadastro() {
                 required: 'CNPJ é obrigatório',
                 onChange: (e: ChangeEvent<HTMLInputElement>) =>
                   setValue('cnpj', formatCNPJ(e.target.value)),
-                validate: (v) =>
-                  (v ? v.replace(/\D/g, '').length === 14 : false) ||
-                  'CNPJ inválido',
+                validate: (v) => validateCNPJ(v),
               })}
-              error={(formState.errors as any).cnpj?.message as string | undefined}
-              isValid={!(formState.errors as any).cnpj && !!watch('cnpj')}
+              error={
+                (formState.errors as any).cnpj?.message as string | undefined ??
+                (typeof cnpjValidationResult === 'string' && _cnpjValue
+                  ? (cnpjValidationResult as string)
+                  : undefined)
+              }
+              isValid={cnpjValidAll}
               required
             />
             <FormInput
@@ -279,12 +317,15 @@ export default function Cadastro() {
               {...register('email_contato', {
                 required: 'Email é obrigatório',
                 pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  value: emailRegex,
                   message: 'Email inválido',
                 },
               })}
-              error={(formState.errors as any).email_contato?.message as string | undefined}
-              isValid={!(formState.errors as any).email_contato && !!watch('email_contato')}
+              error={
+                (formState.errors as any).email_contato?.message as string | undefined ??
+                (_emailContatoValue && !emailContatoValid ? 'Email inválido' : undefined)
+              }
+              isValid={emailContatoValid}
               required
             />
             <FormInput
@@ -294,8 +335,13 @@ export default function Cadastro() {
               {...register('senha', {
                 validate: validatePassword,
               })}
-              error={(formState.errors as any).senha?.message as string | undefined}
-              isValid={!(formState.errors as any).senha && !!watch('senha')}
+              error={
+                (formState.errors as any).senha?.message as string | undefined ??
+                (typeof senhaValidationMessage === 'string' && _senhaValue
+                  ? (senhaValidationMessage as string)
+                  : undefined)
+              }
+              isValid={senhaValidAll}
               required
             />
             {!senhaValidAll && (
@@ -349,12 +395,15 @@ export default function Cadastro() {
               {...register('email', {
                 required: 'Email é obrigatório',
                 pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  value: emailRegex,
                   message: 'Email inválido',
                 },
               })}
-              error={(formState.errors as any).email?.message as string | undefined}
-              isValid={!(formState.errors as any).email && !!watch('email')}
+              error={
+                (formState.errors as any).email?.message as string | undefined ??
+                (_emailValue && !emailValid ? 'Email inválido' : undefined)
+              }
+              isValid={emailValid}
               required
             />
             <FormInput
@@ -364,8 +413,13 @@ export default function Cadastro() {
               {...register('senha', {
                 validate: validatePassword,
               })}
-              error={(formState.errors as any).senha?.message as string | undefined}
-              isValid={!(formState.errors as any).senha && !!watch('senha')}
+              error={
+                (formState.errors as any).senha?.message as string | undefined ??
+                (typeof senhaValidationMessage === 'string' && _senhaValue
+                  ? (senhaValidationMessage as string)
+                  : undefined)
+              }
+              isValid={senhaValidAll}
               required
             />
             {!senhaValidAll && (
