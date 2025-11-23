@@ -1,33 +1,24 @@
-
-import type { MembrosSocialProps } from '../../types/member';
-import BtnExterno from '../Buttons/BtnExterno';
-
+import type { MembrosSocialProps } from '../../types/member'
+import BtnExterno from '../Buttons/BtnExterno'
 
 export default function MembrosSocial({ socials }: MembrosSocialProps) {
   return (
-    <div className='flex mt-2 gap-3 sm:gap-4'>
+    <div className="mt-2 flex gap-3 sm:gap-4">
       {socials.map((s) => (
         <BtnExterno
           key={s.alt}
           href={s.href}
-          target='_blank'
-          className='!p-0 !bg-transparent !hover:bg-transparent focus:!outline-none'
+          target="_blank"
+          className="!hover:bg-transparent !bg-transparent !p-0 focus:!outline-none"
           aria-label={s.alt}
         >
           <img
             src={s.icon}
             alt={s.alt}
-            className='
-              w-8 h-8
-              sm:w-9 sm:h-9
-              md:w-10 md:h-10
-              lg:w-11 lg:h-11
-              xl:w-12 xl:h-12
-              transition-transform duration-300 hover:scale-110
-            '
+            className="h-8 w-8 transition-transform duration-300 hover:scale-110 sm:h-9 sm:w-9 md:h-10 md:w-10 lg:h-11 lg:w-11 xl:h-12 xl:w-12"
           />
         </BtnExterno>
       ))}
     </div>
-  );
+  )
 }

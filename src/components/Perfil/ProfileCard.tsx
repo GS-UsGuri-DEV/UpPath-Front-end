@@ -63,8 +63,20 @@ export default function ProfileCard({
 
   useEffect(() => {
     if (userData) {
-      setEditNome(String((userData as unknown as Record<string, unknown>)?.nome_completo ?? (userData as any)?.name ?? ''))
-      setEditEmail(String((userData as unknown as Record<string, unknown>)?.email ?? (userData as any)?.email ?? ''))
+      setEditNome(
+        String(
+          (userData as unknown as Record<string, unknown>)?.nome_completo ??
+            (userData as any)?.name ??
+            '',
+        ),
+      )
+      setEditEmail(
+        String(
+          (userData as unknown as Record<string, unknown>)?.email ??
+            (userData as any)?.email ??
+            '',
+        ),
+      )
       const rawDate = findDateField(userData as any)
       setEditDataNasc(toDateInput(String(rawDate)))
     }
@@ -91,11 +103,18 @@ export default function ProfileCard({
       }
 
       console.debug('PUT /users/{id} payload:', { id, payload, headers })
-      const putRes = await put(`https://uppath.onrender.com/users/${id}`, payload, headers)
+      const putRes = await put(
+        `https://uppath.onrender.com/users/${id}`,
+        payload,
+        headers,
+      )
       console.debug('PUT /users/{id} response:', putRes)
 
       try {
-        const updated = await get(`https://uppath.onrender.com/users/${id}`, headers)
+        const updated = await get(
+          `https://uppath.onrender.com/users/${id}`,
+          headers,
+        )
         console.debug('GET /users/{id} response:', updated)
         if (updated) {
           localStorage.setItem('userData', JSON.stringify(updated))

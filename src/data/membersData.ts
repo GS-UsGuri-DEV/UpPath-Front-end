@@ -1,13 +1,11 @@
-
-import type { Member } from '../types/member';
-
+import type { Member } from '../types/member'
 
 export const members: Member[] = [
   {
     name: 'Alexander Dennis Isidro Mamani',
     rm: 'RM 565554',
     class: '1-TDSPG',
-    img: "integrantes/alexander.jpg",
+    img: 'integrantes/alexander.jpg',
     linkedin: 'https://www.linkedin.com/in/alexander-dennis-a3b48824b/',
     github: 'https://github.com/alex-isidro',
     description:
@@ -17,7 +15,7 @@ export const members: Member[] = [
     name: 'Kelson Zhang',
     rm: 'RM 563748',
     class: '1-TDSPG',
-    img: "integrantes/kelson-zhang.jpg",
+    img: 'integrantes/kelson-zhang.jpg',
     linkedin: 'https://www.linkedin.com/in/kelson-zhang-211456323/',
     github: 'https://github.com/KelsonZh0',
     description:
@@ -27,10 +25,10 @@ export const members: Member[] = [
     name: 'Lucas Rossoni Dieder',
     rm: 'RM 563770',
     class: '1-TDSPG',
-    img: "integrantes/lucas-rossoni.png",
+    img: 'integrantes/lucas-rossoni.png',
     linkedin: 'https://www.linkedin.com/in/lucas-rossoni-dieder-32242a353/',
     github: 'https://github.com/PxS00',
     description:
       'Com 19 anos, estudante de Análise e Desenvolvimento de Sistemas na FIAP, apaixonado por tecnologia, inovação e desenvolvimento de soluções que realmente gerem impacto na vida das pessoas. Atualmente, desenvolvo projetos que envolvem programação, banco de dados, inteligência artificial e desenvolvimento web, sempre em busca de aprimoramento técnico e profissional. Gosto de desafios, de aprender e de colaborar, mantendo viva a essência do gaúcho: determinação, resiliência e espírito de equipe. Transformo complexidade em experiências digitais simples e acessíveis, com foco em usabilidade e inclusão, unindo tecnologia, empatia e propósito.',
   },
-];
+]

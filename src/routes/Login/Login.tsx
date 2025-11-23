@@ -11,7 +11,9 @@ import type { LoginFormData } from '../../types/auth'
 export default function Login() {
   const [msg, setMsg] = useState('')
   const [showForgotPassword, setShowForgotPassword] = useState(false)
-  const [accountType, setAccountType] = useState<'usuario' | 'empresa'>('usuario')
+  const [accountType, setAccountType] = useState<'usuario' | 'empresa'>(
+    'usuario',
+  )
   const [resetEmail, setResetEmail] = useState('')
   const [resetCpf, setResetCpf] = useState('')
   const [resetBirthdate, setResetBirthdate] = useState('')
@@ -101,7 +103,10 @@ export default function Login() {
     }
 
     const cpfCnpjClean = resetCpf.replace(/\D/g, '')
-    if (!resetCpf || (cpfCnpjClean.length !== 11 && cpfCnpjClean.length !== 14)) {
+    if (
+      !resetCpf ||
+      (cpfCnpjClean.length !== 11 && cpfCnpjClean.length !== 14)
+    ) {
       setResetMsg('Por favor, insira um CPF ou CNPJ válido')
       return
     }
@@ -115,51 +120,59 @@ export default function Login() {
       const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
 
       if (accountType === 'empresa') {
-        const COLLECTION_COMPANIES = import.meta.env.VITE_APPWRITE_COLLECTION_COMPANIES
+        const COLLECTION_COMPANIES = import.meta.env
+          .VITE_APPWRITE_COLLECTION_COMPANIES
         const response = await db.listDocuments(DB_ID, COLLECTION_COMPANIES)
         const companyDoc = response.documents.find((doc) => {
           const d = doc as unknown as Record<string, unknown>
-          return (
-            d.email_contato === resetEmail &&
-            d.cnpj === cpfCnpjClean
-          )
+          return d.email_contato === resetEmail && d.cnpj === cpfCnpjClean
         })
 
         if (companyDoc) {
           setVerificationStep(2)
           setResetMsg('')
         } else {
-          setResetMsg('Dados não conferem. Verifique as informações e tente novamente.')
+          setResetMsg(
+            'Dados não conferem. Verifique as informações e tente novamente.',
+          )
         }
       } else {
         const COLLECTION_USERS = import.meta.env.VITE_APPWRITE_COLLECTION_USERS
         const response = await db.listDocuments(DB_ID, COLLECTION_USERS)
-        
+
         console.log('Total documentos:', response.documents.length)
-        console.log('Buscando:', JSON.stringify({ 
-          email: resetEmail, 
-          cpf: cpfCnpjClean, 
-          data: resetBirthdate 
-        }))
-        
+        console.log(
+          'Buscando:',
+          JSON.stringify({
+            email: resetEmail,
+            cpf: cpfCnpjClean,
+            data: resetBirthdate,
+          }),
+        )
+
         const userDoc = response.documents.find((doc) => {
           const d = doc as unknown as Record<string, unknown>
-          const docDate = typeof d.data_nascimento === 'string'
-            ? d.data_nascimento.split('T')[0]
-            : d.data_nascimento
+          const docDate =
+            typeof d.data_nascimento === 'string'
+              ? d.data_nascimento.split('T')[0]
+              : d.data_nascimento
 
           // Normaliza CPF para comparar só números
-          const docCpf = typeof d.cpf === 'string' ? d.cpf.replace(/\D/g, '') : d.cpf
+          const docCpf =
+            typeof d.cpf === 'string' ? d.cpf.replace(/\D/g, '') : d.cpf
 
-          console.log('Comparando:', JSON.stringify({
-            doc_email: d.email,
-            doc_cpf: d.cpf,
-            doc_cpf_normalizado: docCpf,
-            doc_data: docDate,
-            match_email: d.email === resetEmail,
-            match_cpf: docCpf === cpfCnpjClean,
-            match_data: docDate === resetBirthdate
-          }))
+          console.log(
+            'Comparando:',
+            JSON.stringify({
+              doc_email: d.email,
+              doc_cpf: d.cpf,
+              doc_cpf_normalizado: docCpf,
+              doc_data: docDate,
+              match_email: d.email === resetEmail,
+              match_cpf: docCpf === cpfCnpjClean,
+              match_data: docDate === resetBirthdate,
+            }),
+          )
 
           return (
             d.email === resetEmail &&
@@ -174,7 +187,9 @@ export default function Login() {
           setVerificationStep(2)
           setResetMsg('')
         } else {
-          setResetMsg('Dados não conferem. Verifique as informações e tente novamente.')
+          setResetMsg(
+            'Dados não conferem. Verifique as informações e tente novamente.',
+          )
         }
       }
     } catch (error) {
@@ -200,7 +215,8 @@ export default function Login() {
       const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
 
       if (accountType === 'empresa') {
-        const COLLECTION_COMPANIES = import.meta.env.VITE_APPWRITE_COLLECTION_COMPANIES
+        const COLLECTION_COMPANIES = import.meta.env
+          .VITE_APPWRITE_COLLECTION_COMPANIES
         const response = await db.listDocuments(DB_ID, COLLECTION_COMPANIES)
         const companyDoc = response.documents.find((doc) => {
           const d = doc as unknown as Record<string, unknown>
@@ -209,7 +225,7 @@ export default function Login() {
 
         if (companyDoc) {
           await db.updateDocument(DB_ID, COLLECTION_COMPANIES, companyDoc.$id, {
-            senha: newPassword
+            senha: newPassword,
           })
           setResetSuccess(true)
           setResetMsg('Senha alterada com sucesso!')
@@ -239,10 +255,10 @@ export default function Login() {
           )}
 
           <FormInput
-            label="CPF, CNPJ ou E-mail"
-            placeholder="CPF, CNPJ ou e-mail"
+            label="CNPJ ou E-mail"
+            placeholder="CNPJ ou e-mail"
             {...register('email', {
-              required: 'CPF, CNPJ ou email é obrigatório',
+              required: 'CNPJ ou email é obrigatório',
               onChange: handleEmailChange,
             })}
             error={errors.email?.message as string | undefined}

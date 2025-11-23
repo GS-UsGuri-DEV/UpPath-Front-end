@@ -22,7 +22,6 @@ export default function Cadastro() {
 
   const type = watch('type') as 'usuario' | 'empresa' | undefined
 
-
   function formatCNPJ(v: string) {
     const digits = v.replace(/\D/g, '').slice(0, 14)
     return digits
@@ -56,8 +55,14 @@ export default function Cadastro() {
           email: company.email_contato ?? '',
         }
 
-        const companyRes = await post('https://uppath.onrender.com/empresas', companyPayload)
-        const companyId = (companyRes as any)?.idEmpresa ?? (companyRes as any)?.id ?? (companyRes as any)?.id_empresa
+        const companyRes = await post(
+          'https://uppath.onrender.com/empresas',
+          companyPayload,
+        )
+        const companyId =
+          (companyRes as any)?.idEmpresa ??
+          (companyRes as any)?.id ??
+          (companyRes as any)?.id_empresa
 
         const adminPayload = {
           idEmpresa: companyId ?? 0,
@@ -76,21 +81,34 @@ export default function Cadastro() {
         try {
           await login(company.email_contato ?? '', senha ?? '')
         } catch (err) {
-          console.warn('Login automático após criar empresa falhou, tentando fallback', err)
+          console.warn(
+            'Login automático após criar empresa falhou, tentando fallback',
+            err,
+          )
           try {
-            const fallback = await post('https://uppath.onrender.com/login', {
+            const fallback = (await post('https://uppath.onrender.com/login', {
               email: company.email_contato ?? '',
               password: senha ?? '',
-            }) as any
-            const token = fallback?.token ?? fallback?.accessToken ?? fallback?.access_token ?? null
+            })) as any
+            const token =
+              fallback?.token ??
+              fallback?.accessToken ??
+              fallback?.access_token ??
+              null
             const externalUser = fallback?.user ?? fallback?.data ?? null
             if (token) {
               localStorage.setItem('authToken', String(token))
             }
             if (externalUser) {
-              try { localStorage.setItem('userData', JSON.stringify(externalUser)) } catch {}
+              try {
+                localStorage.setItem('userData', JSON.stringify(externalUser))
+              } catch {}
             }
-            try { await checkAuth() } catch (e) { console.warn('checkAuth fallback failed', e) }
+            try {
+              await checkAuth()
+            } catch (e) {
+              console.warn('checkAuth fallback failed', e)
+            }
           } catch (fallbackErr) {
             console.warn('Fallback login também falhou', fallbackErr)
           }
@@ -141,27 +159,43 @@ export default function Cadastro() {
         }
 
         console.debug('POST /users payload:', userPayload)
-        const createdUser = await post('https://uppath.onrender.com/users', userPayload)
+        const createdUser = await post(
+          'https://uppath.onrender.com/users',
+          userPayload,
+        )
         console.debug('POST /users response:', createdUser)
 
         try {
           await login(user.email ?? '', senha ?? '')
         } catch (err) {
-          console.warn('Login automático após criar usuário falhou, tentando fallback', err)
+          console.warn(
+            'Login automático após criar usuário falhou, tentando fallback',
+            err,
+          )
           try {
-            const fallback = await post('https://uppath.onrender.com/login', {
+            const fallback = (await post('https://uppath.onrender.com/login', {
               email: user.email ?? '',
               password: senha ?? '',
-            }) as any
-            const token = fallback?.token ?? fallback?.accessToken ?? fallback?.access_token ?? null
+            })) as any
+            const token =
+              fallback?.token ??
+              fallback?.accessToken ??
+              fallback?.access_token ??
+              null
             const externalUser = fallback?.user ?? fallback?.data ?? null
             if (token) {
               localStorage.setItem('authToken', String(token))
             }
             if (externalUser) {
-              try { localStorage.setItem('userData', JSON.stringify(externalUser)) } catch {}
+              try {
+                localStorage.setItem('userData', JSON.stringify(externalUser))
+              } catch {}
             }
-            try { await checkAuth() } catch (e) { console.warn('checkAuth fallback failed', e) }
+            try {
+              await checkAuth()
+            } catch (e) {
+              console.warn('checkAuth fallback failed', e)
+            }
           } catch (fallbackErr) {
             console.warn('Fallback login também falhou', fallbackErr)
           }

@@ -10,15 +10,23 @@ export default function Perfil() {
   const [fileUrl, setFileUrl] = useState<string | undefined>()
   const { userData, loading } = useAuth()
 
-
-  const displayName = (userData as any)?.nome_completo ?? (userData as any)?.name ?? '—'
+  const displayName =
+    (userData as any)?.nome_completo ?? (userData as any)?.name ?? '—'
   const displayEmail = String(userData?.email ?? '—')
-  const profileImage = String((userData && (userData.profile_image as unknown)) ?? fileUrl ?? '')
+  const profileImage = String(
+    (userData && (userData.profile_image as unknown)) ?? fileUrl ?? '',
+  )
 
-  const nivelCarreira = (userData as any)?.nivel_carreira ?? (userData as any)?.nivelCarreira ?? '—'
-  const occupation = (userData as any)?.ocupacao ?? (userData as any)?.occupation ?? '—'
+  const nivelCarreira =
+    (userData as any)?.nivel_carreira ?? (userData as any)?.nivelCarreira ?? '—'
+  const occupation =
+    (userData as any)?.ocupacao ?? (userData as any)?.occupation ?? '—'
   const gender = (userData as any)?.genero ?? (userData as any)?.gender ?? '—'
-  const dateRegistered = (userData as any)?.data_cadastro ?? (userData as any)?.dateRegistered ?? (userData as any)?.dateRegistered ?? ''
+  const dateRegistered =
+    (userData as any)?.data_cadastro ??
+    (userData as any)?.dateRegistered ??
+    (userData as any)?.dateRegistered ??
+    ''
 
   function fmtDate(d: string | undefined) {
     if (!d) return '—'
@@ -59,12 +67,22 @@ export default function Perfil() {
         <UploadProfileImage onUploadSuccess={(url) => setFileUrl(url)} />
 
         <section className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4">
-          <h3 className="mb-2 font-semibold text-[var(--text-primary)]">Detalhes</h3>
+          <h3 className="mb-2 font-semibold text-[var(--text-primary)]">
+            Detalhes
+          </h3>
           <div className="grid grid-cols-1 gap-2 text-[var(--text-secondary)]">
-            <div><strong>Carreira:</strong> {nivelCarreira}</div>
-            <div><strong>Ocupação:</strong> {occupation}</div>
-            <div><strong>Gênero:</strong> {gender}</div>
-            <div><strong>Data de cadastro:</strong> {fmtDate(dateRegistered)}</div>
+            <div>
+              <strong>Carreira:</strong> {nivelCarreira}
+            </div>
+            <div>
+              <strong>Ocupação:</strong> {occupation}
+            </div>
+            <div>
+              <strong>Gênero:</strong> {gender}
+            </div>
+            <div>
+              <strong>Data de cadastro:</strong> {fmtDate(dateRegistered)}
+            </div>
           </div>
         </section>
 

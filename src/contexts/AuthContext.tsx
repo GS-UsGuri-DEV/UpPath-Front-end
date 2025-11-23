@@ -27,7 +27,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         headers,
       )
 
-
       const r: any = res
       let items: any[] = []
       if (Array.isArray(r)) items = r
@@ -52,21 +51,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const id = first.idUser
       if (id != null) {
         try {
-          const full = await get(`https://uppath.onrender.com/users/${id}`, headers)
+          const full = await get(
+            `https://uppath.onrender.com/users/${id}`,
+            headers,
+          )
           const normalized = { ...(full as any), id: id }
           return normalized as UserData
         } catch (e) {
-          console.warn('Could not fetch full user by id, returning first match', e)
+          console.warn(
+            'Could not fetch full user by id, returning first match',
+            e,
+          )
           const normalizedFirst = { ...first, id }
           return normalizedFirst as UserData
         }
       }
 
       return {
-      ...first,
-      id: first.idUser ?? null
+        ...first,
+        id: first.idUser ?? null,
       } as UserData
-
     } catch (error) {
       return null
     }
@@ -109,87 +113,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  async function login(emailOrCpfCnpj: string, password: string) {
-    let loginEmail = emailOrCpfCnpj
+  async function login(emailOrCnpj: string, password: string) {
+    let loginEmail = emailOrCnpj
 
-    // Se não for email, busca o email correspondente ao CPF/CNPJ
-    if (!emailOrCpfCnpj.includes('@')) {
+    // If input is not an email, treat it as CNPJ and try to map to contact email
+    if (!emailOrCnpj.includes('@')) {
       const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
-      const COLLECTION_USERS = import.meta.env.VITE_APPWRITE_COLLECTION_USERS
       const COLLECTION_COMPANIES = import.meta.env
         .VITE_APPWRITE_COLLECTION_COMPANIES
-      const cpfCnpjClean = emailOrCpfCnpj.replace(/\D/g, '')
+      const cnpjClean = String(emailOrCnpj).replace(/\D/g, '')
 
       try {
-        // Busca em usuários
-        const responseUsers = await db.listDocuments(DB_ID, COLLECTION_USERS)
-        console.log('--- Usuários encontrados ---')
-        responseUsers.documents.forEach((doc) => {
-          const d = doc as unknown as Record<string, unknown>
-          console.log({
-            email: d.email,
-            cpf: d.cpf,
-            cpf_normalizado:
-              typeof d.cpf === 'string' ? d.cpf.replace(/\D/g, '') : d.cpf,
-          })
-        })
-        console.log('Buscando por CPF/CNPJ:', cpfCnpjClean)
-        const userDoc = responseUsers.documents.find((doc) => {
+        if (!DB_ID || !COLLECTION_COMPANIES)
+          throw new Error('CNPJ lookup not configured')
+        const responseCompanies = await db.listDocuments(
+          DB_ID,
+          COLLECTION_COMPANIES,
+        )
+        const companyDoc = responseCompanies.documents.find((doc) => {
           const d = doc as unknown as Record<string, unknown>
           return (
-            d.cpf &&
-            typeof d.cpf === 'string' &&
-            d.cpf.replace(/\D/g, '') === cpfCnpjClean
+            d.cnpj &&
+            typeof d.cnpj === 'string' &&
+            d.cnpj.replace(/\D/g, '') === cnpjClean
           )
         })
 
-        if (userDoc) {
-          const userData = userDoc as unknown as Record<string, unknown>
-          loginEmail = userData.email as string
-        } else if (COLLECTION_COMPANIES) {
-          // Busca em empresas
-          const responseCompanies = await db.listDocuments(
-            DB_ID,
-            COLLECTION_COMPANIES,
-          )
-          console.log('--- Empresas encontradas ---')
-          responseCompanies.documents.forEach((doc) => {
-            const d = doc as unknown as Record<string, unknown>
-            console.log({
-              email_contato: d.email_contato,
-              cnpj: d.cnpj,
-              cnpj_normalizado:
-                typeof d.cnpj === 'string' ? d.cnpj.replace(/\D/g, '') : d.cnpj,
-            })
-          })
-          const companyDoc = responseCompanies.documents.find((doc) => {
-            const d = doc as unknown as Record<string, unknown>
-            return (
-              d.cnpj &&
-              typeof d.cnpj === 'string' &&
-              d.cnpj.replace(/\D/g, '') === cpfCnpjClean
-            )
-          })
-
-          if (companyDoc) {
-            const companyData = companyDoc as unknown as Record<string, unknown>
-            loginEmail = companyData.email_contato as string
-          } else {
-            throw new Error('CPF/CNPJ não encontrado')
-          }
+        if (companyDoc) {
+          const companyData = companyDoc as unknown as Record<string, unknown>
+          loginEmail = (companyData.email_contato as string) ?? loginEmail
         } else {
-          throw new Error('CPF não encontrado')
+          throw new Error('CNPJ não encontrado')
         }
-      } catch (error) {
-        throw new Error('CPF/CNPJ não encontrado')
+      } catch (err) {
+        console.warn('CNPJ lookup failed', err)
+        throw err
       }
     }
 
-      try {
-        const res = await post('https://uppath.onrender.com/login', {
-          email: loginEmail,
-          password,
-        })
+    try {
+      const res = await post('https://uppath.onrender.com/login', {
+        email: loginEmail,
+        password,
+      })
 
       const r = res as any
       const token = r?.token ?? r?.accessToken ?? r?.access_token ?? null
@@ -199,14 +165,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           const minimal = { email: loginEmail }
           localStorage.setItem('userData', JSON.stringify(minimal))
-        } catch {
-
+        } catch (e) {
+          console.warn('Could not persist minimal userData', e)
         }
       }
       let data: any = null
       try {
         data = await fetchUserData(loginEmail)
       } catch (e) {
+        console.warn('fetchUserData failed', e)
       }
 
       let result: UserData | null = null
