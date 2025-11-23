@@ -125,10 +125,13 @@ export default function Cadastro() {
       }
 
       try {
-        const idEmpresaNumber = user.id_empresa ? Number(user.id_empresa) : 0
+        const idEmpresaNumber = user.id_empresa ? Number(user.id_empresa) : null
 
         const userPayload = {
-          idEmpresa: Number.isFinite(idEmpresaNumber) ? idEmpresaNumber : 0,
+          idEmpresa:
+            idEmpresaNumber != null && Number.isFinite(idEmpresaNumber)
+              ? idEmpresaNumber
+              : null,
           name: user.nome_completo ?? '',
           email: user.email ?? '',
           password: senha,
