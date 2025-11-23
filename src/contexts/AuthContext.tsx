@@ -21,6 +21,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function fetchUserData(email: string) {
     const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
     const COLLECTION_USERS = import.meta.env.VITE_APPWRITE_COLLECTION_USERS
+    const COLLECTION_COMPANIES = import.meta.env
+      .VITE_APPWRITE_COLLECTION_COMPANIES
 
     if (!DB_ID || !COLLECTION_USERS) {
       console.warn('Database config missing')
@@ -28,14 +30,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const response = await db.listDocuments(DB_ID, COLLECTION_USERS)
-      const userDoc = response.documents.find((doc: Models.Document) => {
+      // Primeiro tenta buscar na collection de usuários
+      const responseUsers = await db.listDocuments(DB_ID, COLLECTION_USERS)
+      const userDoc = responseUsers.documents.find((doc: Models.Document) => {
         const d = doc as unknown as Record<string, unknown>
         return typeof d.email === 'string' && d.email === email
       }) as UserData | undefined
 
       if (userDoc) {
-        return userDoc
+        return { ...userDoc, tipo_conta: 'usuario' }
+      }
+
+      // Se não encontrou em usuários, busca em empresas
+      if (COLLECTION_COMPANIES) {
+        const responseCompanies = await db.listDocuments(
+          DB_ID,
+          COLLECTION_COMPANIES,
+        )
+        const companyDoc = responseCompanies.documents.find(
+          (doc: Models.Document) => {
+            const d = doc as unknown as Record<string, unknown>
+            return (
+              typeof d.email_contato === 'string' && d.email_contato === email
+            )
+          },
+        ) as UserData | undefined
+
+        if (companyDoc) {
+          return { ...companyDoc, tipo_conta: 'empresa' }
+        }
       }
     } catch (error) {
       console.error('Error fetching user data:', error)
