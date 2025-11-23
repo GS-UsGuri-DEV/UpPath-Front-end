@@ -43,7 +43,7 @@ interface MediasBemEstar {
 }
 
 export default function DashboardEmpresa() {
-  const { userData, logout } = useAuth()
+  const { userData } = useAuth()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [empresa, setEmpresa] = useState<EmpresaData | null>(null)
@@ -164,11 +164,6 @@ export default function DashboardEmpresa() {
     }
   }
 
-  async function handleLogout() {
-    await logout()
-    window.location.href = '/'
-  }
-
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--bg-primary)] p-4">
@@ -200,27 +195,17 @@ export default function DashboardEmpresa() {
     <div className="min-h-screen bg-[var(--bg-primary)] pb-16 sm:pb-24">
       <header className="border-b border-[var(--border-color)] bg-[var(--bg-secondary)] shadow-sm">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30">
-                <FaBuilding className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-[var(--text-primary)] sm:text-2xl">
-                  Dashboard - {empresa?.nome_empresa}
-                </h1>
-                <p className="text-xs text-[var(--text-muted)] sm:text-sm">
-                  CNPJ: {empresa?.cnpj}
-                </p>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30">
+              <FaBuilding className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
             </div>
-            <div className="flex gap-2">
-              <button
-                onClick={handleLogout}
-                className="rounded bg-red-600 px-3 py-2 text-sm text-white transition-colors hover:bg-red-700 sm:px-4"
-              >
-                Sair
-              </button>
+            <div>
+              <h1 className="text-xl font-bold text-[var(--text-primary)] sm:text-2xl">
+                Dashboard - {empresa?.nome_empresa}
+              </h1>
+              <p className="text-xs text-[var(--text-muted)] sm:text-sm">
+                CNPJ: {empresa?.cnpj}
+              </p>
             </div>
           </div>
         </div>
