@@ -1,4 +1,6 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { FaUser, FaBars, FaTimes } from 'react-icons/fa'
 import { useAuth } from '../../contexts/useAuth'
 import useTheme from '../../hooks/useTheme'
 import DarkLightMode from '../Buttons/DarkLightMode'
@@ -6,14 +8,29 @@ import DarkLightMode from '../Buttons/DarkLightMode'
 export default function NavBar() {
   const { user, userData, logout } = useAuth()
   const nav = useNavigate()
+  const location = useLocation()
   const { isDark } = useTheme()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   async function handleLogout() {
     await logout()
     nav('/')
+    setIsMenuOpen(false)
   }
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
+
+  const closeMenu = () => {
+    setIsMenuOpen(false)
+  }
+
+  const isActive = (path: string) => location.pathname === path
+
   const displayName = String(userData?.nome_completo ?? user?.name ?? 'Usuário')
+  const isEmpresa =
+    (userData as Record<string, unknown>)?.tipo_conta === 'empresa'
 
   return (
     <nav className="w-full border-b border-[var(--border-color)] bg-[var(--bg-primary)]">
@@ -23,45 +40,57 @@ export default function NavBar() {
             <img
               src={isDark ? '/icon/logo-dark.svg' : '/icon/logo-light.svg'}
               alt="UpPath Logo"
-              className="h-24 w-auto"
+              className="h-16 w-auto sm:h-20 md:h-24"
             />
           </Link>
-          <div className="hidden gap-2 sm:flex">
-            {!user && (
+          <div className="hidden gap-2 md:flex">
+            {!isEmpresa && (
               <Link
-                to="/cadastro"
-                className="nav-btn"
+                to="/"
+                className={`nav-btn ${isActive('/') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
               >
-                Cadastro
+                Home
+              </Link>
+            )}
+            {user && !isEmpresa && (
+              <Link
+                to="/dashboard"
+                className={`nav-btn ${isActive('/dashboard') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
+              >
+                Dashboard
+              </Link>
+            )}
+            {isEmpresa && (
+              <Link
+                to="/dashboard-empresa"
+                className={`nav-btn ${isActive('/dashboard-empresa') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
+              >
+                Empresa
+              </Link>
+            )}
+            {!isEmpresa && (
+              <Link
+                to="/cursos"
+                className={`nav-btn ${isActive('/cursos') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
+              >
+                Cursos
               </Link>
             )}
             <Link
-              to="/"
-              className="nav-btn"
+              to="/dicas"
+              className={`nav-btn ${isActive('/dicas') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
             >
-              Home
-            </Link>
-            <Link
-              to="/dashboard"
-              className="nav-btn"
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="/perfil"
-              className="nav-btn"
-            >
-              Perfil
+              Dicas
             </Link>
             <Link
               to="/faq"
-              className="nav-btn"
+              className={`nav-btn ${isActive('/faq') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
             >
               FAQ
             </Link>
             <Link
               to="/contato"
-              className="nav-btn"
+              className={`nav-btn ${isActive('/contato') ? 'border-b-2 border-indigo-500 bg-[var(--bg-secondary)] font-semibold' : ''}`}
             >
               Contato
             </Link>
@@ -75,12 +104,13 @@ export default function NavBar() {
               <div className="hidden text-sm text-[var(--text-secondary)] sm:block">
                 {displayName}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="hidden items-center gap-2 sm:flex">
                 <button
                   onClick={() => nav('/perfil')}
-                  className="rounded bg-[var(--bg-secondary)] px-3 py-1 text-sm text-[var(--text-primary)]"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-secondary)] text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-tertiary)]"
+                  title="Meu Perfil"
                 >
-                  Meu Perfil
+                  <FaUser />
                 </button>
                 <button
                   onClick={handleLogout}
@@ -91,8 +121,129 @@ export default function NavBar() {
               </div>
             </>
           )}
+          <button
+            onClick={toggleMenu}
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] md:hidden"
+            aria-label="Menu"
+          >
+            {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+          </button>
         </div>
       </div>
+
+      {isMenuOpen && (
+        <div className="border-t border-[var(--border-color)] bg-[var(--bg-primary)] md:hidden">
+          <div className="flex flex-col space-y-1 px-4 py-3">
+            {!isEmpresa && (
+              <Link
+                to="/"
+                className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                  isActive('/')
+                    ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                    : ''
+                }`}
+                onClick={closeMenu}
+              >
+                Home
+              </Link>
+            )}
+            {user && !isEmpresa && (
+              <Link
+                to="/dashboard"
+                className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                  isActive('/dashboard')
+                    ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                    : ''
+                }`}
+                onClick={closeMenu}
+              >
+                Dashboard
+              </Link>
+            )}
+            {isEmpresa && (
+              <Link
+                to="/dashboard-empresa"
+                className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                  isActive('/dashboard-empresa')
+                    ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                    : ''
+                }`}
+                onClick={closeMenu}
+              >
+                Empresa
+              </Link>
+            )}
+            {!isEmpresa && (
+              <Link
+                to="/cursos"
+                className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                  isActive('/cursos')
+                    ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                    : ''
+                }`}
+                onClick={closeMenu}
+              >
+                Cursos
+              </Link>
+            )}
+            <Link
+              to="/dicas"
+              className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                isActive('/dicas')
+                  ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                  : ''
+              }`}
+              onClick={closeMenu}
+            >
+              Dicas
+            </Link>
+            <Link
+              to="/faq"
+              className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                isActive('/faq')
+                  ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                  : ''
+              }`}
+              onClick={closeMenu}
+            >
+              FAQ
+            </Link>
+            <Link
+              to="/contato"
+              className={`rounded px-3 py-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)] ${
+                isActive('/contato')
+                  ? 'border-l-4 border-indigo-500 bg-[var(--bg-secondary)] font-semibold'
+                  : ''
+              }`}
+              onClick={closeMenu}
+            >
+              Contato
+            </Link>
+            {user && (
+              <>
+                <div className="border-t border-[var(--border-color)] pt-3 text-sm text-[var(--text-secondary)]">
+                  {displayName}
+                </div>
+                <button
+                  onClick={() => {
+                    closeMenu();
+                    nav('/perfil');
+                  }}
+                  className="mb-2 mt-2 flex w-full items-center gap-2 rounded bg-[var(--bg-secondary)] px-3 py-2 text-left text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-tertiary)]"
+                >
+                  <FaUser className="mr-2" /> Meu Perfil
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="rounded bg-[var(--bg-tertiary)] px-3 py-2 text-left text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-secondary)]"
+                >
+                  Sair
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   )
 }

@@ -158,7 +158,7 @@ export default function GamificationCard({
   void avgSleep
 
   const containerClass = notification
-    ? `fixed bottom-6 right-6 z-50 transition-transform duration-600 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`
+    ? `fixed bottom-4 right-4 left-4 sm:bottom-6 sm:right-6 sm:left-auto z-50 transition-transform duration-600 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`
     : `max-w-md mx-auto transition-transform duration-600 ease-out ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`
 
   if (!userData || hideCard) return null
@@ -166,18 +166,21 @@ export default function GamificationCard({
   return (
     <div className={containerClass}>
       <div
-        className={`rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4 shadow-lg ${notification ? 'w-80' : ''}`}
+        className={`rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-3 shadow-lg sm:p-4 ${notification ? 'sm:w-80' : ''}`}
       >
         <div className="mb-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
-            <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
-              Registre seu bem-estar hoje
+            <div className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)] sm:text-sm">
+              <span className="hidden sm:inline">
+                Registre seu bem-estar hoje
+              </span>
+              <span className="sm:hidden">Bem-estar hoje</span>
             </div>
             <img
               src={isDark ? '/icon/icon-dark.svg' : '/icon/icon-light.svg'}
               alt="UpPath Icon"
-              className="h-6 w-6"
+              className="h-5 w-5 sm:h-6 sm:w-6"
             />
           </div>
           <button
@@ -196,9 +199,10 @@ export default function GamificationCard({
           }}
           className="grid grid-cols-1 gap-2"
         >
-          <div className="flex gap-2">
-            <label className="flex-1 text-xs">
-              Estresse (0-10)
+          <div className="grid grid-cols-2 gap-2">
+            <label className="text-xs">
+              <span className="hidden sm:inline">Estresse (0-10)</span>
+              <span className="sm:hidden">Estresse</span>
               <input
                 type="number"
                 min={0}
@@ -207,12 +211,14 @@ export default function GamificationCard({
                 onChange={(e) =>
                   setStress(e.target.value === '' ? '' : Number(e.target.value))
                 }
-                className="mt-1 w-full rounded border border-[var(--input-border)] p-2 text-sm"
+                className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 text-xs sm:p-2 sm:text-sm"
+                placeholder="0 = bom, 10 = ruim"
                 required
               />
             </label>
-            <label className="flex-1 text-xs">
-              Motivação (0-10)
+            <label className="text-xs">
+              <span className="hidden sm:inline">Motivação (0-10)</span>
+              <span className="sm:hidden">Motivação</span>
               <input
                 type="number"
                 min={0}
@@ -223,14 +229,16 @@ export default function GamificationCard({
                     e.target.value === '' ? '' : Number(e.target.value),
                   )
                 }
-                className="mt-1 w-full rounded border border-[var(--input-border)] p-2 text-sm"
+                className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 text-xs sm:p-2 sm:text-sm"
+                placeholder="0 = ruim, 10 = bom"
                 required
               />
             </label>
           </div>
-          <div className="flex gap-2">
-            <label className="flex-1 text-xs">
-              Sono (0-10)
+          <div className="grid grid-cols-2 gap-2">
+            <label className="text-xs">
+              <span className="hidden sm:inline">Qualidade do Sono (0-10)</span>
+              <span className="sm:hidden">Qualidade do Sono</span>
               <input
                 type="number"
                 min={0}
@@ -241,26 +249,28 @@ export default function GamificationCard({
                     e.target.value === '' ? '' : Number(e.target.value),
                   )
                 }
-                className="mt-1 w-full rounded border border-[var(--input-border)] p-2 text-sm"
+                className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 text-xs sm:p-2 sm:text-sm"
+                placeholder="0 = ruim, 10 = bom"
                 required
               />
             </label>
-            <label className="flex-1 text-xs">
+            <label className="text-xs">
               Observação
               <input
                 type="text"
                 value={observation}
                 onChange={(e) => setObservation(e.target.value)}
-                className="mt-1 w-full rounded border border-[var(--input-border)] p-2 text-sm"
+                className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 text-xs sm:p-2 sm:text-sm"
+                placeholder="Opcional"
               />
             </label>
           </div>
-          <div className="mt-1 flex items-center gap-2">
+          <div className="mt-1 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
             {!registeredOnce ? (
               <button
                 type="submit"
                 disabled={submitLoading}
-                className="flex-1 rounded bg-[var(--accent-success)] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--accent-success-hover)]"
+                className="flex-1 rounded bg-[var(--accent-success)] px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-success-hover)] sm:text-sm"
               >
                 {submitLoading ? 'Salvando...' : 'Registrar hoje'}
               </button>
@@ -268,7 +278,7 @@ export default function GamificationCard({
               <button
                 type="button"
                 onClick={() => nav('/dashboard')}
-                className="flex-1 rounded bg-[var(--accent-indigo)] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--accent-indigo-hover)]"
+                className="flex-1 rounded bg-[var(--accent-indigo)] px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-indigo-hover)] sm:text-sm"
               >
                 Registrar mais
               </button>
@@ -282,13 +292,13 @@ export default function GamificationCard({
                 setObservation('')
                 setSubmitMessage(null)
               }}
-              className="rounded bg-[var(--bg-tertiary)] px-3 py-2 text-sm transition-colors hover:bg-[var(--bg-secondary)]"
+              className="rounded bg-[var(--bg-tertiary)] px-3 py-2 text-xs transition-colors hover:bg-[var(--bg-secondary)] sm:text-sm"
             >
               Limpar
             </button>
           </div>
           {submitMessage && (
-            <div className="text-center text-sm text-[var(--accent-success)]">
+            <div className="text-center text-xs text-[var(--accent-success)] sm:text-sm">
               {submitMessage}
             </div>
           )}
@@ -296,7 +306,7 @@ export default function GamificationCard({
 
         {loading && (
           <div className="mt-2 text-center">
-            <Spinner text="Carregando..." size={24} />
+            <Spinner text="Carregando..." size={20} />
           </div>
         )}
         {error && (
