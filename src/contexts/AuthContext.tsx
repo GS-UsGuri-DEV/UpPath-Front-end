@@ -5,8 +5,8 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { post, get } from '../api/client'
-import type { AuthContextType, UserData, SimpleUser } from '../types/auth'
+import { get, post } from '../api/client'
+import type { AuthContextType, SimpleUser, UserData } from '../types/auth'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export { AuthContext }
@@ -112,137 +112,160 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  async function login(emailOrCnpj: string, password: string) {
-    // Only accept email + password for login. Do not attempt CNPJ mapping.
-    const loginEmail = String(emailOrCnpj ?? '').trim()
+  async function login(
+    emailOrCnpj: string,
+    password: string,
+    tipo?: 'usuario' | 'empresa',
+  ) {
+    const identifier = String(emailOrCnpj ?? '').trim()
+
+    // Detectar se é CNPJ (apenas números, 14 dígitos)
+    const digitsOnly = identifier.replace(/\D/g, '')
+    const isCNPJ = digitsOnly.length === 14
+    const loginType = tipo ?? (isCNPJ ? 'empresa' : 'usuario')
 
     try {
-      // Prepare compatibility payloads. The backend expects nested fields
-      // under `autenticar.login.*` (see response violations), so try that
-      // shape first, then fall back to other formats.
-      const digitsOnly = loginEmail.replace(/\D/g, '')
-      const looksLikeCNPJ = digitsOnly.length === 14
+      if (loginType === 'empresa' || isCNPJ) {
+        console.info('[Auth] 🏢 Login de empresa via CNPJ:', digitsOnly)
 
-      const nestedPayload: any = {
-        autenticar: {
-          login: {
-            // If the user provided a CNPJ (company), send it as `cnpj`,
-            // otherwise send `email`.
-            ...(looksLikeCNPJ ? { cnpj: digitsOnly } : { email: loginEmail }),
-            // include both keys for compatibility
-            password,
-            senha: password,
-          },
-        },
-      }
+        // Backend não tem endpoint de login para empresas ainda
+        // Solução temporária: validar credenciais localmente
+        try {
+          const empresasRes = await get('https://uppath.onrender.com/empresas')
+          const empresas = Array.isArray(empresasRes) ? empresasRes : []
 
-      console.info('[Auth] trying nested login payload ->')
-      console.debug(nestedPayload)
-      let res: any = null
-      try {
-        // First try the nested payload the backend validated in the error
-        res = await post('https://uppath.onrender.com/login', nestedPayload)
-        console.info('[Auth] nested login response ->')
-        console.debug(res)
-      } catch (err) {
-        console.warn('[Auth] nested login attempt failed, trying fallbacks')
-        console.warn(err)
+          // Buscar empresa por CNPJ
+          const empresa = empresas.find((e: any) => {
+            const cnpjEmpresa = String(e.cnpj ?? '').replace(/\D/g, '')
+            return cnpjEmpresa === digitsOnly
+          })
 
-        // Fallback sequence: try a few common alternatives including cnpj
-        const triedPayloads: any[] = []
-        if (looksLikeCNPJ) {
-          triedPayloads.push({ cnpj: digitsOnly, senha: password })
-        }
-        triedPayloads.push({ email: loginEmail, password, senha: password })
-        triedPayloads.push({ email_contato: loginEmail, password })
-        triedPayloads.push({ email_contato: loginEmail, senha: password })
-        triedPayloads.push({ login: loginEmail, password })
-        triedPayloads.push({ login: loginEmail, senha: password })
-        triedPayloads.push({ username: loginEmail, password })
-        triedPayloads.push({ username: loginEmail, senha: password })
-
-        let lastErr: unknown = err
-        for (const p of triedPayloads) {
-          try {
-            console.info('[Auth] trying fallback payload ->')
-            console.debug(p)
-            res = await post('https://uppath.onrender.com/login', p)
-            console.info('[Auth] fallback response ->')
-            console.debug(res)
-            lastErr = null
-            break
-          } catch (e2) {
-            console.warn('[Auth] fallback attempt failed', e2)
-            lastErr = e2
+          if (!empresa) {
+            throw new Error('Empresa não encontrada. Verifique o CNPJ.')
           }
-        }
 
-        if (lastErr) {
-          // All attempts failed — rethrow original error for upstream handling
+          // Validar senha (comparação direta pois backend não criptografa)
+          if (empresa.senha !== password) {
+            throw new Error('Senha incorreta.')
+          }
+
+          console.info(
+            '[Auth] ✅ Credenciais validadas! Empresa:',
+            empresa.name,
+          )
+
+          // Gerar token temporário (simulado localmente)
+          const tempToken = btoa(`empresa:${empresa.idEmpresa}:${Date.now()}`)
+          localStorage.setItem('authToken', tempToken)
+
+          const userData = {
+            idEmpresa: empresa.idEmpresa,
+            name: empresa.name,
+            cnpj: empresa.cnpj,
+            email: empresa.email,
+            tipo_conta: 'empresa',
+            admin: true,
+          }
+
+          localStorage.setItem('userData', JSON.stringify(userData))
+          setUser({ name: empresa.name, email: empresa.email })
+          setUserData(userData as any)
+
+          console.info('[Auth] 🎉 Login de empresa bem-sucedido!')
+          return userData as any
+        } catch (err) {
+          console.error('[Auth] ❌ Erro no login de empresa:', err)
           throw err
         }
-      }
+      } else {
+        // Login de usuário usa email + password
+        const endpoint = 'https://uppath.onrender.com/login'
+        const payload = {
+          email: identifier,
+          password: password,
+        }
+        console.info('[Auth] 👤 Login usuário com email:', identifier)
 
-      const r = res as any
-      const token = r?.token ?? r?.accessToken ?? r?.access_token ?? null
+        const res = await post(endpoint, payload)
+        console.info('[Auth] Login response:', res)
 
-      if (token) {
-        localStorage.setItem('authToken', String(token))
+        const r = res as any
+        const token = r?.token ?? r?.accessToken ?? r?.access_token ?? null
+
+        if (token) {
+          localStorage.setItem('authToken', String(token))
+        }
+
+        // Fetch user data
+        let data: any = null
         try {
-          const minimal = { email: loginEmail }
-          localStorage.setItem('userData', JSON.stringify(minimal))
+          data = await fetchUserData(identifier)
         } catch (e) {
-          console.warn('Could not persist minimal userData', e)
-        }
-      }
-      let data: any = null
-      try {
-        data = await fetchUserData(loginEmail)
-      } catch (e) {
-        console.warn('fetchUserData failed', e)
-      }
-
-      let result: UserData | null = null
-
-      if (data) {
-        const normalized = {
-          id: data.idUser,
-          name: data.name,
-          nome_completo: data.nome_completo ?? data.name ?? undefined,
-          email: data.email,
-          birthDate: data.birthDate,
-          occupation: data.occupation,
-          nivelCarreira: data.nivelCarreira,
-          gender: data.gender,
-          admin: data.admin === 1,
-          idEmpresa: data.idEmpresa ?? null,
-          dateRegistered: data.dateRegistered ?? null,
-          // By default this is a user account; company logins go through the
-          // fallback branch below which sets `tipo_conta: 'empresa'`.
-          tipo_conta: 'usuario',
+          console.warn('fetchUserData failed', e)
         }
 
-        localStorage.setItem('userData', JSON.stringify(normalized))
+        let result: UserData | null = null
 
-        const su: SimpleUser = {
-          name: normalized.name,
-          email: normalized.email,
+        if (data) {
+          const normalized = {
+            id: data.idUser,
+            name: data.name,
+            nome_completo: data.nome_completo ?? data.name ?? undefined,
+            email: data.email,
+            birthDate: data.birthDate,
+            occupation: data.occupation,
+            nivelCarreira: data.nivelCarreira,
+            gender: data.gender,
+            admin: data.admin === 1,
+            idEmpresa: data.idEmpresa ?? null,
+            dateRegistered: data.dateRegistered ?? null,
+            tipo_conta: data.admin === 1 ? 'empresa' : 'usuario',
+          }
+
+          localStorage.setItem('userData', JSON.stringify(normalized))
+
+          const su: SimpleUser = {
+            name: normalized.name,
+            email: normalized.email,
+          }
+
+          setUser(su)
+          setUserData(normalized)
+          result = normalized as unknown as UserData
+        } else {
+          // If we can't fetch full user data, store minimal info
+          const minimal = { email: identifier }
+          localStorage.setItem('userData', JSON.stringify(minimal))
+          setUser({ name: undefined, email: identifier })
         }
 
-        setUser(su)
-        setUserData(normalized)
-        result = normalized as unknown as UserData
+        return result
       }
 
-      return result
+      return null
     } catch (err) {
-      // Map common backend errors to user-friendly messages
       console.error('[Auth] login error ->', err)
       const message = err instanceof Error ? err.message : String(err)
-      if (/401|unauthor/i.test(message)) {
-        throw new Error('Email ou senha incorretos')
+
+      // Check for common error patterns
+      if (/401|unauthorized/i.test(message)) {
+        throw new Error(
+          loginType === 'empresa'
+            ? 'CNPJ ou senha incorretos'
+            : 'Email ou senha incorretos',
+        )
       }
-      // If backend provided a message, forward it, otherwise generic
+      if (/400|bad request/i.test(message)) {
+        throw new Error('Dados de login inválidos. Verifique as informações.')
+      }
+      if (/404|not found/i.test(message)) {
+        throw new Error(
+          loginType === 'empresa'
+            ? 'Empresa não encontrada'
+            : 'Usuário não encontrado',
+        )
+      }
+
       throw new Error(message || 'Erro ao autenticar')
     }
   }

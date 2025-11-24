@@ -9,7 +9,7 @@ export interface AuthContextType {
   user: SimpleUser | null
   userData: UserData | null
   loading: boolean
-  login: (email: string, password: string) => Promise<UserData | null>
+  login: (email: string, password: string, tipo?: 'usuario' | 'empresa') => Promise<UserData | null>
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
 }
