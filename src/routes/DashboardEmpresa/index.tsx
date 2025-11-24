@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { FaBatteryFull, FaBuilding, FaChartBar, FaHeart, FaMoon, FaUsers } from 'react-icons/fa'
 import { get } from '../../api/client'
 import Spinner from '../../components/Spinner/Spinner'
@@ -19,14 +19,7 @@ export default function DashboardEmpresa() {
   // ID can come from different fields in the backend; store the canonical id we used to lookup
   const [companyIdDisplay, setCompanyIdDisplay] = useState<string | null>(null)
 
-  useEffect(() => {
-    // Only fetch company data when the logged user is a company account.
-    if ((userData as any)?.tipo_conta === 'empresa') {
-      fetchDadosEmpresa()
-    }
-  }, [userData])
-
-  async function fetchDadosEmpresa() {
+  const fetchDadosEmpresa = useCallback(async () => {
     setLoading(true)
     setError(null)
 
@@ -498,7 +491,14 @@ export default function DashboardEmpresa() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [userData])
+
+  useEffect(() => {
+    // Only fetch company data when the logged user is a company account.
+    if ((userData as any)?.tipo_conta === 'empresa') {
+      fetchDadosEmpresa()
+    }
+  }, [userData, fetchDadosEmpresa])
 
   if (loading) {
     return (

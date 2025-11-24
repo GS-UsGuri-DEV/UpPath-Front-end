@@ -1,5 +1,5 @@
 import { MdOutlineLightbulb } from 'react-icons/md'
-import type { RecomendacoesCardProps, Recomendacao } from '../../types/graphicsDashboard'
+import type { Recomendacao, RecomendacoesCardProps } from '../../types/graphicsDashboard'
 
 export default function RecomendacoesCard({ recomendacoes }: RecomendacoesCardProps) {
   if (!recomendacoes || recomendacoes.length === 0) {

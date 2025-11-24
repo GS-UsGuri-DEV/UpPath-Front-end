@@ -102,6 +102,16 @@ export default function Questionario() {
     }
   }
 
+  const getStepColor = (index: number, current: number) => {
+    if (index + 1 === current) {
+      return 'w-8 bg-indigo-600'
+    }
+    if (index + 1 < current) {
+      return 'bg-indigo-400'
+    }
+    return 'bg-gray-300 dark:bg-gray-600'
+  }
+
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] py-4 sm:py-8">
       {showSuccess && (
@@ -167,13 +177,7 @@ export default function Questionario() {
           {Array.from({ length: totalSteps }).map((_, index) => (
             <div
               key={index}
-              className={`h-2 w-2 rounded-full transition-all ${
-                index + 1 === currentStep
-                  ? 'w-8 bg-indigo-600'
-                  : index + 1 < currentStep
-                    ? 'bg-indigo-400'
-                    : 'bg-gray-300 dark:bg-gray-600'
-              }`}
+              className={`h-2 w-2 rounded-full transition-all ${getStepColor(index, currentStep)}`}
             />
           ))}
         </div>

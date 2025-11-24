@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { FaTimes } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/useAuth'
@@ -30,7 +30,7 @@ export default function GamificationCard({ notification = false }: { notificatio
     }
   }, [])
 
-  async function fetchLatest() {
+  const fetchLatest = useCallback(async () => {
     setError(null)
     setLoading(true)
     try {
@@ -74,13 +74,13 @@ export default function GamificationCard({ notification = false }: { notificatio
     } finally {
       setLoading(false)
     }
-  }
+  }, [userData])
 
   useEffect(() => {
     if (userData) {
       fetchLatest()
     }
-  }, [userData])
+  }, [userData, fetchLatest])
 
   async function registerToday() {
     setSubmitMessage(null)

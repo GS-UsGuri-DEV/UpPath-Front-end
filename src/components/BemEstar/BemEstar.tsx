@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { FaFire, FaMedal } from 'react-icons/fa'
 import { useAuth } from '../../contexts/useAuth'
 import Spinner from '../Spinner/Spinner'
@@ -13,7 +13,7 @@ export default function BemEstar() {
   const [bemTo, setBemTo] = useState<string>('')
   const [bemLimit, setBemLimit] = useState<string>('')
 
-  async function fetchBemEstar() {
+  const fetchBemEstar = useCallback(async () => {
     setBemError(null)
     setBemLoading(true)
     try {
@@ -63,13 +63,13 @@ export default function BemEstar() {
     } finally {
       setBemLoading(false)
     }
-  }
+  }, [userData, bemFrom, bemTo, bemLimit])
 
   useEffect(() => {
     if (userData) {
       fetchBemEstar()
     }
-  }, [userData])
+  }, [userData, fetchBemEstar])
 
   const num = (v: unknown) => {
     if (v === null || v === undefined) {
@@ -121,12 +121,16 @@ export default function BemEstar() {
 
   const score = computeScore()
 
-  const badge =
-    score >= 71
-      ? { label: 'Ouro', color: 'text-[var(--accent-warning)]' }
-      : score >= 41
-        ? { label: 'Prata', color: 'text-[var(--text-muted)]' }
-        : { label: 'Bronze', color: 'text-[var(--accent-warning-dark)]' }
+  const getBadge = (s: number) => {
+    if (s >= 71) {
+      return { label: 'Ouro', color: 'text-[var(--accent-warning)]' }
+    }
+    if (s >= 41) {
+      return { label: 'Prata', color: 'text-[var(--text-muted)]' }
+    }
+    return { label: 'Bronze', color: 'text-[var(--accent-warning-dark)]' }
+  }
+  const badge = getBadge(score)
 
   const computeStreak = () => {
     if (!Array.isArray(bemEstar) || bemEstar.length === 0) {

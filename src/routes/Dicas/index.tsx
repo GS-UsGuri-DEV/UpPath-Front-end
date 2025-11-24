@@ -1,5 +1,5 @@
 import { Query } from 'appwrite'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   FaBatteryFull,
   FaBrain,
@@ -28,16 +28,7 @@ export default function Dicas() {
     null,
   )
 
-  useEffect(() => {
-    if (userData) {
-      fetchUltimoRegistro()
-    } else if (user === null) {
-      // Usuário não está logado
-      setLoading(false)
-    }
-  }, [userData, user])
-
-  async function fetchUltimoRegistro() {
+  const fetchUltimoRegistro = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -89,7 +80,16 @@ export default function Dicas() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [userData])
+
+  useEffect(() => {
+    if (userData) {
+      fetchUltimoRegistro()
+    } else if (user === null) {
+      // Usuário não está logado
+      setLoading(false)
+    }
+  }, [userData, user, fetchUltimoRegistro])
 
   function selecionarDicaAutomatica(niveisData: NiveisBemEstar) {
     const categorias: Array<'sono' | 'estresse' | 'motivacao'> = []

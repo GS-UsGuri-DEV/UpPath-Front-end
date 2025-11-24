@@ -348,7 +348,7 @@ export default function Login() {
 
             {resetMsg && (
               <div
-                className={`mb-4 rounded-lg p-3 text-sm ${
+                className={`rounded-lg p-3 text-sm ${
                   resetSuccess
                     ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                     : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
@@ -358,159 +358,161 @@ export default function Login() {
               </div>
             )}
 
-            {!resetSuccess ? (
-              verificationStep === 1 ? (
-                <form onSubmit={handleVerifyData}>
-                  <p className="mb-4 text-sm text-[var(--text-secondary)]">
-                    Para redefinir sua senha, precisamos verificar seus dados.
-                  </p>
-                  <div className="space-y-3">
-                    <div className="flex gap-2 rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] p-1">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setAccountType('usuario')
-                          setResetCpf('')
-                          setResetBirthdate('')
-                        }}
-                        className={`flex-1 rounded px-4 py-2 text-sm font-medium transition-colors ${
-                          accountType === 'usuario'
-                            ? 'bg-indigo-600 text-white'
-                            : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-                        }`}
-                      >
-                        Usuário
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setAccountType('empresa')
-                          setResetCpf('')
-                          setResetBirthdate('')
-                        }}
-                        className={`flex-1 rounded px-4 py-2 text-sm font-medium transition-colors ${
-                          accountType === 'empresa'
-                            ? 'bg-indigo-600 text-white'
-                            : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-                        }`}
-                      >
-                        Empresa
-                      </button>
-                    </div>
-                    <input
-                      type="email"
-                      value={resetEmail}
-                      onChange={(e) => setResetEmail(e.target.value)}
-                      placeholder="E-mail"
-                      className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
-                      required
-                    />
-                    <input
-                      type="text"
-                      value={resetCpf}
-                      onChange={(e) => {
-                        const raw = e.target.value.replace(/\D/g, '')
-                        if (accountType === 'empresa') {
-                          const formatted = raw
-                            .replace(/(\d{2})(\d)/, '$1.$2')
-                            .replace(/(\d{3})(\d)/, '$1.$2')
-                            .replace(/(\d{3})(\d)/, '$1/$2')
-                            .replace(/(\d{4})(\d{2})$/, '$1-$2')
-                          setResetCpf(formatted)
-                        } else {
-                          const formatted = raw
-                            .replace(/(\d{3})(\d)/, '$1.$2')
-                            .replace(/(\d{3})(\d)/, '$1.$2')
-                            .replace(/(\d{3})(\d{2})$/, '$1-$2')
-                          setResetCpf(formatted)
-                        }
-                      }}
-                      placeholder={accountType === 'empresa' ? 'CNPJ' : 'CPF'}
-                      maxLength={accountType === 'empresa' ? 18 : 14}
-                      className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
-                      required
-                    />
-                    {accountType === 'usuario' && (
-                      <input
-                        type="date"
-                        value={resetBirthdate}
-                        onChange={(e) => setResetBirthdate(e.target.value)}
-                        placeholder="Data de Nascimento"
-                        className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
-                        required
-                      />
-                    )}
-                  </div>
-                  <div className="mt-4 flex gap-2">
+            {!resetSuccess && verificationStep === 1 && (
+              <form onSubmit={handleVerifyData}>
+                <p className="mb-4 text-sm text-[var(--text-secondary)]">
+                  Para redefinir sua senha, precisamos verificar seus dados.
+                </p>
+                <div className="space-y-3">
+                  <div className="flex gap-2 rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] p-1">
                     <button
                       type="button"
                       onClick={() => {
-                        setShowForgotPassword(false)
-                        setResetMsg('')
-                        setResetEmail('')
+                        setAccountType('usuario')
                         setResetCpf('')
                         setResetBirthdate('')
-                        setVerificationStep(1)
                       }}
-                      className="flex-1 rounded-lg border border-[var(--border-color)] bg-[var(--bg-tertiary)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
+                      className={`flex-1 rounded px-4 py-2 text-sm font-medium transition-colors ${
+                        accountType === 'usuario'
+                          ? 'bg-indigo-600 text-white'
+                          : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                      }`}
                     >
-                      Cancelar
+                      Usuário
                     </button>
-                    <button
-                      type="submit"
-                      className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
-                    >
-                      Verificar
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <form onSubmit={handleChangePassword}>
-                  <p className="mb-4 text-sm text-[var(--text-secondary)]">
-                    Dados verificados! Agora defina sua nova senha.
-                  </p>
-                  <div className="space-y-3">
-                    <input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="Nova senha (mínimo 8 caracteres)"
-                      className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
-                      required
-                      minLength={8}
-                    />
-                    <input
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Confirmar nova senha"
-                      className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
-                      required
-                    />
-                  </div>
-                  <div className="mt-4 flex gap-2">
                     <button
                       type="button"
                       onClick={() => {
-                        setVerificationStep(1)
-                        setNewPassword('')
-                        setConfirmPassword('')
-                        setResetMsg('')
+                        setAccountType('empresa')
+                        setResetCpf('')
+                        setResetBirthdate('')
                       }}
-                      className="flex-1 rounded-lg border border-[var(--border-color)] bg-[var(--bg-tertiary)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
+                      className={`flex-1 rounded px-4 py-2 text-sm font-medium transition-colors ${
+                        accountType === 'empresa'
+                          ? 'bg-indigo-600 text-white'
+                          : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                      }`}
                     >
-                      Voltar
-                    </button>
-                    <button
-                      type="submit"
-                      className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
-                    >
-                      Alterar Senha
+                      Empresa
                     </button>
                   </div>
-                </form>
-              )
-            ) : (
+                  <input
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    placeholder="E-mail"
+                    className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
+                    required
+                  />
+                  <input
+                    type="text"
+                    value={resetCpf}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/\D/g, '')
+                      if (accountType === 'empresa') {
+                        const formatted = raw
+                          .replace(/(\d{2})(\d)/, '$1.$2')
+                          .replace(/(\d{3})(\d)/, '$1.$2')
+                          .replace(/(\d{3})(\d)/, '$1/$2')
+                          .replace(/(\d{4})(\d{2})$/, '$1-$2')
+                        setResetCpf(formatted)
+                      } else {
+                        const formatted = raw
+                          .replace(/(\d{3})(\d)/, '$1.$2')
+                          .replace(/(\d{3})(\d)/, '$1.$2')
+                          .replace(/(\d{3})(\d{2})$/, '$1-$2')
+                        setResetCpf(formatted)
+                      }
+                    }}
+                    placeholder={accountType === 'empresa' ? 'CNPJ' : 'CPF'}
+                    maxLength={accountType === 'empresa' ? 18 : 14}
+                    className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
+                    required
+                  />
+                  {accountType === 'usuario' && (
+                    <input
+                      type="date"
+                      value={resetBirthdate}
+                      onChange={(e) => setResetBirthdate(e.target.value)}
+                      placeholder="Data de Nascimento"
+                      className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
+                      required
+                    />
+                  )}
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowForgotPassword(false)
+                      setResetMsg('')
+                      setResetEmail('')
+                      setResetCpf('')
+                      setResetBirthdate('')
+                      setVerificationStep(1)
+                    }}
+                    className="flex-1 rounded-lg border border-[var(--border-color)] bg-[var(--bg-tertiary)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                  >
+                    Verificar
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {!resetSuccess && verificationStep === 2 && (
+              <form onSubmit={handleChangePassword}>
+                <p className="mb-4 text-sm text-[var(--text-secondary)]">
+                  Dados verificados! Agora defina sua nova senha.
+                </p>
+                <div className="space-y-3">
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Nova senha (mínimo 8 caracteres)"
+                    className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
+                    required
+                    minLength={8}
+                  />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirmar nova senha"
+                    className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-[var(--text-primary)] focus:border-indigo-500 focus:outline-none"
+                    required
+                  />
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setVerificationStep(1)
+                      setNewPassword('')
+                      setConfirmPassword('')
+                      setResetMsg('')
+                    }}
+                    className="flex-1 rounded-lg border border-[var(--border-color)] bg-[var(--bg-tertiary)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-secondary)]"
+                  >
+                    Voltar
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                  >
+                    Alterar Senha
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {resetSuccess && (
               <button
                 onClick={() => {
                   setShowForgotPassword(false)

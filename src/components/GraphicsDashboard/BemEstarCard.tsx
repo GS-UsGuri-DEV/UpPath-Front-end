@@ -37,6 +37,17 @@ export default function BemEstarCard({
         return 'var(--accent-primary)'
     }
   }
+
+  const getStatusColor = (s: string) => {
+    if (s === 'Melhorando') {
+      return 'text-[var(--accent-success)]'
+    }
+    if (s === 'Piorando') {
+      return 'text-[var(--accent-danger)]'
+    }
+    return 'text-[var(--text-muted)]'
+  }
+
   const accent = getAccentVar(color)
   return (
     <div
@@ -71,17 +82,7 @@ export default function BemEstarCard({
         </div>
         <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
           <span>Média: {media}</span>
-          <span
-            className={`bemestar-status ${
-              status === 'Melhorando'
-                ? 'text-[var(--accent-success)]'
-                : status === 'Piorando'
-                  ? 'text-[var(--accent-danger)]'
-                  : 'text-[var(--text-muted)]'
-            }`}
-          >
-            {status}
-          </span>
+          <span className={`bemestar-status ${getStatusColor(status)}`}>{status}</span>
         </div>
       </div>
     </div>

@@ -6,17 +6,14 @@ import { useAuth } from '../../contexts/useAuth'
 export default function Perfil() {
   const { userData, loading } = useAuth()
 
-  const displayName = (userData as any)?.nome_completo ?? (userData as any)?.name ?? '—'
-  const displayEmail = String(userData?.email ?? '—')
-  const profileImage = String((userData && (userData.profile_image as unknown)) ?? '')
-  const nivelCarreira = (userData as any)?.nivel_carreira ?? (userData as any)?.nivelCarreira ?? '—'
-  const occupation = (userData as any)?.ocupacao ?? (userData as any)?.occupation ?? '—'
-  const gender = (userData as any)?.genero ?? (userData as any)?.gender ?? '—'
-  const dateRegistered =
-    (userData as any)?.data_cadastro ??
-    (userData as any)?.dateRegistered ??
-    (userData as any)?.dateRegistered ??
-    ''
+  const userDataObj = userData as Record<string, unknown> | null
+  const displayName = String(userDataObj?.nome_completo ?? userDataObj?.name ?? '—')
+  const displayEmail = String(userDataObj?.email ?? '—')
+  const profileImage = String(userDataObj?.profile_image ?? '')
+  const nivelCarreira = String(userDataObj?.nivel_carreira ?? userDataObj?.nivelCarreira ?? '—')
+  const occupation = String(userDataObj?.ocupacao ?? userDataObj?.occupation ?? '—')
+  const gender = String(userDataObj?.genero ?? userDataObj?.gender ?? '—')
+  const dateRegistered = String(userDataObj?.data_cadastro ?? userDataObj?.dateRegistered ?? '')
   function fmtDate(d: string | undefined) {
     if (!d) {
       return '—'
