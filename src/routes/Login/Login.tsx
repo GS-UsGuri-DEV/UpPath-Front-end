@@ -77,6 +77,12 @@ export default function Login() {
       let loginIdentifier = data.email
       if (loginType === 'empresa') {
         loginIdentifier = data.email.replace(/\D/g, '')
+      } else {
+        // Para usuário, só aceita e-mail válido contendo @ e .com
+        if (!/^[^@\s]+@[^@\s]+\.com$/.test(data.email)) {
+          setMsg('Digite um e-mail válido (deve conter @ e .com)')
+          return
+        }
       }
 
       await login(loginIdentifier, data.password, loginType)
@@ -90,7 +96,7 @@ export default function Login() {
       }
 
       if (loginType === 'empresa') {
-        nav('/dashboard-empresa')
+        nav('/dashboardempresa')
       } else {
         nav('/')
       }
