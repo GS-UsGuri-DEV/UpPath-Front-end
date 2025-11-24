@@ -6,7 +6,6 @@ import {
   type ReactNode,
 } from 'react'
 import { post, get } from '../api/client'
-import { db } from '../shared/appwrite'
 import type { AuthContextType, UserData, SimpleUser } from '../types/auth'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -114,48 +113,75 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   async function login(emailOrCnpj: string, password: string) {
-    let loginEmail = emailOrCnpj
-
-    // If input is not an email, treat it as CNPJ and try to map to contact email
-    if (!emailOrCnpj.includes('@')) {
-      const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
-      const COLLECTION_COMPANIES = import.meta.env
-        .VITE_APPWRITE_COLLECTION_COMPANIES
-      const cnpjClean = String(emailOrCnpj).replace(/\D/g, '')
-
-      try {
-        if (!DB_ID || !COLLECTION_COMPANIES)
-          throw new Error('CNPJ lookup not configured')
-        const responseCompanies = await db.listDocuments(
-          DB_ID,
-          COLLECTION_COMPANIES,
-        )
-        const companyDoc = responseCompanies.documents.find((doc) => {
-          const d = doc as unknown as Record<string, unknown>
-          return (
-            d.cnpj &&
-            typeof d.cnpj === 'string' &&
-            d.cnpj.replace(/\D/g, '') === cnpjClean
-          )
-        })
-
-        if (companyDoc) {
-          const companyData = companyDoc as unknown as Record<string, unknown>
-          loginEmail = (companyData.email_contato as string) ?? loginEmail
-        } else {
-          throw new Error('CNPJ não encontrado')
-        }
-      } catch (err) {
-        console.warn('CNPJ lookup failed', err)
-        throw err
-      }
-    }
+    // Only accept email + password for login. Do not attempt CNPJ mapping.
+    const loginEmail = String(emailOrCnpj ?? '').trim()
 
     try {
-      const res = await post('https://uppath.onrender.com/login', {
-        email: loginEmail,
-        password,
-      })
+      // Prepare compatibility payloads. The backend expects nested fields
+      // under `autenticar.login.*` (see response violations), so try that
+      // shape first, then fall back to other formats.
+      const digitsOnly = loginEmail.replace(/\D/g, '')
+      const looksLikeCNPJ = digitsOnly.length === 14
+
+      const nestedPayload: any = {
+        autenticar: {
+          login: {
+            // If the user provided a CNPJ (company), send it as `cnpj`,
+            // otherwise send `email`.
+            ...(looksLikeCNPJ ? { cnpj: digitsOnly } : { email: loginEmail }),
+            // include both keys for compatibility
+            password,
+            senha: password,
+          },
+        },
+      }
+
+      console.info('[Auth] trying nested login payload ->')
+      console.debug(nestedPayload)
+      let res: any = null
+      try {
+        // First try the nested payload the backend validated in the error
+        res = await post('https://uppath.onrender.com/login', nestedPayload)
+        console.info('[Auth] nested login response ->')
+        console.debug(res)
+      } catch (err) {
+        console.warn('[Auth] nested login attempt failed, trying fallbacks')
+        console.warn(err)
+
+        // Fallback sequence: try a few common alternatives including cnpj
+        const triedPayloads: any[] = []
+        if (looksLikeCNPJ) {
+          triedPayloads.push({ cnpj: digitsOnly, senha: password })
+        }
+        triedPayloads.push({ email: loginEmail, password, senha: password })
+        triedPayloads.push({ email_contato: loginEmail, password })
+        triedPayloads.push({ email_contato: loginEmail, senha: password })
+        triedPayloads.push({ login: loginEmail, password })
+        triedPayloads.push({ login: loginEmail, senha: password })
+        triedPayloads.push({ username: loginEmail, password })
+        triedPayloads.push({ username: loginEmail, senha: password })
+
+        let lastErr: unknown = err
+        for (const p of triedPayloads) {
+          try {
+            console.info('[Auth] trying fallback payload ->')
+            console.debug(p)
+            res = await post('https://uppath.onrender.com/login', p)
+            console.info('[Auth] fallback response ->')
+            console.debug(res)
+            lastErr = null
+            break
+          } catch (e2) {
+            console.warn('[Auth] fallback attempt failed', e2)
+            lastErr = e2
+          }
+        }
+
+        if (lastErr) {
+          // All attempts failed — rethrow original error for upstream handling
+          throw err
+        }
+      }
 
       const r = res as any
       const token = r?.token ?? r?.accessToken ?? r?.access_token ?? null
@@ -182,6 +208,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const normalized = {
           id: data.idUser,
           name: data.name,
+          nome_completo: data.nome_completo ?? data.name ?? undefined,
           email: data.email,
           birthDate: data.birthDate,
           occupation: data.occupation,
@@ -190,6 +217,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           admin: data.admin === 1,
           idEmpresa: data.idEmpresa ?? null,
           dateRegistered: data.dateRegistered ?? null,
+          // By default this is a user account; company logins go through the
+          // fallback branch below which sets `tipo_conta: 'empresa'`.
+          tipo_conta: 'usuario',
         }
 
         localStorage.setItem('userData', JSON.stringify(normalized))
@@ -206,53 +236,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return result
     } catch (err) {
-      try {
-        const emailParam = encodeURIComponent(loginEmail)
-        const resCompanies = await get(
-          `https://uppath.onrender.com/empresas?email=${emailParam}`,
-        )
-        let items: any[] = []
-        const rc: any = resCompanies
-        if (Array.isArray(rc)) items = rc
-        else if (rc?.data && Array.isArray(rc.data)) items = rc.data
-        else if (rc?.items && Array.isArray(rc.items)) items = rc.items
-        else if (rc) items = [rc]
-
-        const company = items.find((it) => {
-          if (!it) return false
-          const emailCandidates = [it.email, it.email_contato, it.emailContact]
-          return emailCandidates.some((c: any) => c && String(c).toLowerCase() === String(loginEmail).toLowerCase())
-        })
-
-        if (company) {
-          const companyPwd = company.senha ?? company.password ?? null
-          if (companyPwd && String(companyPwd) === String(password)) {
-            const normalized = {
-              id: company.idEmpresa ?? company.id ?? company.id_empresa ?? null,
-              name: company.name ?? company.nome_empresa ?? company.companyName ?? null,
-              email: company.email ?? company.email_contato ?? null,
-              admin: false,
-              idEmpresa: company.idEmpresa ?? company.id ?? company.id_empresa ?? null,
-            }
-
-            try {
-              localStorage.setItem('userData', JSON.stringify(normalized))
-            } catch {}
-
-            const su = {
-              name: normalized.name,
-              email: normalized.email,
-            }
-
-            setUser(su)
-            setUserData(normalized as any)
-            return normalized as unknown as UserData
-          }
-        }
-      } catch (e2) {
-        console.warn('Fallback empresa login failed', e2)
+      // Map common backend errors to user-friendly messages
+      console.error('[Auth] login error ->', err)
+      const message = err instanceof Error ? err.message : String(err)
+      if (/401|unauthor/i.test(message)) {
+        throw new Error('Email ou senha incorretos')
       }
-      throw err
+      // If backend provided a message, forward it, otherwise generic
+      throw new Error(message || 'Erro ao autenticar')
     }
   }
 
