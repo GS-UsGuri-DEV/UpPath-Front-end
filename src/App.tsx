@@ -14,6 +14,7 @@ import Perfil from './routes/Perfil/Perfil'
 import Protected from './routes/Protected/Protected'
 import ProtectedCompany from './routes/ProtectedCompany/ProtectedCompany'
 import Questionario from './routes/Questionario'
+import Integrantes from './routes/integrantes/integrantes'
 
 export default function App() {
   const location = useLocation()
@@ -40,6 +41,7 @@ export default function App() {
           <Route path="/dashboard-empresa" element={<DashboardEmpresa />} />
         </Route>
         <Route path="*" element={<Error404 />} />
+        <Route path="/integrantes*" element={<Integrantes />} />
       </Routes>
     </div>
   )
