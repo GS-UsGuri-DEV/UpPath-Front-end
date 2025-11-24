@@ -30,12 +30,13 @@ export default function BemEstarDashboard() {
           '',
       )
 
+      const userDataObj = userData as unknown as Record<string, unknown>
       const idUserCandidate =
-        (userData as any)?.id ??
-        (userData as any)?.ID ??
-        (userData as any)?.userId ??
-        (userData as any)?.idUser ??
-        (userData as any)?.$id ??
+        userDataObj?.id ??
+        userDataObj?.ID ??
+        userDataObj?.userId ??
+        userDataObj?.idUser ??
+        userDataObj?.$id ??
         undefined
       const parsedId = Number(idUserCandidate)
       const idUser = Number.isFinite(parsedId) ? parsedId : undefined
@@ -64,7 +65,7 @@ export default function BemEstarDashboard() {
 
       const items = Array.isArray(data) ? data : (data?.data ?? data?.items ?? (data ? [data] : []))
 
-      const filtered = items.filter((r: { idUser: any }) => {
+      const filtered = items.filter((r: Record<string, unknown>) => {
         const rId = Number(r.idUser)
         return rId === idUser
       })
@@ -113,15 +114,18 @@ export default function BemEstarDashboard() {
 
   const avg = (arr: number[]) => (arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN)
 
-  const stressValues = records7.map((r) =>
-    num((r as any).stressLevel ?? r.nivel_estresse ?? r.NIVEL_ESTRESSE),
-  )
-  const motivationValues = records7.map((r) =>
-    num((r as any).motivationLevel ?? r.nivel_motivacao ?? r.NIVEL_MOTIVACAO),
-  )
-  const sleepValues = records7.map((r) =>
-    num((r as any).sleepQuality ?? r.qualidade_sono ?? r.QUALIDADE_SONO),
-  )
+  const stressValues = records7.map((r) => {
+    const record = r as Record<string, unknown>
+    return num(record.stressLevel ?? record.nivel_estresse ?? record.NIVEL_ESTRESSE)
+  })
+  const motivationValues = records7.map((r) => {
+    const record = r as Record<string, unknown>
+    return num(record.motivationLevel ?? record.nivel_motivacao ?? record.NIVEL_MOTIVACAO)
+  })
+  const sleepValues = records7.map((r) => {
+    const record = r as Record<string, unknown>
+    return num(record.sleepQuality ?? record.qualidade_sono ?? record.QUALIDADE_SONO)
+  })
 
   const avgStress = avg(stressValues.filter((v) => !isNaN(v)))
   const avgMotivation = avg(motivationValues.filter((v) => !isNaN(v)))
@@ -383,6 +387,11 @@ export default function BemEstarDashboard() {
               <tbody>
                 {bemEstar.map((r, idx) => {
                   const row = r as Record<string, unknown>
+                  const id = (row['id_registro'] ?? row['ID_REGISTRO'] ?? row.id ?? '—') as
+                    | string
+                    | number
+                  const rowKey =
+                    typeof id === 'string' || typeof id === 'number' ? String(id) : `row-${idx}`
                   const data = String(
                     row['data_registro'] ??
                       row['DATA_REGISTRO'] ??
@@ -392,29 +401,20 @@ export default function BemEstarDashboard() {
                       '—',
                   )
                   const estresse = String(
-                    (row as any).stressLevel ??
-                      row['nivel_estresse'] ??
-                      row['NIVEL_ESTRESSE'] ??
-                      '—',
+                    row.stressLevel ?? row['nivel_estresse'] ?? row['NIVEL_ESTRESSE'] ?? '—',
                   )
                   const motivacao = String(
-                    (row as any).motivationLevel ??
-                      row['nivel_motivacao'] ??
-                      row['NIVEL_MOTIVACAO'] ??
-                      '—',
+                    row.motivationLevel ?? row['nivel_motivacao'] ?? row['NIVEL_MOTIVACAO'] ?? '—',
                   )
                   const sono = String(
-                    (row as any).sleepQuality ??
-                      row['qualidade_sono'] ??
-                      row['QUALIDADE_SONO'] ??
-                      '—',
+                    row.sleepQuality ?? row['qualidade_sono'] ?? row['QUALIDADE_SONO'] ?? '—',
                   )
                   const obs = String(
-                    (row as any).observations ?? row['observacao'] ?? row['OBSERVACAO'] ?? '—',
+                    row.observations ?? row['observacao'] ?? row['OBSERVACAO'] ?? '—',
                   )
                   return (
                     <tr
-                      key={idx}
+                      key={rowKey}
                       className="border-b border-[var(--border-color)] hover:bg-[var(--bg-secondary)]"
                     >
                       <td className="p-2">{data.slice(0, 10)}</td>

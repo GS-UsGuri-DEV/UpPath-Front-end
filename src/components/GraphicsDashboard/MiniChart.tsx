@@ -26,6 +26,9 @@ export default function MiniChart({ values, color }: MiniChartProps) {
   const step = width / Math.max(values.length - 1, 1)
   const points = values.map((v, i) => `${i * step},${height - (v / maxVal) * height}`).join(' ')
 
+  // Create array with indices for stable keys in time-series data
+  const indexedValues = values.map((v, i) => ({ value: v, position: i }))
+
   return (
     <svg width={width} height={height} className="opacity-30">
       <polyline
@@ -36,8 +39,14 @@ export default function MiniChart({ values, color }: MiniChartProps) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      {values.map((v, i) => (
-        <circle key={i} cx={i * step} cy={height - (v / maxVal) * height} r={2} fill={accent} />
+      {indexedValues.map(({ value, position }) => (
+        <circle
+          key={`point-${position}`}
+          cx={position * step}
+          cy={height - (value / maxVal) * height}
+          r={2}
+          fill={accent}
+        />
       ))}
     </svg>
   )

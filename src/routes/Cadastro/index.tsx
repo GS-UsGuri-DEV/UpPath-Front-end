@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, type FieldErrors } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { post } from '../../api/client'
 import FormButton from '../../components/Form/FormButton'
@@ -19,6 +19,18 @@ export default function Cadastro() {
   })
 
   const { login, checkAuth } = useAuth()
+
+  // Helper function to safely access form errors
+  const getFieldError = (fieldName: string): string | undefined => {
+    const errors = formState.errors as FieldErrors<Record<string, unknown>>
+    const fieldError = errors[fieldName]
+    return fieldError?.message as string | undefined
+  }
+
+  const hasFieldError = (fieldName: string): boolean => {
+    const errors = formState.errors as FieldErrors<Record<string, unknown>>
+    return !!errors[fieldName]
+  }
 
   const type = watch('type') as 'usuario' | 'empresa' | undefined
   const senhaValue = watch('senha') as string | undefined
@@ -327,8 +339,8 @@ export default function Cadastro() {
               {...register('nome_empresa', {
                 required: 'Nome da empresa é obrigatório',
               })}
-              error={(formState.errors as any).nome_empresa?.message as string | undefined}
-              isValid={!(formState.errors as any).nome_empresa && !!watch('nome_empresa')}
+              error={getFieldError('nome_empresa')}
+              isValid={!hasFieldError('nome_empresa') && !!watch('nome_empresa')}
               required
             />
             <FormInput
@@ -341,7 +353,7 @@ export default function Cadastro() {
                 validate: (v) => validateCNPJ(v),
               })}
               error={
-                ((formState.errors as any).cnpj?.message as string | undefined) ??
+                getFieldError('cnpj') ??
                 (typeof cnpjValidationResult === 'string' && _cnpjValue
                   ? (cnpjValidationResult as string)
                   : undefined)
@@ -360,7 +372,7 @@ export default function Cadastro() {
                 },
               })}
               error={
-                ((formState.errors as any).email_contato?.message as string | undefined) ??
+                getFieldError('email_contato') ??
                 (_emailContatoValue && !emailContatoValid ? 'Email inválido' : undefined)
               }
               isValid={emailContatoValid}
@@ -374,7 +386,7 @@ export default function Cadastro() {
                 validate: validatePassword,
               })}
               error={
-                ((formState.errors as any).senha?.message as string | undefined) ??
+                getFieldError('senha') ??
                 (typeof senhaValidationMessage === 'string' && _senhaValue
                   ? (senhaValidationMessage as string)
                   : undefined)
@@ -448,8 +460,8 @@ export default function Cadastro() {
               {...register('confirmPassword', {
                 validate: (v) => v === watch('senha') || 'As senhas não coincidem',
               })}
-              error={(formState.errors as any).confirmPassword?.message as string | undefined}
-              isValid={!(formState.errors as any).confirmPassword && !!watch('confirmPassword')}
+              error={getFieldError('confirmPassword')}
+              isValid={!hasFieldError('confirmPassword') && !!watch('confirmPassword')}
               required
             />
           </>
@@ -459,8 +471,8 @@ export default function Cadastro() {
               label="Nome Completo"
               placeholder="Nome Completo"
               {...register('nome_completo', { required: 'Nome é obrigatório' })}
-              error={(formState.errors as any).nome_completo?.message as string | undefined}
-              isValid={!(formState.errors as any).nome_completo && !!watch('nome_completo')}
+              error={getFieldError('nome_completo')}
+              isValid={!hasFieldError('nome_completo') && !!watch('nome_completo')}
               required
             />
             {/* CPF removido */}
@@ -475,7 +487,7 @@ export default function Cadastro() {
                 },
               })}
               error={
-                ((formState.errors as any).email?.message as string | undefined) ??
+                getFieldError('email') ??
                 (_emailValue && !emailValid ? 'Email inválido' : undefined)
               }
               isValid={emailValid}
@@ -489,7 +501,7 @@ export default function Cadastro() {
                 validate: validatePassword,
               })}
               error={
-                ((formState.errors as any).senha?.message as string | undefined) ??
+                getFieldError('senha') ??
                 (typeof senhaValidationMessage === 'string' && _senhaValue
                   ? (senhaValidationMessage as string)
                   : undefined)
@@ -563,8 +575,8 @@ export default function Cadastro() {
               {...register('confirmPassword', {
                 validate: (v) => v === watch('senha') || 'As senhas não coincidem',
               })}
-              error={(formState.errors as any).confirmPassword?.message as string | undefined}
-              isValid={!(formState.errors as any).confirmPassword && !!watch('confirmPassword')}
+              error={getFieldError('confirmPassword')}
+              isValid={!hasFieldError('confirmPassword') && !!watch('confirmPassword')}
               required
             />
             <FormInput
@@ -579,8 +591,8 @@ export default function Cadastro() {
               {...register('data_nascimento', {
                 required: 'Data de nascimento é obrigatória',
               })}
-              error={(formState.errors as any).data_nascimento?.message as string | undefined}
-              isValid={!(formState.errors as any).data_nascimento && !!watch('data_nascimento')}
+              error={getFieldError('data_nascimento')}
+              isValid={!hasFieldError('data_nascimento') && !!watch('data_nascimento')}
               required
             />
             <FormInput
@@ -589,24 +601,24 @@ export default function Cadastro() {
               {...register('nivel_carreira', {
                 required: 'Nível de carreira é obrigatório',
               })}
-              error={(formState.errors as any).nivel_carreira?.message as string | undefined}
-              isValid={!(formState.errors as any).nivel_carreira && !!watch('nivel_carreira')}
+              error={getFieldError('nivel_carreira')}
+              isValid={!hasFieldError('nivel_carreira') && !!watch('nivel_carreira')}
               required
             />
             <FormInput
               label="Ocupação "
               placeholder="Ocupação"
               {...register('ocupacao', { required: 'Ocupação é obrigatória' })}
-              error={(formState.errors as any).ocupacao?.message as string | undefined}
-              isValid={!(formState.errors as any).ocupacao && !!watch('ocupacao')}
+              error={getFieldError('ocupacao')}
+              isValid={!hasFieldError('ocupacao') && !!watch('ocupacao')}
               required
             />
             <FormInput
               label="Gênero "
               placeholder="Gênero"
               {...register('genero', { required: 'Gênero é obrigatório' })}
-              error={(formState.errors as any).genero?.message as string | undefined}
-              isValid={!(formState.errors as any).genero && !!watch('genero')}
+              error={getFieldError('genero')}
+              isValid={!hasFieldError('genero') && !!watch('genero')}
               required
             />
           </>

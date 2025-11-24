@@ -42,12 +42,13 @@ export default function GamificationCard({ notification = false }: { notificatio
       )
 
       // Prefer numeric idUser when available
+      const userDataObj = userData as unknown as Record<string, unknown>
       const idUserCandidate =
-        (userData as any)?.id ??
-        (userData as any)?.ID ??
-        (userData as any)?.userId ??
-        (userData as any)?.idUser ??
-        (userData as any)?.$id ??
+        userDataObj?.id ??
+        userDataObj?.ID ??
+        userDataObj?.userId ??
+        userDataObj?.idUser ??
+        userDataObj?.$id ??
         undefined
 
       const parsedId = Number(idUserCandidate)
@@ -96,12 +97,13 @@ export default function GamificationCard({ notification = false }: { notificatio
       if ([s, m, q].some((v) => Number.isNaN(v) || v < 0 || v > 10)) {
         throw new Error('Estresse, Motivação e Sono devem ser números entre 0 e 10.')
       }
+      const userDataObj2 = userData as unknown as Record<string, unknown>
       const idUserCandidate =
-        (userData as any)?.id ??
-        (userData as any)?.ID ??
-        (userData as any)?.userId ??
-        (userData as any)?.idUser ??
-        (userData as any)?.$id ??
+        userDataObj2?.id ??
+        userDataObj2?.ID ??
+        userDataObj2?.userId ??
+        userDataObj2?.idUser ??
+        userDataObj2?.$id ??
         undefined
 
       const parsedId = Number(idUserCandidate)

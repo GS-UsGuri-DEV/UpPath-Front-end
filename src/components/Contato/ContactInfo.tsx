@@ -10,7 +10,7 @@ export default function ContactInfo() {
       <p className="mb-6 text-sm text-[var(--text-muted)]">{contactInfo.tagline}</p>
 
       <div className="space-y-6">
-        {contactItems.map((item, index) => {
+        {contactItems.map((item) => {
           const iconMap = {
             email: <FaEnvelope className="text-xl text-[var(--accent-indigo)]" />,
             support: <FaHeadset className="text-xl text-[var(--accent-success)]" />,
@@ -20,15 +20,18 @@ export default function ContactInfo() {
           }
 
           return (
-            <div key={index} className="flex items-start gap-4">
+            <div key={item.icon} className="flex items-start gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--bg-tertiary)]">
                 {iconMap[item.icon as keyof typeof iconMap]}
               </div>
               <div>
                 <p className="text-sm font-semibold text-[var(--text-primary)]">{item.title}</p>
                 {Array.isArray(item.content) ? (
-                  item.content.map((line, i) => (
-                    <p key={i} className="text-sm text-[var(--text-secondary)]">
+                  item.content.map((line) => (
+                    <p
+                      key={`${item.icon}-${line}`}
+                      className="text-sm text-[var(--text-secondary)]"
+                    >
                       {line}
                     </p>
                   ))

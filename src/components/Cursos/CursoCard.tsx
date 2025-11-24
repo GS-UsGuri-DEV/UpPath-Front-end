@@ -23,6 +23,14 @@ export default function CursoCard({ curso, onClick }: CursoCardProps) {
   return (
     <div
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick()
+        }
+      }}
+      role="button"
+      tabIndex={0}
       className="group cursor-pointer rounded-xl border-2 border-gray-200 bg-white p-4 shadow-md transition-all duration-200 hover:-translate-y-1 hover:border-indigo-500 hover:shadow-xl dark:border-gray-700 dark:bg-[var(--bg-secondary)] dark:hover:border-indigo-400"
     >
       <div className="mb-3 flex items-start justify-between">
@@ -37,9 +45,9 @@ export default function CursoCard({ curso, onClick }: CursoCardProps) {
       </div>
 
       <div className="mb-3 flex flex-wrap gap-2">
-        {curso.tags.slice(0, 3).map((tag, idx) => (
+        {curso.tags.slice(0, 3).map((tag) => (
           <span
-            key={idx}
+            key={tag}
             className="rounded-full bg-gray-300 px-3 py-1 text-xs font-semibold text-black dark:bg-gray-600 dark:text-white"
           >
             {tag}

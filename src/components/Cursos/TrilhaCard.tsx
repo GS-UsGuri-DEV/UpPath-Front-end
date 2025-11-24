@@ -23,6 +23,14 @@ export default function TrilhaCard({ trilha, onClick }: TrilhaCardProps) {
   return (
     <div
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick()
+        }
+      }}
+      role="button"
+      tabIndex={0}
       className="group cursor-pointer rounded-xl border-2 border-gray-200 bg-white p-5 shadow-md transition-all duration-200 hover:-translate-y-1 hover:border-purple-500 hover:shadow-xl dark:border-gray-700 dark:bg-[var(--bg-secondary)] dark:hover:border-purple-400"
     >
       <div className="mb-3">
@@ -35,9 +43,9 @@ export default function TrilhaCard({ trilha, onClick }: TrilhaCardProps) {
       </div>
 
       <div className="mb-4 flex flex-wrap gap-2">
-        {trilha.tags.slice(0, 4).map((tag, idx) => (
+        {trilha.tags.slice(0, 4).map((tag) => (
           <span
-            key={idx}
+            key={tag}
             className="rounded-full bg-gray-300 px-3 py-1 text-xs font-semibold text-black dark:bg-gray-600 dark:text-white"
           >
             {tag}

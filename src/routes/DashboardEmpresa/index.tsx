@@ -34,11 +34,11 @@ export default function DashboardEmpresa() {
 
       // Prefer buscar a empresa pelo id (idEmpresa/id), se disponível no userData,
       // pois isso evita ambiguidades entre empresas com emails parecidos.
-      const userDataObj2 = userData as unknown as Record<string, any>
+      const userDataObj2 = userData as unknown as Record<string, unknown>
       const candidateCompanyId =
         userDataObj2?.idEmpresa ?? userDataObj2?.id ?? userDataObj2?.id_empresa
 
-      let empresasResRaw: any = null
+      let empresasResRaw: unknown = null
       if (candidateCompanyId) {
         const tryPaths = [
           `/empresas/${candidateCompanyId}`,
@@ -62,15 +62,15 @@ export default function DashboardEmpresa() {
       if (!empresasResRaw) {
         empresasResRaw = await get(`/empresas?email=${encodeURIComponent(userEmail)}`)
       }
-      const empresasResAny = empresasResRaw as any
+      const empresasResAny = empresasResRaw as Record<string, unknown>
 
-      let empresasItems: any[] = []
+      let empresasItems: unknown[] = []
       if (Array.isArray(empresasResAny)) {
         empresasItems = empresasResAny
       } else if (empresasResAny && Array.isArray(empresasResAny.data)) {
-        empresasItems = empresasResAny.data
+        empresasItems = empresasResAny.data as unknown[]
       } else if (empresasResAny && Array.isArray(empresasResAny.items)) {
-        empresasItems = empresasResAny.items
+        empresasItems = empresasResAny.items as unknown[]
       } else if (empresasResAny) {
         empresasItems = [empresasResAny]
       }
@@ -79,16 +79,13 @@ export default function DashboardEmpresa() {
         throw new Error('Empresa não encontrada')
       }
 
-      const empresaData = empresasItems[0] as any as EmpresaData
+      const empresaData = empresasItems[0] as EmpresaData
       setEmpresa(empresaData)
 
       // Determinar identificador da empresa (tenta vários nomes possíveis)
+      const empresaObj = empresaData as unknown as Record<string, unknown>
       const companyId =
-        (empresaData as any).idEmpresa ??
-        (empresaData as any).id_empresa ??
-        (empresaData as any).id ??
-        (empresaData as any).$id ??
-        null
+        empresaObj.idEmpresa ?? empresaObj.id_empresa ?? empresaObj.id ?? empresaObj.$id ?? null
 
       if (!companyId) {
         throw new Error('ID da empresa não encontrado')
@@ -109,14 +106,14 @@ export default function DashboardEmpresa() {
       for (const q of userQueries) {
         try {
           const resp = await get(`/users?${q}`)
-          const respAny = resp as any
-          let items: any[] = []
+          const respAny = resp as Record<string, unknown>
+          let items: unknown[] = []
           if (Array.isArray(respAny)) {
             items = respAny
           } else if (respAny && Array.isArray(respAny.data)) {
-            items = respAny.data
+            items = respAny.data as unknown[]
           } else if (respAny && Array.isArray(respAny.items)) {
-            items = respAny.items
+            items = respAny.items as unknown[]
           } else if (respAny) {
             items = [respAny]
           }
@@ -133,7 +130,7 @@ export default function DashboardEmpresa() {
       // Filtra funcionários: manter apenas os que registraram usando o ID da empresa.
       // Aceita vários formatos: strings, números e objetos { id, $id }.
       const canonicalCompanyId = String(companyId)
-      const extractId = (val: any) => {
+      const extractId = (val: unknown): string | null => {
         if (val == null) {
           return null
         }
@@ -141,35 +138,37 @@ export default function DashboardEmpresa() {
           return String(val)
         }
         if (typeof val === 'object') {
+          const obj = val as Record<string, unknown>
           // common variants
-          if (val.id) {
-            return String(val.id)
+          if (obj.id) {
+            return String(obj.id)
           }
-          if (val.$id) {
-            return String(val.$id)
+          if (obj.$id) {
+            return String(obj.$id)
           }
-          if (val._id) {
-            return String(val._id)
+          if (obj._id) {
+            return String(obj._id)
           }
-          if (val.companyId) {
-            return String(val.companyId)
+          if (obj.companyId) {
+            return String(obj.companyId)
           }
         }
         return null
       }
 
-      funcionariosData = (funcionariosData || []).filter((f: any) => {
+      funcionariosData = (funcionariosData || []).filter((f) => {
         if (!f) {
           return false
         }
+        const fObj = f as unknown as Record<string, unknown>
         const candidateFields = [
-          f.idEmpresa,
-          f.id_empresa,
-          f.empresaId,
-          f.empresa,
-          f.companyId,
-          f.empresa_id,
-          f.company,
+          fObj.idEmpresa,
+          fObj.id_empresa,
+          fObj.empresaId,
+          fObj.empresa,
+          fObj.companyId,
+          fObj.empresa_id,
+          fObj.company,
         ]
 
         for (const c of candidateFields) {
@@ -182,7 +181,7 @@ export default function DashboardEmpresa() {
         // also check if employee.row contains nested company object under other keys
         const nestedCandidates = ['empresa', 'company', 'organization']
         for (const key of nestedCandidates) {
-          const obj = (f as any)[key]
+          const obj = fObj[key]
           const v = extractId(obj)
           if (v && v === canonicalCompanyId) {
             return true
@@ -193,43 +192,61 @@ export default function DashboardEmpresa() {
       })
 
       // Normaliza campos que podem ter nomes diferentes no backend
-      const normalizedFuncionarios: Funcionario[] = (funcionariosData || []).map((f: any) => {
-        const id = (f && (f.$id ?? f.id ?? f.id_usuario ?? f.userId)) || String(Math.random())
+      const normalizedFuncionarios: Funcionario[] = (funcionariosData || []).map((f) => {
+        const fObj = f as unknown as Record<string, unknown>
+        const id = (fObj.$id ?? fObj.id ?? fObj.id_usuario ?? fObj.userId) || String(Math.random())
 
         // Name resolution: try many aliases and compose from first/last if needed
-        let nome_completo =
-          f?.nome_completo ?? f?.nome ?? f?.name ?? f?.full_name ?? f?.fullName ?? ''
+        let nome_completo = (fObj?.nome_completo ??
+          fObj?.nome ??
+          fObj?.name ??
+          fObj?.full_name ??
+          fObj?.fullName ??
+          '') as string
         if (!nome_completo) {
-          const first = f?.firstName ?? f?.firstname ?? f?.given_name ?? ''
-          const last = f?.lastName ?? f?.lastname ?? f?.family_name ?? ''
+          const first = (fObj?.firstName ?? fObj?.firstname ?? fObj?.given_name ?? '') as string
+          const last = (fObj?.lastName ?? fObj?.lastname ?? fObj?.family_name ?? '') as string
           nome_completo = [first, last].filter(Boolean).join(' ').trim()
         }
 
         // Email
-        const email = f?.email ?? f?.email_contato ?? f?.emailContact ?? f?.email_contact ?? ''
+        const email = (fObj?.email ??
+          fObj?.email_contato ??
+          fObj?.emailContact ??
+          fObj?.email_contact ??
+          '') as string
 
         // Occupation aliases
-        const ocupacao =
-          f?.ocupacao ?? f?.ocupation ?? f?.occupation ?? f?.role ?? f?.cargo ?? f?.job_title ?? ''
+        const ocupacao = (fObj?.ocupacao ??
+          fObj?.ocupation ??
+          fObj?.occupation ??
+          fObj?.role ??
+          fObj?.cargo ??
+          fObj?.job_title ??
+          '') as string
 
         // Career level aliases
-        const nivel_carreira =
-          f?.nivel_carreira ?? f?.nivelCarreira ?? f?.careerLevel ?? f?.nivel ?? f?.level ?? ''
+        const nivel_carreira = (fObj?.nivel_carreira ??
+          fObj?.nivelCarreira ??
+          fObj?.careerLevel ??
+          fObj?.nivel ??
+          fObj?.level ??
+          '') as string
 
         // Date aliases
-        const data_cadastro =
-          f?.data_cadastro ??
-          f?.created_at ??
-          f?.createdAt ??
-          f?.date_registered ??
-          f?.dateRegistered ??
-          f?.data ??
-          ''
+        const data_cadastro = (fObj?.data_cadastro ??
+          fObj?.created_at ??
+          fObj?.createdAt ??
+          fObj?.date_registered ??
+          fObj?.dateRegistered ??
+          fObj?.data ??
+          '') as string
 
         // Fallbacks: if no name, try deriving from email local-part
         let finalName = nome_completo
         if (!finalName && email) {
-          finalName = String(email).split('@')[0]
+          const emailPart = String(email).split('@')[0]
+          finalName = emailPart ?? ''
         }
 
         return {
@@ -248,17 +265,18 @@ export default function DashboardEmpresa() {
       if (funcionariosData.length > 0) {
         // Primeiro, tente buscar por usuário (muitos formatos de id)
         const bemEstarPromises = funcionariosData.map(async (f) => {
+          const fObj = f as unknown as Record<string, unknown>
           const candidateIds = [
-            (f as any).id,
-            (f as any).$id,
-            (f as any).id_usuario,
-            (f as any).idUser,
-            (f as any).userId,
-            (f as any).uid,
-            (f as any).idUserAlt,
+            fObj.id,
+            fObj.$id,
+            fObj.id_usuario,
+            fObj.idUser,
+            fObj.userId,
+            fObj.uid,
+            fObj.idUserAlt,
           ].filter(Boolean)
 
-          const candidateEmails = [(f as any).email, (f as any).email_contato].filter(Boolean)
+          const candidateEmails = [fObj.email, fObj.email_contato].filter(Boolean)
 
           const tried = new Set<string>()
 
@@ -279,14 +297,14 @@ export default function DashboardEmpresa() {
               tried.add(q)
               try {
                 const resp = await get(`/wellBeing?${q}`)
-                const respAny = resp as any
-                let items: any[] = []
+                const respAny = resp as Record<string, unknown>
+                let items: unknown[] = []
                 if (Array.isArray(respAny)) {
                   items = respAny
                 } else if (respAny && Array.isArray(respAny.data)) {
-                  items = respAny.data
+                  items = respAny.data as unknown[]
                 } else if (respAny && Array.isArray(respAny.items)) {
-                  items = respAny.items
+                  items = respAny.items as unknown[]
                 } else if (respAny) {
                   items = [respAny]
                 }
@@ -298,9 +316,15 @@ export default function DashboardEmpresa() {
 
                 // wellBeing: items for query
 
-                items.sort((a: any, b: any) => {
-                  const da = new Date(a.data_registro ?? a.data ?? 0).getTime()
-                  const dbt = new Date(b.data_registro ?? b.data ?? 0).getTime()
+                items.sort((a, b) => {
+                  const aObj = a as Record<string, unknown>
+                  const bObj = b as Record<string, unknown>
+                  const da = new Date(
+                    (aObj.data_registro ?? aObj.data ?? 0) as string | number,
+                  ).getTime()
+                  const dbt = new Date(
+                    (bObj.data_registro ?? bObj.data ?? 0) as string | number,
+                  ).getTime()
                   return dbt - da
                 })
 
@@ -320,14 +344,14 @@ export default function DashboardEmpresa() {
             tried.add(q)
             try {
               const resp = await get(`/wellBeing?${q}`)
-              const respAny = resp as any
-              let items: any[] = []
+              const respAny = resp as Record<string, unknown>
+              let items: unknown[] = []
               if (Array.isArray(respAny)) {
                 items = respAny
               } else if (respAny && Array.isArray(respAny.data)) {
-                items = respAny.data
+                items = respAny.data as unknown[]
               } else if (respAny && Array.isArray(respAny.items)) {
-                items = respAny.items
+                items = respAny.items as unknown[]
               } else if (respAny) {
                 items = [respAny]
               }
@@ -339,9 +363,15 @@ export default function DashboardEmpresa() {
 
               // wellBeing: company items for query
 
-              items.sort((a: any, b: any) => {
-                const da = new Date(a.data_registro ?? a.data ?? 0).getTime()
-                const dbt = new Date(b.data_registro ?? b.data ?? 0).getTime()
+              items.sort((a, b) => {
+                const aObj = a as Record<string, unknown>
+                const bObj = b as Record<string, unknown>
+                const da = new Date(
+                  (aObj.data_registro ?? aObj.data ?? 0) as string | number,
+                ).getTime()
+                const dbt = new Date(
+                  (bObj.data_registro ?? bObj.data ?? 0) as string | number,
+                ).getTime()
                 return dbt - da
               })
 
@@ -369,14 +399,14 @@ export default function DashboardEmpresa() {
           for (const cq of companyBemQueries) {
             try {
               const resp = await get(`/wellBeing?${cq}`)
-              const respAny = resp as any
-              let items: any[] = []
+              const respAny = resp as Record<string, unknown>
+              let items: unknown[] = []
               if (Array.isArray(respAny)) {
                 items = respAny
               } else if (respAny && Array.isArray(respAny.data)) {
-                items = respAny.data
+                items = respAny.data as unknown[]
               } else if (respAny && Array.isArray(respAny.items)) {
-                items = respAny.items
+                items = respAny.items as unknown[]
               } else if (respAny) {
                 items = [respAny]
               }
@@ -386,14 +416,15 @@ export default function DashboardEmpresa() {
               }
 
               // Agrupar por usuário e pegar o mais recente por usuário
-              const grouped = new Map<string, any[]>()
+              const grouped = new Map<string, unknown[]>()
               for (const it of items) {
+                const itObj = it as Record<string, unknown>
                 const uid = String(
-                  it.id_usuario ??
-                    it.userId ??
-                    it.idUser ??
-                    it.user_id ??
-                    it.email ??
+                  itObj.id_usuario ??
+                    itObj.userId ??
+                    itObj.idUser ??
+                    itObj.user_id ??
+                    itObj.email ??
                     Math.random(),
                 )
                 const arr = grouped.get(uid) ?? []
@@ -403,9 +434,15 @@ export default function DashboardEmpresa() {
 
               const latestPerUser: BemEstarData[] = []
               for (const arr of grouped.values()) {
-                arr.sort((a: any, b: any) => {
-                  const da = new Date(a.data_registro ?? a.data ?? 0).getTime()
-                  const dbt = new Date(b.data_registro ?? b.data ?? 0).getTime()
+                arr.sort((a, b) => {
+                  const aObj = a as Record<string, unknown>
+                  const bObj = b as Record<string, unknown>
+                  const da = new Date(
+                    (aObj.data_registro ?? aObj.data ?? 0) as string | number,
+                  ).getTime()
+                  const dbt = new Date(
+                    (bObj.data_registro ?? bObj.data ?? 0) as string | number,
+                  ).getTime()
                   return dbt - da
                 })
                 latestPerUser.push(arr[0] as BemEstarData)
@@ -421,7 +458,7 @@ export default function DashboardEmpresa() {
 
         // Calcular médias com detecção automática de aliases de campo
         if (validResults.length > 0) {
-          const sample = validResults[0] as any
+          const sample = validResults[0] as unknown as Record<string, unknown>
 
           const estresseKeys = [
             'nivel_estresse',
@@ -451,7 +488,7 @@ export default function DashboardEmpresa() {
           const kMotivacao = findKey(motivacaoKeys)
           const kSono = findKey(sonoKeys)
 
-          const toNumber = (v: any) => {
+          const toNumber = (v: unknown): number => {
             if (v == null) {
               return 0
             }
@@ -459,18 +496,18 @@ export default function DashboardEmpresa() {
             return Number.isNaN(n) ? 0 : n
           }
 
-          const somaEstresse = validResults.reduce(
-            (acc, r) => acc + toNumber((r as any)[kEstresse ?? 'nivel_estresse']),
-            0,
-          )
-          const somaMotivacao = validResults.reduce(
-            (acc, r) => acc + toNumber((r as any)[kMotivacao ?? 'nivel_motivacao']),
-            0,
-          )
-          const somaSono = validResults.reduce(
-            (acc, r) => acc + toNumber((r as any)[kSono ?? 'qualidade_sono']),
-            0,
-          )
+          const somaEstresse = validResults.reduce((acc, r) => {
+            const rObj = r as unknown as Record<string, unknown>
+            return acc + toNumber(rObj[kEstresse ?? 'nivel_estresse'])
+          }, 0)
+          const somaMotivacao = validResults.reduce((acc, r) => {
+            const rObj = r as unknown as Record<string, unknown>
+            return acc + toNumber(rObj[kMotivacao ?? 'nivel_motivacao'])
+          }, 0)
+          const somaSono = validResults.reduce((acc, r) => {
+            const rObj = r as unknown as Record<string, unknown>
+            return acc + toNumber(rObj[kSono ?? 'qualidade_sono'])
+          }, 0)
 
           setMedias({
             estresse:
@@ -495,7 +532,8 @@ export default function DashboardEmpresa() {
 
   useEffect(() => {
     // Only fetch company data when the logged user is a company account.
-    if ((userData as any)?.tipo_conta === 'empresa') {
+    const userDataObj = userData as unknown as Record<string, unknown>
+    if (userDataObj?.tipo_conta === 'empresa') {
       fetchDadosEmpresa()
     }
   }, [userData, fetchDadosEmpresa])

@@ -100,18 +100,18 @@ export default function CarrosselIntegrantes({
                   className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4"
                   role="tablist"
                 >
-                  {Array.from({ length: total }).map((_, i) => (
+                  {Array.from({ length: total }, (_, i) => i).map((pageIndex) => (
                     <button
-                      key={i}
+                      key={`carousel-page-${pageIndex}`}
                       type="button"
                       role="tab"
-                      aria-label={`Ir ao passo ${i + 1}`}
-                      aria-selected={i === index}
-                      onClick={() => goTo(i)}
+                      aria-label={`Ir ao passo ${pageIndex + 1}`}
+                      aria-selected={pageIndex === index}
+                      onClick={() => goTo(pageIndex)}
                       className={[
                         'rounded-full transition',
                         'h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5',
-                        i === index
+                        pageIndex === index
                           ? 'dark:bg-backBtn dark:ring-fontPrimary bg-gray-800 ring-2 ring-gray-300'
                           : 'bg-gray-300 hover:bg-gray-400',
                       ].join(' ')}

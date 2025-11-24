@@ -33,9 +33,9 @@ export default function SocialLinks() {
 
   return (
     <div className="flex items-center justify-center gap-4">
-      {socialLinks.map((link, index) => (
+      {socialLinks.map((link) => (
         <a
-          key={index}
+          key={link.url}
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"

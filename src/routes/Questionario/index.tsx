@@ -174,10 +174,10 @@ export default function Questionario() {
 
         {/* Steps Indicator */}
         <div className="mt-6 flex justify-center gap-2">
-          {Array.from({ length: totalSteps }).map((_, index) => (
+          {Array.from({ length: totalSteps }, (_, i) => i).map((stepIndex) => (
             <div
-              key={index}
-              className={`h-2 w-2 rounded-full transition-all ${getStepColor(index, currentStep)}`}
+              key={`step-indicator-${stepIndex}`}
+              className={`h-2 w-2 rounded-full transition-all ${getStepColor(stepIndex, currentStep)}`}
             />
           ))}
         </div>

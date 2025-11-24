@@ -145,11 +145,9 @@ export const trilhasDisponiveis: TrilhaCompleta[] = [
     num_cursos: 4,
     imagem: '/images/trilhas/fullstack.jpg',
     tags: ['Full Stack', 'JavaScript', 'React', 'Node.js'],
-    cursos: [
-      cursosDisponiveis[0]!, // React Avançado
-      cursosDisponiveis[1]!, // TypeScript Pro
-      cursosDisponiveis[2]!, // Node.js Backend
-    ],
+    cursos: [cursosDisponiveis[0], cursosDisponiveis[1], cursosDisponiveis[2]].filter(
+      (c): c is Curso => c !== undefined,
+    ),
     progresso: 65,
   },
   {
@@ -162,10 +160,7 @@ export const trilhasDisponiveis: TrilhaCompleta[] = [
     num_cursos: 5,
     imagem: '/images/trilhas/datascience.jpg',
     tags: ['Data Science', 'Python', 'ML', 'IA'],
-    cursos: [
-      cursosDisponiveis[4]!, // Python para Data Science
-      cursosDisponiveis[5]!, // Machine Learning Essentials
-    ],
+    cursos: [cursosDisponiveis[4], cursosDisponiveis[5]].filter((c): c is Curso => c !== undefined),
     progresso: 30,
   },
   {
@@ -178,11 +173,9 @@ export const trilhasDisponiveis: TrilhaCompleta[] = [
     num_cursos: 6,
     imagem: '/images/trilhas/product.jpg',
     tags: ['Product', 'Gestão', 'UX', 'Business'],
-    cursos: [
-      cursosDisponiveis[3]!, // UI/UX Design Fundamentals
-      cursosDisponiveis[6]!, // Liderança e Gestão de Equipes
-      cursosDisponiveis[7]!, // Marketing Digital
-    ],
+    cursos: [cursosDisponiveis[3], cursosDisponiveis[6], cursosDisponiveis[7]].filter(
+      (c): c is Curso => c !== undefined,
+    ),
   },
   {
     id: 4,
@@ -194,6 +187,6 @@ export const trilhasDisponiveis: TrilhaCompleta[] = [
     num_cursos: 3,
     imagem: '/images/trilhas/uxui.jpg',
     tags: ['Design', 'UX', 'UI', 'Figma'],
-    cursos: [cursosDisponiveis[3]!],
+    cursos: [cursosDisponiveis[3]].filter((c): c is Curso => c !== undefined),
   },
 ]

@@ -18,9 +18,9 @@ export default function TrilhasCard({ trilhas }: TrilhasCardProps) {
         <h3 className="text-lg font-semibold text-[var(--text-primary)]">Trilhas</h3>
       </div>
       <div className="space-y-3">
-        {trilhas.map((trilha, idx) => (
+        {trilhas.map((trilha) => (
           <div
-            key={idx}
+            key={trilha.nome_trilha}
             className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] p-3"
             tabIndex={0}
             aria-label={`Trilha ${trilha.nome_trilha}, progresso ${trilha.progresso_percentual}%`}

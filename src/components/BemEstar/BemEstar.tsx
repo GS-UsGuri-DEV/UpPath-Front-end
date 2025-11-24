@@ -24,12 +24,13 @@ export default function BemEstar() {
           '',
       )
 
+      const userDataObj = userData as unknown as Record<string, unknown>
       const idUserCandidate =
-        (userData as any)?.id ??
-        (userData as any)?.ID ??
-        (userData as any)?.userId ??
-        (userData as any)?.idUser ??
-        (userData as any)?.$id ??
+        userDataObj?.id ??
+        userDataObj?.ID ??
+        userDataObj?.userId ??
+        userDataObj?.idUser ??
+        userDataObj?.$id ??
         undefined
       const parsedId = Number(idUserCandidate)
       const idUser = Number.isFinite(parsedId) ? parsedId : undefined
@@ -101,13 +102,22 @@ export default function BemEstar() {
   const avg = (arr: number[]) => (arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN)
 
   const avgStress = avg(
-    records7.map((r) => num((r as any).stressLevel ?? r.nivel_estresse ?? r.NIVEL_ESTRESSE)),
+    records7.map((r) => {
+      const record = r as Record<string, unknown>
+      return num(record.stressLevel ?? record.nivel_estresse ?? record.NIVEL_ESTRESSE)
+    }),
   )
   const avgMotivation = avg(
-    records7.map((r) => num((r as any).motivationLevel ?? r.nivel_motivacao ?? r.NIVEL_MOTIVACAO)),
+    records7.map((r) => {
+      const record = r as Record<string, unknown>
+      return num(record.motivationLevel ?? record.nivel_motivacao ?? record.NIVEL_MOTIVACAO)
+    }),
   )
   const avgSleep = avg(
-    records7.map((r) => num((r as any).sleepQuality ?? r.qualidade_sono ?? r.QUALIDADE_SONO)),
+    records7.map((r) => {
+      const record = r as Record<string, unknown>
+      return num(record.sleepQuality ?? record.qualidade_sono ?? record.QUALIDADE_SONO)
+    }),
   )
 
   const computeScore = () => {
@@ -308,49 +318,53 @@ export default function BemEstar() {
                 </tr>
               </thead>
               <tbody>
-                {bemEstar.map((r, idx) => (
-                  <tr key={idx}>
-                    {(() => {
-                      const row = r as Record<string, unknown>
-                      const id = (row['id_registro'] ??
-                        row['ID_REGISTRO'] ??
-                        (row as any).id ??
-                        '—') as string | number
-                      const data = (row['data_registro'] ??
-                        row['DATA_REGISTRO'] ??
-                        (row as any).date ??
-                        (row as any).createdAt ??
-                        (row as any).created_at ??
-                        '—') as string
-                      const estresse = ((row as any).stressLevel ??
-                        row['nivel_estresse'] ??
-                        row['NIVEL_ESTRESSE'] ??
-                        '—') as string | number
-                      const motivacao = ((row as any).motivationLevel ??
-                        row['nivel_motivacao'] ??
-                        row['NIVEL_MOTIVACAO'] ??
-                        '—') as string | number
-                      const sono = ((row as any).sleepQuality ??
-                        row['qualidade_sono'] ??
-                        row['QUALIDADE_SONO'] ??
-                        '—') as string | number
-                      const obs = ((row as any).observations ??
-                        row['observacao'] ??
-                        row['OBSERVACAO'] ??
-                        '—') as string
-                      return (
-                        <>
-                          <td className="pr-2 align-top">{String(id)}</td>
-                          <td className="pr-2 align-top">{String(data).slice(0, 10)}</td>
-                          <td className="pr-2 align-top">{String(estresse)}</td>
-                          <td className="pr-2 align-top">{String(motivacao)}</td>
-                          <td className="pr-2 align-top">{String(sono)}</td>
-                          <td className="pr-2 align-top">{String(obs)}</td>
-                        </>
-                      )
-                    })()}
-                  </tr>
-                ))}
+                {bemEstar.map((r, idx) => {
+                  const row = r as Record<string, unknown>
+                  const id = (row['id_registro'] ?? row['ID_REGISTRO'] ?? row.id ?? '—') as
+                    | string
+                    | number
+                  const rowKey =
+                    typeof id === 'string' || typeof id === 'number' ? String(id) : `row-${idx}`
+
+                  return (
+                    <tr key={rowKey}>
+                      {(() => {
+                        const data = (row['data_registro'] ??
+                          row['DATA_REGISTRO'] ??
+                          row.date ??
+                          row.createdAt ??
+                          row.created_at ??
+                          '—') as string
+                        const estresse = (row.stressLevel ??
+                          row['nivel_estresse'] ??
+                          row['NIVEL_ESTRESSE'] ??
+                          '—') as string | number
+                        const motivacao = (row.motivationLevel ??
+                          row['nivel_motivacao'] ??
+                          row['NIVEL_MOTIVACAO'] ??
+                          '—') as string | number
+                        const sono = (row.sleepQuality ??
+                          row['qualidade_sono'] ??
+                          row['QUALIDADE_SONO'] ??
+                          '—') as string | number
+                        const obs = (row.observations ??
+                          row['observacao'] ??
+                          row['OBSERVACAO'] ??
+                          '—') as string
+                        return (
+                          <>
+                            <td className="pr-2 align-top">{String(id)}</td>
+                            <td className="pr-2 align-top">{String(data).slice(0, 10)}</td>
+                            <td className="pr-2 align-top">{String(estresse)}</td>
+                            <td className="pr-2 align-top">{String(motivacao)}</td>
+                            <td className="pr-2 align-top">{String(sono)}</td>
+                            <td className="pr-2 align-top">{String(obs)}</td>
+                          </>
+                        )
+                      })()}
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

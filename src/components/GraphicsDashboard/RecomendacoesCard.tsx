@@ -18,9 +18,9 @@ export default function RecomendacoesCard({ recomendacoes }: RecomendacoesCardPr
         <h3 className="text-lg font-semibold text-[var(--text-primary)]">Recomendações</h3>
       </div>
       <div className="space-y-3">
-        {recomendacoes.slice(0, 3).map((rec: Recomendacao, idx: number) => (
+        {recomendacoes.slice(0, 3).map((rec: Recomendacao) => (
           <div
-            key={idx}
+            key={`${rec.tipo}-${rec.data_recomendacao}`}
             className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] p-3"
             tabIndex={0}
             aria-label={`Recomendação ${rec.tipo}, motivo: ${rec.motivo}`}
