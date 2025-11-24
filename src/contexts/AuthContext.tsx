@@ -120,67 +120,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Prepare compatibility payloads. The backend expects nested fields
       // under `autenticar.login.*` (see response violations), so try that
       // shape first, then fall back to other formats.
-      const digitsOnly = loginEmail.replace(/\D/g, '')
-      const looksLikeCNPJ = digitsOnly.length === 14
-
-      const nestedPayload: any = {
+      // Sempre envia o payload aninhado com email e password, como o backend espera para empresa e usuário.
+      const nestedPayload = {
         autenticar: {
           login: {
-            // If the user provided a CNPJ (company), send it as `cnpj`,
-            // otherwise send `email`.
-            ...(looksLikeCNPJ ? { cnpj: digitsOnly } : { email: loginEmail }),
-            // include both keys for compatibility
+            email: loginEmail,
             password,
-            senha: password,
           },
         },
       }
 
-      console.info('[Auth] trying nested login payload ->')
+      console.info('[Auth] login payload ->')
       console.debug(nestedPayload)
       let res: any = null
       try {
-        // First try the nested payload the backend validated in the error
         res = await post('https://uppath.onrender.com/login', nestedPayload)
-        console.info('[Auth] nested login response ->')
+        console.info('[Auth] login response ->')
         console.debug(res)
       } catch (err) {
-        console.warn('[Auth] nested login attempt failed, trying fallbacks')
-        console.warn(err)
-
-        // Fallback sequence: try a few common alternatives including cnpj
-        const triedPayloads: any[] = []
-        if (looksLikeCNPJ) {
-          triedPayloads.push({ cnpj: digitsOnly, senha: password })
-        }
-        triedPayloads.push({ email: loginEmail, password, senha: password })
-        triedPayloads.push({ email_contato: loginEmail, password })
-        triedPayloads.push({ email_contato: loginEmail, senha: password })
-        triedPayloads.push({ login: loginEmail, password })
-        triedPayloads.push({ login: loginEmail, senha: password })
-        triedPayloads.push({ username: loginEmail, password })
-        triedPayloads.push({ username: loginEmail, senha: password })
-
-        let lastErr: unknown = err
-        for (const p of triedPayloads) {
-          try {
-            console.info('[Auth] trying fallback payload ->')
-            console.debug(p)
-            res = await post('https://uppath.onrender.com/login', p)
-            console.info('[Auth] fallback response ->')
-            console.debug(res)
-            lastErr = null
-            break
-          } catch (e2) {
-            console.warn('[Auth] fallback attempt failed', e2)
-            lastErr = e2
-          }
-        }
-
-        if (lastErr) {
-          // All attempts failed — rethrow original error for upstream handling
-          throw err
-        }
+        // Se falhar, não tenta mais fallbacks — erro real do backend
+        console.error('[Auth] login error ->', err)
+        throw err
       }
 
       const r = res as any
