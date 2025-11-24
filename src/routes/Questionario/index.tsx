@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import SuccessMessage from '../../components/SuccessMessage'
-import { FaArrowRight, FaArrowLeft } from 'react-icons/fa'
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import DadosBasicos from './steps/DadosBasicos'
-import PerfilProfissional from './steps/PerfilProfissional'
-import ObjetivosCarreira from './steps/ObjetivosCarreira'
-import EstiloAprendizado from './steps/EstiloAprendizado'
-import PreferenciasTrabalho from './steps/PreferenciasTrabalho'
-import BemEstarEquilibrio from './steps/BemEstarEquilibrio'
-import UsoPlataforma from './steps/UsoPlataforma'
+import SuccessMessage from '../../components/SuccessMessage'
 import type { QuestionarioData } from '../../types/quest'
+import BemEstarEquilibrio from './steps/BemEstarEquilibrio'
+import DadosBasicos from './steps/DadosBasicos'
+import EstiloAprendizado from './steps/EstiloAprendizado'
+import ObjetivosCarreira from './steps/ObjetivosCarreira'
+import PerfilProfissional from './steps/PerfilProfissional'
+import PreferenciasTrabalho from './steps/PreferenciasTrabalho'
+import UsoPlataforma from './steps/UsoPlataforma'
 
 export default function Questionario() {
   const navigate = useNavigate()
@@ -73,7 +73,7 @@ export default function Questionario() {
 
   const handleFinish = () => {
     // Aqui você pode enviar os dados para o backend
-    console.log('Dados do questionário:', formData)
+    // Dados do questionário processados
     setShowSuccess(true)
     setTimeout(() => {
       setShowSuccess(false)

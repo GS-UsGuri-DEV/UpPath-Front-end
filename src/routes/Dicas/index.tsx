@@ -65,13 +65,15 @@ export default function Dicas() {
 
       if (Array.isArray(docs) && docs.length > 0) {
         const doc = docs[0]
-        const niveisData: NiveisBemEstar = {
-          sono: Number(doc.qualidade_sono ?? doc.QUALIDADE_SONO ?? 7),
-          estresse: Number(doc.nivel_estresse ?? doc.NIVEL_ESTRESSE ?? 5),
-          motivacao: Number(doc.nivel_motivacao ?? doc.NIVEL_MOTIVACAO ?? 7),
+        if (doc) {
+          const niveisData: NiveisBemEstar = {
+            sono: Number(doc.qualidade_sono ?? doc.QUALIDADE_SONO ?? 7),
+            estresse: Number(doc.nivel_estresse ?? doc.NIVEL_ESTRESSE ?? 5),
+            motivacao: Number(doc.nivel_motivacao ?? doc.NIVEL_MOTIVACAO ?? 7),
+          }
+          setNiveis(niveisData)
+          selecionarDicaAutomatica(niveisData)
         }
-        setNiveis(niveisData)
-        selecionarDicaAutomatica(niveisData)
       } else {
         // Sem registros, usar valores padrão
         const niveisDefault: NiveisBemEstar = {
@@ -109,7 +111,7 @@ export default function Dicas() {
     }
 
     // Escolhe categoria aleatória das disponíveis
-    const categoriaEscolhida = categorias[Math.floor(Math.random() * categorias.length)]
+    const categoriaEscolhida = categorias[Math.floor(Math.random() * categorias.length)] || 'sono'
     setCategoriaAtiva(categoriaEscolhida)
 
     // Seleciona dica aleatória da categoria
@@ -122,7 +124,10 @@ export default function Dicas() {
       dicasDisponiveis = DICAS_MOTIVACAO
     }
 
-    const dicaAleatoria = dicasDisponiveis[Math.floor(Math.random() * dicasDisponiveis.length)]
+    const dicaAleatoria =
+      dicasDisponiveis[Math.floor(Math.random() * dicasDisponiveis.length)] ||
+      dicasDisponiveis[0] ||
+      null
     setDicaSelecionada(dicaAleatoria)
   }
 
@@ -144,7 +149,10 @@ export default function Dicas() {
       dicasDisponiveis = DICAS_MOTIVACAO
     }
 
-    const dicaAleatoria = dicasDisponiveis[Math.floor(Math.random() * dicasDisponiveis.length)]
+    const dicaAleatoria =
+      dicasDisponiveis[Math.floor(Math.random() * dicasDisponiveis.length)] ||
+      dicasDisponiveis[0] ||
+      null
     setDicaSelecionada(dicaAleatoria)
   }
 

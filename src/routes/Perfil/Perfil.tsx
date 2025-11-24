@@ -24,6 +24,9 @@ export default function Perfil() {
     try {
       const s = String(d)
       const iso = s.split('T')[0]
+      if (!iso) {
+        return '—'
+      }
       const parts = iso.split('-')
       if (parts.length >= 3) {
         return `${parts[2]}/${parts[1]}/${parts[0]}`

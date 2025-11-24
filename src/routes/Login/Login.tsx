@@ -146,16 +146,6 @@ export default function Login() {
         const COLLECTION_USERS = import.meta.env.VITE_APPWRITE_COLLECTION_USERS
         const response = await db.listDocuments(DB_ID, COLLECTION_USERS)
 
-        console.log('Total documentos:', response.documents.length)
-        console.log(
-          'Buscando:',
-          JSON.stringify({
-            email: resetEmail,
-            cpf: cpfCnpjClean,
-            data: resetBirthdate,
-          }),
-        )
-
         const userDoc = response.documents.find((doc) => {
           const d = doc as unknown as Record<string, unknown>
           const docDate =
@@ -166,23 +156,8 @@ export default function Login() {
           // Normaliza CPF para comparar só números
           const docCpf = typeof d.cpf === 'string' ? d.cpf.replace(/\D/g, '') : d.cpf
 
-          console.log(
-            'Comparando:',
-            JSON.stringify({
-              doc_email: d.email,
-              doc_cpf: d.cpf,
-              doc_cpf_normalizado: docCpf,
-              doc_data: docDate,
-              match_email: d.email === resetEmail,
-              match_cpf: docCpf === cpfCnpjClean,
-              match_data: docDate === resetBirthdate,
-            }),
-          )
-
           return d.email === resetEmail && docCpf === cpfCnpjClean && docDate === resetBirthdate
         })
-
-        console.log('Encontrou?', !!userDoc)
 
         if (userDoc) {
           setVerificationStep(2)
@@ -191,7 +166,7 @@ export default function Login() {
           setResetMsg('Dados não conferem. Verifique as informações e tente novamente.')
         }
       }
-    } catch (error) {
+    } catch (_error) {
       setResetMsg('Erro ao verificar dados. Tente novamente.')
     }
   }
@@ -234,7 +209,7 @@ export default function Login() {
         setResetSuccess(true)
         setResetMsg('Senha alterada com sucesso!')
       }
-    } catch (error) {
+    } catch (_error) {
       setResetMsg('Erro ao alterar senha. Tente novamente.')
     }
   }

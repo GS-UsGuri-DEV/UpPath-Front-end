@@ -3,36 +3,7 @@ import { FaBatteryFull, FaBuilding, FaChartBar, FaHeart, FaMoon, FaUsers } from 
 import Spinner from '../../components/Spinner/Spinner'
 import { useAuth } from '../../contexts/useAuth'
 import { get } from '../../api/client'
-
-type Funcionario = {
-  $id: string
-  nome_completo: string
-  email: string
-  ocupacao?: string
-  nivel_carreira?: string
-  data_cadastro: string
-}
-
-type BemEstarData = {
-  id_usuario: string
-  nivel_estresse: number
-  nivel_motivacao: number
-  qualidade_sono: number
-  data_registro: string
-}
-
-type EmpresaData = {
-  $id: string
-  nome_empresa: string
-  cnpj: string
-  email_contato: string
-}
-
-type MediasBemEstar = {
-  estresse: number
-  motivacao: number
-  sono: number
-}
+import type { Funcionario, BemEstarData, EmpresaData, MediasBemEstar } from '../../types/empresa'
 
 export default function DashboardEmpresa() {
   const { userData } = useAuth()
@@ -328,11 +299,11 @@ export default function DashboardEmpresa() {
                 }
 
                 if (items.length === 0) {
-                  console.debug('wellBeing: no items for query', q, respAny)
+                  // wellBeing: no items for query
                   continue
                 }
 
-                console.debug('wellBeing: items for query', q, items)
+                // wellBeing: items for query
 
                 items.sort((a: any, b: any) => {
                   const da = new Date(a.data_registro ?? a.data ?? 0).getTime()
@@ -369,11 +340,11 @@ export default function DashboardEmpresa() {
               }
 
               if (items.length === 0) {
-                console.debug('wellBeing: no items for email query', q, respAny)
+                // wellBeing: no company items for query
                 continue
               }
 
-              console.debug('wellBeing: items for email query', q, items)
+              // wellBeing: company items for query
 
               items.sort((a: any, b: any) => {
                 const da = new Date(a.data_registro ?? a.data ?? 0).getTime()

@@ -69,7 +69,7 @@ export default function Cadastro() {
         base.length === 12
           ? [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
           : [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
-      const sum = nums.reduce((acc, n, i) => acc + n * multipliers[i], 0)
+      const sum = nums.reduce((acc, n, i) => acc + n * (multipliers[i] ?? 0), 0)
       const r = sum % 11
       return r < 2 ? 0 : 11 - r
     }
@@ -140,12 +140,12 @@ export default function Cadastro() {
         try {
           await login(company.email_contato ?? '', senha ?? '', 'empresa')
         } catch (err) {
-          console.warn('Login automático após criar empresa falhou, tentando fallback', err)
+          // Login automático após criar empresa falhou, tentando fallback
           try {
             const fallback = (await post('https://uppath.onrender.com/login', {
               email: company.email_contato ?? '',
               password: senha ?? '',
-            })) as any
+            })) as Record<string, unknown>
             const token = fallback?.token ?? fallback?.accessToken ?? fallback?.access_token ?? null
             const externalUser = fallback?.user ?? fallback?.data ?? null
             if (token) {
@@ -158,11 +158,11 @@ export default function Cadastro() {
             }
             try {
               await checkAuth()
-            } catch (e) {
-              console.warn('checkAuth fallback failed', e)
+            } catch (_e) {
+              // checkAuth fallback failed
             }
-          } catch (fallbackErr) {
-            console.warn('Fallback login também falhou', fallbackErr)
+          } catch (_fallbackErr) {
+            // Fallback login também falhou
           }
         }
 
@@ -236,19 +236,17 @@ export default function Cadastro() {
           admin: 0,
         }
 
-        console.debug('POST /users payload:', userPayload)
-        const createdUser = await post('https://uppath.onrender.com/users', userPayload)
-        console.debug('POST /users response:', createdUser)
+        await post('https://uppath.onrender.com/users', userPayload)
 
         try {
           await login(user.email ?? '', senha ?? '')
         } catch (err) {
-          console.warn('Login automático após criar usuário falhou, tentando fallback', err)
+          // Login automático após criar usuário falhou, tentando fallback
           try {
             const fallback = (await post('https://uppath.onrender.com/login', {
               email: user.email ?? '',
               password: senha ?? '',
-            })) as any
+            })) as Record<string, unknown>
             const token = fallback?.token ?? fallback?.accessToken ?? fallback?.access_token ?? null
             const externalUser = fallback?.user ?? fallback?.data ?? null
             if (token) {
@@ -261,11 +259,11 @@ export default function Cadastro() {
             }
             try {
               await checkAuth()
-            } catch (e) {
-              console.warn('checkAuth fallback failed', e)
+            } catch (_e) {
+              // checkAuth fallback failed
             }
-          } catch (fallbackErr) {
-            console.warn('Fallback login também falhou', fallbackErr)
+          } catch (_fallbackErr) {
+            // Fallback login também falhou
           }
         }
 

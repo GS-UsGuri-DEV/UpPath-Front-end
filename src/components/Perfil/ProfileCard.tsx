@@ -18,6 +18,9 @@ export default function ProfileCard({ profileImage, displayName, displayEmail }:
     }
     try {
       const d = String(dateStr).split('T')[0]
+      if (!d) {
+        return '—'
+      }
       const parts = d.split('-')
       if (parts.length >= 3) {
         return `${parts[2]}/${parts[1]}/${parts[0]}`
@@ -28,7 +31,7 @@ export default function ProfileCard({ profileImage, displayName, displayEmail }:
     }
   }
 
-  function findDateField(obj: any) {
+  function findDateField(obj: Record<string, unknown> | null | undefined) {
     if (!obj) {
       return ''
     }
@@ -43,12 +46,12 @@ export default function ProfileCard({ profileImage, displayName, displayEmail }:
     ]
     for (const k of candidates) {
       if (obj[k]) {
-        return obj[k]
+        return obj[k] as string
       }
     }
     for (const key of Object.keys(obj)) {
       if (/birth|nasc/i.test(key) && obj[key]) {
-        return obj[key]
+        return obj[key] as string
       }
     }
     return ''
@@ -75,27 +78,18 @@ export default function ProfileCard({ profileImage, displayName, displayEmail }:
 
   useEffect(() => {
     if (userData) {
-      setEditNome(
-        String(
-          (userData as unknown as Record<string, unknown>)?.nome_completo ??
-            (userData as any)?.name ??
-            '',
-        ),
-      )
-      setEditEmail(
-        String(
-          (userData as unknown as Record<string, unknown>)?.email ?? (userData as any)?.email ?? '',
-        ),
-      )
-      const rawDate = findDateField(userData as any)
-      setEditDataNasc(toDateInput(String(rawDate)))
+      const userObj = userData as Record<string, unknown>
+      setEditNome(String(userObj?.nome_completo ?? userObj?.name ?? ''))
+      setEditEmail(String(userObj?.email ?? ''))
+      const rawDate = findDateField(userData as Record<string, unknown>)
+      setEditDataNasc(toDateInput(String(rawDate)) || '')
     }
   }, [userData])
 
   async function handleSaveProfile(e: React.FormEvent) {
     e.preventDefault()
     setEditMessage(null)
-    const u = userData as unknown as Record<string, any>
+    const u = userData as Record<string, unknown> | null
     const id = u?.id_usuario ?? u?.id ?? u?._id ?? u?.idUser ?? u?.id_user
     if (!id) {
       setEditMessage('ID do usuário não encontrado')
@@ -112,18 +106,15 @@ export default function ProfileCard({ profileImage, displayName, displayEmail }:
         birthDate: editDataNasc,
       }
 
-      console.debug('PUT /users/{id} payload:', { id, payload, headers })
       const putRes = await put(`https://uppath.onrender.com/users/${id}`, payload, headers)
-      console.debug('PUT /users/{id} response:', putRes)
 
       try {
         const updated = await get(`https://uppath.onrender.com/users/${id}`, headers)
-        console.debug('GET /users/{id} response:', updated)
         if (updated) {
           localStorage.setItem('userData', JSON.stringify(updated))
         }
-      } catch (e) {
-        console.warn('Could not fetch updated user after save', e)
+      } catch (_e) {
+        // Could not fetch updated user after save
       }
 
       setEditMessage(
@@ -143,12 +134,7 @@ export default function ProfileCard({ profileImage, displayName, displayEmail }:
     <section className="flex items-center gap-6 rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-6">
       <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-[var(--bg-tertiary)] text-xl font-semibold text-[var(--text-secondary)]">
         {profileImage ? (
-          <img
-            src={profileImage}
-            alt="avatar"
-            className="h-full w-full object-cover"
-            onError={() => console.error('Avatar failed to load:', profileImage)}
-          />
+          <img src={profileImage} alt="avatar" className="h-full w-full object-cover" />
         ) : (
           <span className="inline-block">
             {displayName
@@ -218,7 +204,7 @@ export default function ProfileCard({ profileImage, displayName, displayEmail }:
               </div>
               <div>
                 <span className="font-medium">Data de Nascimento:</span>{' '}
-                {formatDate(String(findDateField(userData as any) ?? ''))}
+                {formatDate(String(findDateField(userData as Record<string, unknown>) ?? ''))}
               </div>
             </div>
             <button

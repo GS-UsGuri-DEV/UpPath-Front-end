@@ -1,7 +1,7 @@
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io'
-import MembroCard from './MembroCard'
 import type { CarrosselIntegrantesProps } from '../../types/member'
 import CarrosselBase from './CarrosselBase'
+import MembroCard from './MembroCard'
 
 export default function CarrosselIntegrantes({
   members,
@@ -25,11 +25,17 @@ export default function CarrosselIntegrantes({
         <CarrosselBase
           total={members.length}
           autoMs={autoMs}
-          renderItem={(i) => (
-            <ul className="m-0 flex list-none justify-center p-0">
-              <MembroCard member={members[i]} />
-            </ul>
-          )}
+          renderItem={(i) => {
+            const member = members[i]
+            if (!member) {
+              return null
+            }
+            return (
+              <ul className="m-0 flex list-none justify-center p-0">
+                <MembroCard member={member} />
+              </ul>
+            )
+          }}
           renderControls={(api) => {
             const { prev, next, total } = api
             if (!(showControls && total > 1)) {

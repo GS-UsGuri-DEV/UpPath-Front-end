@@ -124,7 +124,7 @@ export default function Cursos() {
                 key={trilha.id}
                 trilha={trilha}
                 onClick={() => {
-                  console.log('Trilha clicada:', trilha.id)
+                  // Trilha clicada
                 }}
               />
             ))}
@@ -136,7 +136,7 @@ export default function Cursos() {
                 key={curso.id}
                 curso={curso}
                 onClick={() => {
-                  console.log('Curso clicado:', curso.id)
+                  // Curso clicado
                 }}
               />
             ))}
