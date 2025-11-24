@@ -392,7 +392,7 @@ Projeto desenvolvido para a **Global Solution 2025** - Disciplina de Front-End D
 
 ### Recursos Externos
 
-- 📺 **Vídeo de Apresentação no YouTube**: [Link em breve]
+- 📺 **Vídeo de Apresentação no YouTube**: [[Link](https://youtu.be/RbAHpjLfbgQ)]
 - 🌐 **Deploy na Vercel**: [https://up-path.vercel.app]
 
 ### Tecnologias e Documentações
