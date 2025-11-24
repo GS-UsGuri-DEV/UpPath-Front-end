@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent } from 'react'
 import { useForm, type FieldErrors } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
-import { post } from '../../api/client'
+import { API_URL, post } from '../../api/client'
 import FormButton from '../../components/Form/FormButton'
 import FormInput from '../../components/Form/FormInput'
 import SuccessMessage from '../../components/SuccessMessage'
@@ -147,14 +147,14 @@ export default function Cadastro() {
           senha: company.senha ?? '',
         }
 
-        await post('https://uppath.onrender.com/empresas', companyPayload)
+        await post(`${API_URL}/empresas`, companyPayload)
 
         try {
           await login(company.email_contato ?? '', senha ?? '', 'empresa')
         } catch (_err) {
           // Login automático após criar empresa falhou, tentando fallback
           try {
-            const fallback = (await post('https://uppath.onrender.com/login', {
+            const fallback = (await post(`${API_URL}/login`, {
               email: company.email_contato ?? '',
               password: senha ?? '',
             })) as Record<string, unknown>
@@ -248,14 +248,14 @@ export default function Cadastro() {
           admin: 0,
         }
 
-        await post('https://uppath.onrender.com/users', userPayload)
+        await post(`${API_URL}/users`, userPayload)
 
         try {
           await login(user.email ?? '', senha ?? '')
         } catch (_err) {
           // Login automático após criar usuário falhou, tentando fallback
           try {
-            const fallback = (await post('https://uppath.onrender.com/login', {
+            const fallback = (await post(`${API_URL}/login`, {
               email: user.email ?? '',
               password: senha ?? '',
             })) as Record<string, unknown>
