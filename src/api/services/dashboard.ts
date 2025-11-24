@@ -1,19 +1,42 @@
 import type { ApiResponse, UserDashboard } from '../../types/userDashboard'
-import { get } from '../client'
+import { API_PYTHON_URL } from '../client'
 
 /**
  * Service functions for user dashboard endpoints.
- * These functions return the `data` payload from the API response.
+ * These functions connect to the Python Analytics API.
  */
+
+async function fetchPythonAPI<T>(path: string, token?: string): Promise<T> {
+  const headers: Record<string, string> = {
+    'Accept': 'application/json',
+  }
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+  
+  const url = `${API_PYTHON_URL}${path}`
+  console.info('[Dashboard API]', 'GET', url)
+  
+  const response = await fetch(url, {
+    method: 'GET',
+    headers,
+  })
+  
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}`)
+  }
+  
+  return response.json()
+}
 
 export async function getUserDashboard(
   userId: number | string,
   token?: string,
 ): Promise<UserDashboard> {
-  const headers = token ? { Authorization: `Bearer ${token}` } : undefined
-  const res = await get<ApiResponse<UserDashboard>>(
+  const res = await fetchPythonAPI<ApiResponse<UserDashboard>>(
     `/api/v1/dashboard/user/${userId}/completo`,
-    headers,
+    token,
   )
   return res.data
 }
@@ -22,10 +45,9 @@ export async function getBemEstarUsuario(
   userId: number | string,
   token?: string,
 ) {
-  const headers = token ? { Authorization: `Bearer ${token}` } : undefined
-  const res = await get<ApiResponse<unknown>>(
+  const res = await fetchPythonAPI<ApiResponse<unknown>>(
     `/api/v1/dashboard/user/${userId}/bem-estar`,
-    headers,
+    token,
   )
   return res.data
 }
@@ -34,10 +56,9 @@ export async function getTrilhasUsuario(
   userId: number | string,
   token?: string,
 ) {
-  const headers = token ? { Authorization: `Bearer ${token}` } : undefined
-  const res = await get<ApiResponse<unknown>>(
+  const res = await fetchPythonAPI<ApiResponse<unknown>>(
     `/api/v1/dashboard/user/${userId}/trilhas`,
-    headers,
+    token,
   )
   return res.data
 }
