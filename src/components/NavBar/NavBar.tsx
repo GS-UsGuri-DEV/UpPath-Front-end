@@ -108,13 +108,16 @@ export default function NavBar() {
                 {displayName}
               </div>
               <div className="hidden items-center gap-2 sm:flex">
-                <button
-                  onClick={() => nav('/perfil')}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-secondary)] text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-tertiary)]"
-                  title="Meu Perfil"
-                >
-                  <FaUser />
-                </button>
+                {/* Botão de perfil só para usuário comum */}
+                {!isEmpresa && (
+                  <button
+                    onClick={() => nav('/perfil')}
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-secondary)] text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-tertiary)]"
+                    title="Meu Perfil"
+                  >
+                    <FaUser />
+                  </button>
+                )}
                 <button
                   onClick={handleLogout}
                   className="rounded bg-[var(--bg-tertiary)] px-3 py-1 text-sm text-[var(--text-secondary)]"
@@ -227,15 +230,18 @@ export default function NavBar() {
                 <div className="border-t border-[var(--border-color)] pt-3 text-sm text-[var(--text-secondary)]">
                   {displayName}
                 </div>
-                <button
-                  onClick={() => {
-                    closeMenu()
-                    nav('/perfil')
-                  }}
-                  className="mt-2 mb-2 flex w-full items-center gap-2 rounded bg-[var(--bg-secondary)] px-3 py-2 text-left text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-tertiary)]"
-                >
-                  <FaUser className="mr-2" /> Meu Perfil
-                </button>
+                {/* Botão de perfil só para usuário comum */}
+                {!isEmpresa && (
+                  <button
+                    onClick={() => {
+                      closeMenu()
+                      nav('/perfil')
+                    }}
+                    className="mt-2 mb-2 flex w-full items-center gap-2 rounded bg-[var(--bg-secondary)] px-3 py-2 text-left text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-tertiary)]"
+                  >
+                    <FaUser className="mr-2" /> Meu Perfil
+                  </button>
+                )}
                 <button
                   onClick={handleLogout}
                   className="rounded bg-[var(--bg-tertiary)] px-3 py-2 text-left text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-secondary)]"

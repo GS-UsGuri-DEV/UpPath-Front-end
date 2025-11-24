@@ -401,16 +401,18 @@ export default function Dicas() {
           </div>
         )}
 
-        {/* Botão para Registrar Bem-Estar */}
-        <div className="mt-6 text-center sm:mt-8">
-          <a
-            href="/dashboard"
-            className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-medium text-white transition-all hover:bg-indigo-700 hover:shadow-lg sm:text-base"
-          >
-            <FaBrain className="h-5 w-5" />
-            Registrar Bem-Estar
-          </a>
-        </div>
+        {/* Botão para Registrar Bem-Estar (apenas para usuário comum) */}
+        {userData?.tipo_conta !== 'empresa' && (
+          <div className="mt-6 text-center sm:mt-8">
+            <a
+              href="/dashboard"
+              className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-medium text-white transition-all hover:bg-indigo-700 hover:shadow-lg sm:text-base"
+            >
+              <FaBrain className="h-5 w-5" />
+              Registrar Bem-Estar
+            </a>
+          </div>
+        )}
       </div>
     </div>
   )
