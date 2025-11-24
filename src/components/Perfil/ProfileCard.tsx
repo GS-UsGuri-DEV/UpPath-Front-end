@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
+import { get, put } from '../../api/client'
 import { useAuth } from '../../contexts/useAuth'
-import { put, get } from '../../api/client'
 
 import type { ProfileCardProps } from '../../types/profile'
 

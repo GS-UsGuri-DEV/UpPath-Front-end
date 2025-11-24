@@ -1,22 +1,22 @@
 import { Query } from 'appwrite'
 import { useEffect, useState } from 'react'
 import {
-  FaBatteryFull,
-  FaBrain,
-  FaHeart,
-  FaLightbulb,
-  FaMoon,
-  FaRedo,
-  FaSmile,
-  FaSyncAlt,
-  FaSignInAlt,
+    FaBatteryFull,
+    FaBrain,
+    FaHeart,
+    FaLightbulb,
+    FaMoon,
+    FaRedo,
+    FaSignInAlt,
+    FaSmile,
+    FaSyncAlt,
 } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
+import Spinner from '../../components/Spinner/Spinner'
 import { useAuth } from '../../contexts/useAuth'
 import { db } from '../../shared/appwrite'
-import { DICAS_ESTRESSE, DICAS_MOTIVACAO, DICAS_SONO } from '../../types/dicas'
 import type { Dica, NiveisBemEstar } from '../../types/dicas'
-import Spinner from '../../components/Spinner/Spinner'
+import { DICAS_ESTRESSE, DICAS_MOTIVACAO, DICAS_SONO } from '../../types/dicas'
 
 export default function Dicas() {
   const { userData, user } = useAuth()

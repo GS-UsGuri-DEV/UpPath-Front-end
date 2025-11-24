@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { FaBatteryFull, FaBuilding, FaChartBar, FaHeart, FaMoon, FaUsers } from 'react-icons/fa'
+import { get } from '../../api/client'
 import Spinner from '../../components/Spinner/Spinner'
 import { useAuth } from '../../contexts/useAuth'
-import { get } from '../../api/client'
-import type { Funcionario, BemEstarData, EmpresaData, MediasBemEstar } from '../../types/empresa'
+import type { BemEstarData, EmpresaData, Funcionario, MediasBemEstar } from '../../types/empresa'
 
 export default function DashboardEmpresa() {
   const { userData } = useAuth()

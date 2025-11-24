@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useState, type ReactNode } from 'react'
 import { get, post } from '../api/client'
+import type { EmpresaResponse, UserResponse } from '../types/api'
 import type { AuthContextType, SimpleUser, UserData } from '../types/auth'
-import type { UserResponse, EmpresaResponse } from '../types/api'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export { AuthContext }
