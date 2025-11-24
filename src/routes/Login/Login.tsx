@@ -76,7 +76,7 @@ export default function Login() {
 
   async function onSubmit(data: LoginFormData) {
     try {
-      const loggedUserData = await login(data.email, data.password)
+      await login(data.email, data.password)
 
       if (remember) {
         localStorage.setItem('rememberedEmail', data.email)
