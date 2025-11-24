@@ -16,7 +16,6 @@ async function fetchPythonAPI<T>(path: string, token?: string): Promise<T> {
   }
 
   const url = `${API_PYTHON_URL}${path}`
-  console.info('[Dashboard API]', 'GET', url)
 
   const response = await fetch(url, {
     method: 'GET',
