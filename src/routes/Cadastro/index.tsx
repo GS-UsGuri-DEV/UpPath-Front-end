@@ -88,6 +88,7 @@ export default function Cadastro() {
   }
 
   async function onSubmit(data: SignupFormData) {
+    setSubmitError('')
     if (data.type === 'empresa') {
       try {
         const company = data as SignupFormData & {
@@ -101,7 +102,7 @@ export default function Cadastro() {
         const senha = company.senha
         const confirm = company.confirmPassword
         if (!senha || senha !== confirm) {
-          setMsg('As senhas não coincidem')
+          setSubmitError('As senhas não coincidem')
           return
         }
 
@@ -194,7 +195,30 @@ export default function Cadastro() {
       const senha = user.senha
       const confirm = user.confirmPassword
       if (!senha || senha !== confirm) {
-        setMsg('As senhas não coincidem')
+        setSubmitError('As senhas não coincidem')
+        return
+      }
+
+      const birthRaw = user.data_nascimento ?? ''
+      if (!birthRaw) {
+        setSubmitError('Data de nascimento é obrigatória')
+        return
+      }
+      const birthDate = new Date(String(birthRaw))
+      if (Number.isNaN(birthDate.getTime())) {
+        setSubmitError('Data de nascimento inválida')
+        return
+      }
+      const today = new Date()
+      if (birthDate.getFullYear() === today.getFullYear()) {
+        setSubmitError('Ano inválido')
+        return
+      }
+      let age = today.getFullYear() - birthDate.getFullYear()
+      const m = today.getMonth() - birthDate.getMonth()
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--
+      if (age < 12 || age > 80) {
+        setSubmitError('Somente pessoas entre 12 e 80 anos podem se registrar')
         return
       }
 
@@ -535,14 +559,14 @@ export default function Cadastro() {
         )}
 
         <div className="space-y-3">
-          <FormButton type="submit" disabled={formState.isSubmitting}>
-            {formState.isSubmitting ? 'Criando conta...' : 'Criar conta'}
-          </FormButton>
           {submitError && (
-            <div className="submit-error" style={{ color: 'rgb(220 38 38)', marginTop: '0.5rem' }}>
+            <div className="submit-error" style={{ color: 'rgb(220 38 38)', marginBottom: '0.5rem' }}>
               {submitError}
             </div>
           )}
+          <FormButton type="submit" disabled={formState.isSubmitting}>
+            {formState.isSubmitting ? 'Criando conta...' : 'Criar conta'}
+          </FormButton>
           <p className="link-muted">
             <span className="text-[var(--text-muted)]">Já tem cadastro?</span>{' '}
             <Link
