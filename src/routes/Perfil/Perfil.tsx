@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import ChangePassword from '../../components/Perfil/ChangePassword'
 import ProfileCard from '../../components/Perfil/ProfileCard'
 import UploadProfileImage from '../../components/Perfil/UploadProfileImage'
 import Spinner from '../../components/Spinner/Spinner'
@@ -85,7 +86,7 @@ export default function Perfil() {
           </div>
         </section>
 
-        {/* Alterar senha removido do perfil */}
+        <ChangePassword />
       </div>
     </div>
   )
