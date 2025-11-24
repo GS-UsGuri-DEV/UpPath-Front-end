@@ -18,7 +18,7 @@
 - [Instalação](#-instalação)
 - [Configuração](#-configuração)
 - [Como Usar](#-como-usar)
-- [Deploy](#-deploy)
+- [Screenshots](#-screenshots)
 - [Estrutura de Pastas](#-estrutura-de-pastas)
 - [Rotas Principais](#-rotas-principais)
 - [Autores e Créditos](#-autores-e-créditos)
@@ -208,6 +208,25 @@ Após a instalação, acesse `http://localhost:5173` no navegador.
 - Atualize foto de perfil
 - Altere senha
 
+---
+
+## 📸 Screenshots
+
+### Página Inicial
+![Página Inicial - Seção Hero](docs/screenshots/Captura%20de%20tela%202025-11-24%20025212.png)
+
+### Dashboard de Usuário
+![Dashboard - Métricas e Bem-Estar](docs/screenshots/Captura%20de%20tela%202025-11-24%20025149.png)
+
+### Perfil do Usuário 
+![Gerenciamento de Perfil](docs/screenshots/Captura%20de%20tela%202025-11-24%20025203.png)
+
+### Módulo de Bem-Estar
+![Bem-Estar Emocional](docs/screenshots/Captura%20de%20tela%202025-11-24%20025412.png)
+
+### Trilhas de Aprendizado
+![Trilhas de Aprendizado](docs/screenshots/Captura%20de%20tela%202025-11-24%20025119.png)
+
 
 ---
 
@@ -315,6 +334,7 @@ UpPath-Front-end/
 - Proteção de rotas baseada no tipo de conta (usuário/empresa)
 
 ---
+
 
 ## 👥 Autores e Créditos
 
