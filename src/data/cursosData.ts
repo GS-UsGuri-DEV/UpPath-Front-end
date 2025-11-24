@@ -146,9 +146,9 @@ export const trilhasDisponiveis: TrilhaCompleta[] = [
     imagem: '/images/trilhas/fullstack.jpg',
     tags: ['Full Stack', 'JavaScript', 'React', 'Node.js'],
     cursos: [
-      cursosDisponiveis[0], // React Avançado
-      cursosDisponiveis[1], // TypeScript Pro
-      cursosDisponiveis[2], // Node.js Backend
+      cursosDisponiveis[0]!, // React Avançado
+      cursosDisponiveis[1]!, // TypeScript Pro
+      cursosDisponiveis[2]!, // Node.js Backend
     ],
     progresso: 65,
   },
@@ -163,8 +163,8 @@ export const trilhasDisponiveis: TrilhaCompleta[] = [
     imagem: '/images/trilhas/datascience.jpg',
     tags: ['Data Science', 'Python', 'ML', 'IA'],
     cursos: [
-      cursosDisponiveis[4], // Python para Data Science
-      cursosDisponiveis[5], // Machine Learning Essentials
+      cursosDisponiveis[4]!, // Python para Data Science
+      cursosDisponiveis[5]!, // Machine Learning Essentials
     ],
     progresso: 30,
   },
@@ -179,9 +179,9 @@ export const trilhasDisponiveis: TrilhaCompleta[] = [
     imagem: '/images/trilhas/product.jpg',
     tags: ['Product', 'Gestão', 'UX', 'Business'],
     cursos: [
-      cursosDisponiveis[3], // UI/UX Design Fundamentals
-      cursosDisponiveis[6], // Liderança e Gestão de Equipes
-      cursosDisponiveis[7], // Marketing Digital
+      cursosDisponiveis[3]!, // UI/UX Design Fundamentals
+      cursosDisponiveis[6]!, // Liderança e Gestão de Equipes
+      cursosDisponiveis[7]!, // Marketing Digital
     ],
   },
   {
@@ -194,6 +194,6 @@ export const trilhasDisponiveis: TrilhaCompleta[] = [
     num_cursos: 3,
     imagem: '/images/trilhas/uxui.jpg',
     tags: ['Design', 'UX', 'UI', 'Figma'],
-    cursos: [cursosDisponiveis[3]],
+    cursos: [cursosDisponiveis[3]!],
   },
 ]

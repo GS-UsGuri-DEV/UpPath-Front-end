@@ -24,6 +24,9 @@ export function useBemEstarCards(bemEstar: BemEstarEntry[]): BemEstarCardProps[]
     }
     const primeiro = valores[0]
     const ultimo = valores[valores.length - 1]
+    if (primeiro === undefined || ultimo === undefined) {
+      return 'neutral'
+    }
     return ultimo > primeiro ? 'up' : ultimo < primeiro ? 'down' : 'neutral'
   }
   const estresseData = sortedData.map((d) => d.nivel_estresse)
@@ -36,6 +39,11 @@ export function useBemEstarCards(bemEstar: BemEstarEntry[]): BemEstarCardProps[]
   const tendenciaMotivacao = calcularTendencia(motivacaoData)
   const tendenciaSono = calcularTendencia(sonoData)
   const ultimoRegistro = sortedData[sortedData.length - 1]
+
+  if (!ultimoRegistro) {
+    return []
+  }
+
   return [
     {
       label: 'Estresse',
