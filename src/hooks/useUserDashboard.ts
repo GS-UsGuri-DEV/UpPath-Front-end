@@ -21,15 +21,21 @@ export function useUserDashboard(userId: number | string | null | undefined) {
 
     getUserDashboard(userId)
       .then((d) => {
-        if (!mounted) return
+        if (!mounted) {
+          return
+        }
         setData(d)
       })
       .catch((err) => {
-        if (!mounted) return
+        if (!mounted) {
+          return
+        }
         setError(String(err?.message ?? err))
       })
       .finally(() => {
-        if (!mounted) return
+        if (!mounted) {
+          return
+        }
         setLoading(false)
       })
 

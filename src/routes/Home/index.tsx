@@ -23,7 +23,7 @@ export default function Home() {
           <ResourcesSection />
         </div>
 
-        <GamificationCard notification={true} />
+        <GamificationCard notification />
       </div>
 
       <Footer />

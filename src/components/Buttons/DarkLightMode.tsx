@@ -11,11 +11,7 @@ export default function DarkLightMode() {
       aria-label={isDark ? 'Mudar para modo claro' : 'Mudar para modo escuro'}
       type="button"
     >
-      {isDark ? (
-        <MdLightMode className="text-2xl" />
-      ) : (
-        <MdDarkMode className="text-2xl" />
-      )}
+      {isDark ? <MdLightMode className="text-2xl" /> : <MdDarkMode className="text-2xl" />}
     </button>
   )
 }

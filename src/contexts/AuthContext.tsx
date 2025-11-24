@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useEffect,
-  useState,
-  type ReactNode,
-} from 'react'
+import { createContext, useCallback, useEffect, useState, type ReactNode } from 'react'
 import { get, post } from '../api/client'
 import type { AuthContextType, SimpleUser, UserData } from '../types/auth'
 
@@ -28,39 +22,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const r: any = res
       let items: any[] = []
-      if (Array.isArray(r)) items = r
-      else if (r?.data && Array.isArray(r.data)) items = r.data
-      else if (r?.users && Array.isArray(r.users)) items = r.users
-      else if (r) items = [r]
+      if (Array.isArray(r)) {
+        items = r
+      } else if (r?.data && Array.isArray(r.data)) {
+        items = r.data
+      } else if (r?.users && Array.isArray(r.users)) {
+        items = r.users
+      } else if (r) {
+        items = [r]
+      }
 
-      if (items.length === 0) return null
+      if (items.length === 0) {
+        return null
+      }
 
       const lowerEmail = String(email ?? '').toLowerCase()
       const matcher = (it: any) => {
-        if (!it) return false
+        if (!it) {
+          return false
+        }
         const candidates = [it.email]
         for (const c of candidates) {
-          if (!c) continue
-          if (String(c).toLowerCase() === lowerEmail) return true
+          if (!c) {
+            continue
+          }
+          if (String(c).toLowerCase() === lowerEmail) {
+            return true
+          }
         }
         return false
       }
 
-      let first = items.find(matcher) ?? items[0]
+      const first = items.find(matcher) ?? items[0]
       const id = first.idUser
       if (id != null) {
         try {
-          const full = await get(
-            `https://uppath.onrender.com/users/${id}`,
-            headers,
-          )
-          const normalized = { ...(full as any), id: id }
+          const full = await get(`https://uppath.onrender.com/users/${id}`, headers)
+          const normalized = { ...(full as any), id }
           return normalized as UserData
         } catch (e) {
-          console.warn(
-            'Could not fetch full user by id, returning first match',
-            e,
-          )
+          console.warn('Could not fetch full user by id, returning first match', e)
           const normalizedFirst = { ...first, id }
           return normalizedFirst as UserData
         }
@@ -112,11 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  async function login(
-    emailOrCnpj: string,
-    password: string,
-    tipo?: 'usuario' | 'empresa',
-  ) {
+  async function login(emailOrCnpj: string, password: string, tipo?: 'usuario' | 'empresa') {
     const identifier = String(emailOrCnpj ?? '').trim()
 
     // Detectar se é CNPJ (apenas números, 14 dígitos)
@@ -149,10 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             throw new Error('Senha incorreta.')
           }
 
-          console.info(
-            '[Auth] ✅ Credenciais validadas! Empresa:',
-            empresa.name,
-          )
+          console.info('[Auth] ✅ Credenciais validadas! Empresa:', empresa.name)
 
           // Gerar token temporário (simulado localmente)
           const tempToken = btoa(`empresa:${empresa.idEmpresa}:${Date.now()}`)
@@ -182,7 +176,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const endpoint = 'https://uppath.onrender.com/login'
         const payload = {
           email: identifier,
-          password: password,
+          password,
         }
         console.info('[Auth] 👤 Login usuário com email:', identifier)
 
@@ -250,9 +244,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Check for common error patterns
       if (/401|unauthorized/i.test(message)) {
         throw new Error(
-          loginType === 'empresa'
-            ? 'CNPJ ou senha incorretos'
-            : 'Email ou senha incorretos',
+          loginType === 'empresa' ? 'CNPJ ou senha incorretos' : 'Email ou senha incorretos',
         )
       }
       if (/400|bad request/i.test(message)) {
@@ -260,9 +252,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       if (/404|not found/i.test(message)) {
         throw new Error(
-          loginType === 'empresa'
-            ? 'Empresa não encontrada'
-            : 'Usuário não encontrado',
+          loginType === 'empresa' ? 'Empresa não encontrada' : 'Usuário não encontrado',
         )
       }
 
@@ -282,9 +272,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [checkAuth])
 
   return (
-    <AuthContext.Provider
-      value={{ user, userData, loading, login, logout, checkAuth }}
-    >
+    <AuthContext.Provider value={{ user, userData, loading, login, logout, checkAuth }}>
       {children}
     </AuthContext.Provider>
   )

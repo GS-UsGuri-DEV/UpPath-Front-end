@@ -1,18 +1,18 @@
 // Tipos para FAQ
-export interface FAQItem {
+export type FAQItem = {
   question: string
   answer: string
   category: string
 }
 
-export interface FAQItemProps {
+export type FAQItemProps = {
   question: string
   answer: string
   isExpanded: boolean
   onToggle: () => void
 }
 
-export interface FAQCategoryProps {
+export type FAQCategoryProps = {
   category: string
   categoryNumber: number
   items: FAQItem[]
@@ -21,7 +21,7 @@ export interface FAQCategoryProps {
   allItems: FAQItem[]
 }
 
-export interface SearchBarProps {
+export type SearchBarProps = {
   value: string
   onChange: (value: string) => void
   placeholder?: string

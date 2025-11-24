@@ -6,13 +6,12 @@ import type { BemEstarEntry } from '../types/userDashboard'
  * @param bemEstar Array de registros de bem-estar do usuário
  * @returns Array de BemEstarCardProps para o componente BemEstarGrid
  */
-export function useBemEstarCards(
-  bemEstar: BemEstarEntry[],
-): BemEstarCardProps[] {
-  if (!bemEstar || bemEstar.length === 0) return []
+export function useBemEstarCards(bemEstar: BemEstarEntry[]): BemEstarCardProps[] {
+  if (!bemEstar || bemEstar.length === 0) {
+    return []
+  }
   const sortedData = [...bemEstar].sort(
-    (a, b) =>
-      new Date(a.data_registro).getTime() - new Date(b.data_registro).getTime(),
+    (a, b) => new Date(a.data_registro).getTime() - new Date(b.data_registro).getTime(),
   )
   const calcularMedia = (valores: number[]) => {
     return valores.length > 0
@@ -20,7 +19,9 @@ export function useBemEstarCards(
       : '0'
   }
   const calcularTendencia = (valores: number[]): 'up' | 'down' | 'neutral' => {
-    if (valores.length < 2) return 'neutral'
+    if (valores.length < 2) {
+      return 'neutral'
+    }
     const primeiro = valores[0]
     const ultimo = valores[valores.length - 1]
     return ultimo > primeiro ? 'up' : ultimo < primeiro ? 'down' : 'neutral'
@@ -75,11 +76,7 @@ export function useBemEstarCards(
       media: mediaSono,
       tendencia: tendenciaSono,
       status:
-        tendenciaSono === 'up'
-          ? 'Melhorando'
-          : tendenciaSono === 'down'
-            ? 'Piorando'
-            : 'Estável',
+        tendenciaSono === 'up' ? 'Melhorando' : tendenciaSono === 'down' ? 'Piorando' : 'Estável',
     },
   ]
 }

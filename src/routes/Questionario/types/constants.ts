@@ -1,6 +1,6 @@
 // Opções e constantes para os campos do questionário
 
-export interface Option {
+export type Option = {
   value: string
   label: string
 }

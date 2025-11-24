@@ -1,17 +1,17 @@
 // Tipos para contato
-export interface ContactInfoItem {
+export type ContactInfoItem = {
   icon: string
   title: string
   content: string | string[]
 }
 
-export interface FormData {
+export type FormData = {
   nome: string
   email: string
   assunto: string
   mensagem: string
 }
 
-export interface ContactFormProps {
+export type ContactFormProps = {
   onSubmitSuccess?: () => void
 }

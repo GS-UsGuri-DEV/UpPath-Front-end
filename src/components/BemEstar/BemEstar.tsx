@@ -5,9 +5,7 @@ import Spinner from '../Spinner/Spinner'
 
 export default function BemEstar() {
   const { userData } = useAuth()
-  const [bemEstar, setBemEstar] = useState<Array<
-    Record<string, unknown>
-  > | null>(null)
+  const [bemEstar, setBemEstar] = useState<Array<Record<string, unknown>> | null>(null)
   const [bemLoading, setBemLoading] = useState(false)
   const [bemError, setBemError] = useState<string | null>(null)
 
@@ -37,18 +35,27 @@ export default function BemEstar() {
       const idUser = Number.isFinite(parsedId) ? parsedId : undefined
 
       const url = new URL('https://uppath.onrender.com/wellBeing')
-      if (idUser !== undefined) url.searchParams.append('idUser', String(idUser))
-      else if (identifier) url.searchParams.append('identifier', identifier)
-      if (bemFrom) url.searchParams.append('from', bemFrom)
-      if (bemTo) url.searchParams.append('to', bemTo)
-      if (bemLimit) url.searchParams.append('limit', bemLimit)
+      if (idUser !== undefined) {
+        url.searchParams.append('idUser', String(idUser))
+      } else if (identifier) {
+        url.searchParams.append('identifier', identifier)
+      }
+      if (bemFrom) {
+        url.searchParams.append('from', bemFrom)
+      }
+      if (bemTo) {
+        url.searchParams.append('to', bemTo)
+      }
+      if (bemLimit) {
+        url.searchParams.append('limit', bemLimit)
+      }
 
       const resp = await fetch(String(url))
-      if (!resp.ok) throw new Error(`API externa retornou ${resp.status}`)
+      if (!resp.ok) {
+        throw new Error(`API externa retornou ${resp.status}`)
+      }
       const data = await resp.json()
-      const items = Array.isArray(data)
-        ? data
-        : data?.data ?? data?.items ?? (data ? [data] : [])
+      const items = Array.isArray(data) ? data : (data?.data ?? data?.items ?? (data ? [data] : []))
       setBemEstar(items)
     } catch (err) {
       setBemError(String((err as Error)?.message ?? err))
@@ -59,19 +66,27 @@ export default function BemEstar() {
   }
 
   useEffect(() => {
-    if (userData) fetchBemEstar()
+    if (userData) {
+      fetchBemEstar()
+    }
   }, [userData])
 
   const num = (v: unknown) => {
-    if (v === null || v === undefined) return NaN
-    if (typeof v === 'number') return v
+    if (v === null || v === undefined) {
+      return NaN
+    }
+    if (typeof v === 'number') {
+      return v
+    }
     const s = String(v).replace(',', '.')
     const n = Number(s)
     return Number.isFinite(n) ? n : NaN
   }
 
   const lastNRecords = (n = 7) => {
-    if (!Array.isArray(bemEstar)) return [] as Array<Record<string, unknown>>
+    if (!Array.isArray(bemEstar)) {
+      return [] as Array<Record<string, unknown>>
+    }
     const copy = [...bemEstar]
     copy.sort((a, b) => {
       const da = String(a.data_registro ?? a.DATA_REGISTRO ?? '')
@@ -83,8 +98,7 @@ export default function BemEstar() {
 
   const records7 = lastNRecords(7)
 
-  const avg = (arr: number[]) =>
-    arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN
+  const avg = (arr: number[]) => (arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN)
 
   const avgStress = avg(
     records7.map((r) => num((r as any).stressLevel ?? r.nivel_estresse ?? r.NIVEL_ESTRESSE)),
@@ -115,11 +129,15 @@ export default function BemEstar() {
         : { label: 'Bronze', color: 'text-[var(--accent-warning-dark)]' }
 
   const computeStreak = () => {
-    if (!Array.isArray(bemEstar) || bemEstar.length === 0) return 0
+    if (!Array.isArray(bemEstar) || bemEstar.length === 0) {
+      return 0
+    }
     const days = new Set<string>()
     bemEstar.forEach((r) => {
       const d = String(r.data_registro ?? r.DATA_REGISTRO ?? '')
-      if (!d) return
+      if (!d) {
+        return
+      }
       const day = new Date(d).toISOString().slice(0, 10)
       days.add(day)
     })
@@ -129,8 +147,11 @@ export default function BemEstar() {
       const d = new Date(today)
       d.setDate(today.getDate() - i)
       const key = d.toISOString().slice(0, 10)
-      if (days.has(key)) streak++
-      else break
+      if (days.has(key)) {
+        streak++
+      } else {
+        break
+      }
     }
     return streak
   }
@@ -138,7 +159,9 @@ export default function BemEstar() {
   const streak = computeStreak()
 
   const pct = (v: number) => {
-    if (isNaN(v)) return 0
+    if (isNaN(v)) {
+      return 0
+    }
     return Math.round((Math.max(0, Math.min(10, v)) / 10) * 100)
   }
 
@@ -158,12 +181,7 @@ export default function BemEstar() {
       <div className="flex flex-col items-center text-center">
         <svg width={size} height={size} className="block">
           <g transform={`translate(${size / 2}, ${size / 2})`}>
-            <circle
-              r={radius}
-              stroke="#e5e7eb"
-              strokeWidth={stroke}
-              fill="none"
-            />
+            <circle r={radius} stroke="#e5e7eb" strokeWidth={stroke} fill="none" />
             <circle
               r={radius}
               stroke="#6d28d9"
@@ -184,9 +202,7 @@ export default function BemEstar() {
   return (
     <section className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold text-[var(--text-primary)]">
-          Bem-estar (gamificado)
-        </h2>
+        <h2 className="font-semibold text-[var(--text-primary)]">Bem-estar (gamificado)</h2>
         <div className="text-sm text-[var(--text-muted)]">
           {recordCount} registro{recordCount !== 1 ? 's' : ''}
         </div>
@@ -200,9 +216,7 @@ export default function BemEstar() {
           <div>
             <div className="text-sm text-[var(--text-muted)]">Score</div>
             <div className="text-2xl font-bold">{score}</div>
-            <div className="text-xs text-[var(--text-muted)]">
-              {badge.label}
-            </div>
+            <div className="text-xs text-[var(--text-muted)]">{badge.label}</div>
             <div className="mt-2 flex items-center gap-1 text-sm">
               <FaFire className="text-[var(--accent-warning)]" /> {streak} dia
               {streak !== 1 ? 's' : ''} consecutivo
@@ -254,10 +268,7 @@ export default function BemEstar() {
             />
           </div>
           <div>
-            <button
-              type="submit"
-              className="rounded bg-[var(--bg-tertiary)] px-3 py-1 text-sm"
-            >
+            <button type="submit" className="rounded bg-[var(--bg-tertiary)] px-3 py-1 text-sm">
               Filtrar
             </button>
             <button
@@ -278,9 +289,7 @@ export default function BemEstar() {
 
       <div className="text-sm">
         {bemLoading && <Spinner text="Carregando..." />}
-        {bemError && (
-          <div className="text-[var(--accent-danger)]">Erro: {bemError}</div>
-        )}
+        {bemError && <div className="text-[var(--accent-danger)]">Erro: {bemError}</div>}
         {Array.isArray(bemEstar) && bemEstar.length > 0 ? (
           <div className="overflow-x-auto text-xs">
             <table className="w-full border-collapse">
@@ -328,13 +337,9 @@ export default function BemEstar() {
                       return (
                         <>
                           <td className="pr-2 align-top">{String(id)}</td>
-                          <td className="pr-2 align-top">
-                            {String(data).slice(0, 10)}
-                          </td>
+                          <td className="pr-2 align-top">{String(data).slice(0, 10)}</td>
                           <td className="pr-2 align-top">{String(estresse)}</td>
-                          <td className="pr-2 align-top">
-                            {String(motivacao)}
-                          </td>
+                          <td className="pr-2 align-top">{String(motivacao)}</td>
                           <td className="pr-2 align-top">{String(sono)}</td>
                           <td className="pr-2 align-top">{String(obs)}</td>
                         </>

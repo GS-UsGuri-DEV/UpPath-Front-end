@@ -2,20 +2,11 @@ import { FaUserGraduate } from 'react-icons/fa'
 import RadioGroup from '../../../components/Form/RadioGroup'
 import Input from '../../../components/Form/Input'
 import type { QuestionarioData, StepProps } from '../../../types/quest'
-import {
-  MOMENTOS_OPTIONS,
-  ATUA_NA_AREA_OPTIONS,
-} from '../../../types/constants'
+import { MOMENTOS_OPTIONS, ATUA_NA_AREA_OPTIONS } from '../../../types/constants'
 
-type DadosBasicosData = Pick<
-  QuestionarioData,
-  'momentoAtual' | 'areaFormacao' | 'atuaNaArea'
->
+type DadosBasicosData = Pick<QuestionarioData, 'momentoAtual' | 'areaFormacao' | 'atuaNaArea'>
 
-export default function DadosBasicos({
-  data,
-  updateData,
-}: StepProps<DadosBasicosData>) {
+export default function DadosBasicos({ data, updateData }: StepProps<DadosBasicosData>) {
   return (
     <div className="space-y-6">
       {/* Header da Etapa */}
@@ -24,12 +15,8 @@ export default function DadosBasicos({
           <FaUserGraduate className="text-2xl text-indigo-600 dark:text-indigo-400" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-[var(--text-primary)]">
-            Dados Básicos
-          </h2>
-          <p className="text-sm text-[var(--text-muted)]">
-            Conte-nos um pouco sobre você
-          </p>
+          <h2 className="text-2xl font-bold text-[var(--text-primary)]">Dados Básicos</h2>
+          <p className="text-sm text-[var(--text-muted)]">Conte-nos um pouco sobre você</p>
         </div>
       </div>
 

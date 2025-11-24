@@ -1,34 +1,34 @@
-export interface Recomendacao {
+export type Recomendacao = {
   tipo: string
   motivo: string
   data_recomendacao: string
 }
 
-export interface RecomendacoesCardProps {
+export type RecomendacoesCardProps = {
   recomendacoes: Recomendacao[]
 }
-export interface Trilha {
+export type Trilha = {
   nome_trilha: string
   progresso_percentual: number
   status: string
 }
 
-export interface TrilhasCardProps {
+export type TrilhasCardProps = {
   trilhas: Trilha[]
 }
 
-export interface MiniChartProps {
+export type MiniChartProps = {
   values: number[]
   color: string
 }
 
 export type TrendType = 'up' | 'down' | 'neutral'
 
-export interface TrendIconProps {
+export type TrendIconProps = {
   trend: TrendType
 }
 
-export interface BemEstarCardProps {
+export type BemEstarCardProps = {
   label: string
   color: string
   bgColor: string
@@ -39,6 +39,6 @@ export interface BemEstarCardProps {
   status: string
 }
 
-export interface BemEstarGridProps {
+export type BemEstarGridProps = {
   cards: BemEstarCardProps[]
 }

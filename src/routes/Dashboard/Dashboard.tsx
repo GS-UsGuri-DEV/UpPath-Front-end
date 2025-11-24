@@ -19,8 +19,11 @@ export default function Dashboard() {
   const { userData } = useAuth()
   const [showGame, setShowGame] = useState(false)
 
-  const userId = (userData as unknown as Record<string, unknown>)
-    ?.id_usuario as number | string | null | undefined
+  const userId = (userData as unknown as Record<string, unknown>)?.id_usuario as
+    | number
+    | string
+    | null
+    | undefined
   const {
     data: dashboardData,
     loading: dashboardLoading,
@@ -30,9 +33,7 @@ export default function Dashboard() {
   const displayName = String(userData?.nome_completo ?? '—')
 
   const displayData: UserDashboard =
-    dashboardData &&
-    dashboardData.bem_estar &&
-    dashboardData.bem_estar.length > 0
+    dashboardData && dashboardData.bem_estar && dashboardData.bem_estar.length > 0
       ? dashboardData
       : mockDashboardData
 
@@ -49,9 +50,7 @@ export default function Dashboard() {
       <div className="mx-auto max-w-7xl space-y-4 p-4 sm:space-y-6 sm:p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-              Dashboard
-            </h1>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Dashboard</h1>
             <p className="text-[var(--text-muted)]">Bem-vindo, {displayName}</p>
           </div>
           <div className="flex gap-2">
@@ -79,8 +78,7 @@ export default function Dashboard() {
         {dashboardError && (
           <div className="rounded-xl border border-[var(--border-color)] bg-[var(--accent-warning-bg)] p-4">
             <p className="text-sm text-[var(--accent-warning-dark)]">
-              Usando dados de exemplo (Oracle vazio). Erro da API:{' '}
-              {dashboardError}
+              Usando dados de exemplo (Oracle vazio). Erro da API: {dashboardError}
             </p>
           </div>
         )}
@@ -89,16 +87,10 @@ export default function Dashboard() {
 
         {(displayData || dashboardData) && (
           <>
-            <TrilhasCard
-              trilhas={
-                Array.isArray(displayData.trilhas) ? displayData.trilhas : []
-              }
-            />
+            <TrilhasCard trilhas={Array.isArray(displayData.trilhas) ? displayData.trilhas : []} />
             <RecomendacoesCard
               recomendacoes={
-                Array.isArray(displayData.recomendacoes)
-                  ? displayData.recomendacoes
-                  : []
+                Array.isArray(displayData.recomendacoes) ? displayData.recomendacoes : []
               }
             />
           </>

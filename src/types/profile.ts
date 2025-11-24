@@ -1,14 +1,14 @@
 // Tipos para perfil de usuário
-export interface UploadProfileImageProps {
+export type UploadProfileImageProps = {
   onUploadSuccess: (url: string) => void
 }
 
-export interface ProfileCardProps {
+export type ProfileCardProps = {
   profileImage: string
   displayName: string
   displayEmail: string
 }
 
-export interface QuickAccessSectionProps {
+export type QuickAccessSectionProps = {
   showCadastro: boolean
 }

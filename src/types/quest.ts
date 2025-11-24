@@ -1,6 +1,6 @@
 // Tipos para os dados do questionário
 
-export interface QuestionarioData {
+export type QuestionarioData = {
   // Etapa 1: Dados Básicos
   momentoAtual: string
   areaFormacao: string
@@ -45,7 +45,7 @@ export interface QuestionarioData {
 }
 
 // Props genérico para os steps
-export interface StepProps<T> {
+export type StepProps<T> = {
   data: T
   updateData: (data: Partial<T>) => void
 }

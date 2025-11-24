@@ -3,10 +3,7 @@ import { mapMemberSocialNetworks } from '../../utils/socialNetworks'
 import MembroAvatar from './MembroAvatar'
 import MembrosSocial from './MembrosSocial'
 
-export default function MembroCard({
-  member,
-  className = '',
-}: MembroCardProps) {
+export default function MembroCard({ member, className = '' }: MembroCardProps) {
   const { name, rm, class: memberClass, img, description } = member
   const socialNetworks = mapMemberSocialNetworks(member)
   return (

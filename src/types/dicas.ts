@@ -1,10 +1,10 @@
-export interface Dica {
+export type Dica = {
   tipo: 'frase' | 'pratica' | 'motivacional'
   categoria: 'sono' | 'estresse' | 'motivacao'
   conteudo: string
 }
 
-export interface NiveisBemEstar {
+export type NiveisBemEstar = {
   sono: number
   estresse: number
   motivacao: number
@@ -39,8 +39,7 @@ export const DICAS_SONO: Dica[] = [
   {
     tipo: 'frase',
     categoria: 'sono',
-    conteudo:
-      'Se você está cansado, o descanso faz parte do progresso, não é o oposto dele.',
+    conteudo: 'Se você está cansado, o descanso faz parte do progresso, não é o oposto dele.',
   },
   // Dicas práticas
   {
@@ -58,14 +57,12 @@ export const DICAS_SONO: Dica[] = [
   {
     tipo: 'pratica',
     categoria: 'sono',
-    conteudo:
-      'Evite telas fortes pelo menos 20 minutos antes de dormir. Seu cérebro agradece.',
+    conteudo: 'Evite telas fortes pelo menos 20 minutos antes de dormir. Seu cérebro agradece.',
   },
   {
     tipo: 'pratica',
     categoria: 'sono',
-    conteudo:
-      'Se possível, faça uma mini-sesta de 10 a 20 minutos durante o dia (sem culpa!).',
+    conteudo: 'Se possível, faça uma mini-sesta de 10 a 20 minutos durante o dia (sem culpa!).',
   },
   {
     tipo: 'pratica',
@@ -93,8 +90,7 @@ export const DICAS_ESTRESSE: Dica[] = [
   {
     tipo: 'frase',
     categoria: 'estresse',
-    conteudo:
-      'Seu nível de estresse está alto. Antes de continuar, você merece um respiro.',
+    conteudo: 'Seu nível de estresse está alto. Antes de continuar, você merece um respiro.',
   },
   {
     tipo: 'frase',
@@ -105,8 +101,7 @@ export const DICAS_ESTRESSE: Dica[] = [
   {
     tipo: 'frase',
     categoria: 'estresse',
-    conteudo:
-      'Você não precisa carregar tudo sozinho. Um passo de cada vez já é suficiente.',
+    conteudo: 'Você não precisa carregar tudo sozinho. Um passo de cada vez já é suficiente.',
   },
   {
     tipo: 'frase',
@@ -170,8 +165,7 @@ export const DICAS_MOTIVACAO: Dica[] = [
   {
     tipo: 'frase',
     categoria: 'motivacao',
-    conteudo:
-      'Motivação baixa não impede o progresso. Hoje o foco é: pequenos passos.',
+    conteudo: 'Motivação baixa não impede o progresso. Hoje o foco é: pequenos passos.',
   },
   {
     tipo: 'frase',
@@ -182,8 +176,7 @@ export const DICAS_MOTIVACAO: Dica[] = [
   {
     tipo: 'frase',
     categoria: 'motivacao',
-    conteudo:
-      'Tudo bem não estar empolgado sempre. Disciplina gentil também conta.',
+    conteudo: 'Tudo bem não estar empolgado sempre. Disciplina gentil também conta.',
   },
   {
     tipo: 'frase',
@@ -194,8 +187,7 @@ export const DICAS_MOTIVACAO: Dica[] = [
   {
     tipo: 'frase',
     categoria: 'motivacao',
-    conteudo:
-      'Seu valor não depende do quanto você produz hoje. Um avanço mínimo já é vitória.',
+    conteudo: 'Seu valor não depende do quanto você produz hoje. Um avanço mínimo já é vitória.',
   },
   // Dicas práticas
   {

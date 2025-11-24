@@ -29,8 +29,7 @@ export default function NavBar() {
   const isActive = (path: string) => location.pathname === path
 
   const displayName = String(userData?.nome_completo ?? user?.name ?? 'Usuário')
-  const isEmpresa =
-    (userData as Record<string, unknown>)?.tipo_conta === 'empresa'
+  const isEmpresa = (userData as Record<string, unknown>)?.tipo_conta === 'empresa'
 
   return (
     <nav className="w-full border-b border-[var(--border-color)] bg-[var(--bg-primary)]">

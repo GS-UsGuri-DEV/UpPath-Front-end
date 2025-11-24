@@ -1,7 +1,7 @@
 // Tipos para redes sociais
 import type { ReactNode } from 'react'
 
-export interface SocialLink {
+export type SocialLink = {
   icon: ReactNode
   url: string
   bgColor: string

@@ -1,17 +1,10 @@
 import { useEffect, useState } from 'react'
-import {
-  FaBatteryFull,
-  FaBuilding,
-  FaChartBar,
-  FaHeart,
-  FaMoon,
-  FaUsers,
-} from 'react-icons/fa'
+import { FaBatteryFull, FaBuilding, FaChartBar, FaHeart, FaMoon, FaUsers } from 'react-icons/fa'
 import Spinner from '../../components/Spinner/Spinner'
 import { useAuth } from '../../contexts/useAuth'
 import { get } from '../../api/client'
 
-interface Funcionario {
+type Funcionario = {
   $id: string
   nome_completo: string
   email: string
@@ -20,7 +13,7 @@ interface Funcionario {
   data_cadastro: string
 }
 
-interface BemEstarData {
+type BemEstarData = {
   id_usuario: string
   nivel_estresse: number
   nivel_motivacao: number
@@ -28,14 +21,14 @@ interface BemEstarData {
   data_registro: string
 }
 
-interface EmpresaData {
+type EmpresaData = {
   $id: string
   nome_empresa: string
   cnpj: string
   email_contato: string
 }
 
-interface MediasBemEstar {
+type MediasBemEstar = {
   estresse: number
   motivacao: number
   sono: number
@@ -69,9 +62,7 @@ export default function DashboardEmpresa() {
     try {
       // Buscar dados da empresa pelo email do usuário logado via API Java
       const userDataObj = userData as unknown as Record<string, unknown>
-      const userEmail = String(
-        userDataObj?.email_contato ?? userDataObj?.email ?? '',
-      )
+      const userEmail = String(userDataObj?.email_contato ?? userDataObj?.email ?? '')
 
       if (!userEmail) {
         throw new Error('Email não encontrado nos dados do usuário')
@@ -110,12 +101,15 @@ export default function DashboardEmpresa() {
       const empresasResAny = empresasResRaw as any
 
       let empresasItems: any[] = []
-      if (Array.isArray(empresasResAny)) empresasItems = empresasResAny
-      else if (empresasResAny && Array.isArray(empresasResAny.data))
+      if (Array.isArray(empresasResAny)) {
+        empresasItems = empresasResAny
+      } else if (empresasResAny && Array.isArray(empresasResAny.data)) {
         empresasItems = empresasResAny.data
-      else if (empresasResAny && Array.isArray(empresasResAny.items))
+      } else if (empresasResAny && Array.isArray(empresasResAny.items)) {
         empresasItems = empresasResAny.items
-      else if (empresasResAny) empresasItems = [empresasResAny]
+      } else if (empresasResAny) {
+        empresasItems = [empresasResAny]
+      }
 
       if (empresasItems.length === 0) {
         throw new Error('Empresa não encontrada')
@@ -153,10 +147,15 @@ export default function DashboardEmpresa() {
           const resp = await get(`/users?${q}`)
           const respAny = resp as any
           let items: any[] = []
-          if (Array.isArray(respAny)) items = respAny
-          else if (respAny && Array.isArray(respAny.data)) items = respAny.data
-          else if (respAny && Array.isArray(respAny.items)) items = respAny.items
-          else if (respAny) items = [respAny]
+          if (Array.isArray(respAny)) {
+            items = respAny
+          } else if (respAny && Array.isArray(respAny.data)) {
+            items = respAny.data
+          } else if (respAny && Array.isArray(respAny.items)) {
+            items = respAny.items
+          } else if (respAny) {
+            items = [respAny]
+          }
 
           if (items.length > 0) {
             funcionariosData = items as unknown as Funcionario[]
@@ -171,20 +170,34 @@ export default function DashboardEmpresa() {
       // Aceita vários formatos: strings, números e objetos { id, $id }.
       const canonicalCompanyId = String(companyId)
       const extractId = (val: any) => {
-        if (val == null) return null
-        if (typeof val === 'string' || typeof val === 'number') return String(val)
+        if (val == null) {
+          return null
+        }
+        if (typeof val === 'string' || typeof val === 'number') {
+          return String(val)
+        }
         if (typeof val === 'object') {
           // common variants
-          if (val.id) return String(val.id)
-          if (val.$id) return String(val.$id)
-          if (val._id) return String(val._id)
-          if (val.companyId) return String(val.companyId)
+          if (val.id) {
+            return String(val.id)
+          }
+          if (val.$id) {
+            return String(val.$id)
+          }
+          if (val._id) {
+            return String(val._id)
+          }
+          if (val.companyId) {
+            return String(val.companyId)
+          }
         }
         return null
       }
 
       funcionariosData = (funcionariosData || []).filter((f: any) => {
-        if (!f) return false
+        if (!f) {
+          return false
+        }
         const candidateFields = [
           f.idEmpresa,
           f.id_empresa,
@@ -197,7 +210,9 @@ export default function DashboardEmpresa() {
 
         for (const c of candidateFields) {
           const v = extractId(c)
-          if (v && v === canonicalCompanyId) return true
+          if (v && v === canonicalCompanyId) {
+            return true
+          }
         }
 
         // also check if employee.row contains nested company object under other keys
@@ -205,7 +220,9 @@ export default function DashboardEmpresa() {
         for (const key of nestedCandidates) {
           const obj = (f as any)[key]
           const v = extractId(obj)
-          if (v && v === canonicalCompanyId) return true
+          if (v && v === canonicalCompanyId) {
+            return true
+          }
         }
 
         return false
@@ -228,7 +245,8 @@ export default function DashboardEmpresa() {
         const email = f?.email ?? f?.email_contato ?? f?.emailContact ?? f?.email_contact ?? ''
 
         // Occupation aliases
-        const ocupacao = f?.ocupacao ?? f?.ocupation ?? f?.occupation ?? f?.role ?? f?.cargo ?? f?.job_title ?? ''
+        const ocupacao =
+          f?.ocupacao ?? f?.ocupation ?? f?.occupation ?? f?.role ?? f?.cargo ?? f?.job_title ?? ''
 
         // Career level aliases
         const nivel_carreira =
@@ -236,7 +254,13 @@ export default function DashboardEmpresa() {
 
         // Date aliases
         const data_cadastro =
-          f?.data_cadastro ?? f?.created_at ?? f?.createdAt ?? f?.date_registered ?? f?.dateRegistered ?? f?.data ?? ''
+          f?.data_cadastro ??
+          f?.created_at ??
+          f?.createdAt ??
+          f?.date_registered ??
+          f?.dateRegistered ??
+          f?.data ??
+          ''
 
         // Fallbacks: if no name, try deriving from email local-part
         let finalName = nome_completo
@@ -247,10 +271,10 @@ export default function DashboardEmpresa() {
         return {
           $id: String(id),
           nome_completo: finalName,
-          email: email,
-          ocupacao: ocupacao,
-          nivel_carreira: nivel_carreira,
-          data_cadastro: data_cadastro,
+          email,
+          ocupacao,
+          nivel_carreira,
+          data_cadastro,
         }
       })
 
@@ -285,16 +309,23 @@ export default function DashboardEmpresa() {
             ]
 
             for (const q of bemQueries) {
-              if (tried.has(q)) continue
+              if (tried.has(q)) {
+                continue
+              }
               tried.add(q)
-                try {
+              try {
                 const resp = await get(`/wellBeing?${q}`)
                 const respAny = resp as any
                 let items: any[] = []
-                if (Array.isArray(respAny)) items = respAny
-                else if (respAny && Array.isArray(respAny.data)) items = respAny.data
-                else if (respAny && Array.isArray(respAny.items)) items = respAny.items
-                else if (respAny) items = [respAny]
+                if (Array.isArray(respAny)) {
+                  items = respAny
+                } else if (respAny && Array.isArray(respAny.data)) {
+                  items = respAny.data
+                } else if (respAny && Array.isArray(respAny.items)) {
+                  items = respAny.items
+                } else if (respAny) {
+                  items = [respAny]
+                }
 
                 if (items.length === 0) {
                   console.debug('wellBeing: no items for query', q, respAny)
@@ -319,16 +350,23 @@ export default function DashboardEmpresa() {
           // tentar por email
           for (const em of candidateEmails) {
             const q = `email=${encodeURIComponent(String(em))}`
-            if (tried.has(q)) continue
+            if (tried.has(q)) {
+              continue
+            }
             tried.add(q)
-              try {
+            try {
               const resp = await get(`/wellBeing?${q}`)
               const respAny = resp as any
               let items: any[] = []
-              if (Array.isArray(respAny)) items = respAny
-              else if (respAny && Array.isArray(respAny.data)) items = respAny.data
-              else if (respAny && Array.isArray(respAny.items)) items = respAny.items
-              else if (respAny) items = [respAny]
+              if (Array.isArray(respAny)) {
+                items = respAny
+              } else if (respAny && Array.isArray(respAny.data)) {
+                items = respAny.data
+              } else if (respAny && Array.isArray(respAny.items)) {
+                items = respAny.items
+              } else if (respAny) {
+                items = [respAny]
+              }
 
               if (items.length === 0) {
                 console.debug('wellBeing: no items for email query', q, respAny)
@@ -352,7 +390,7 @@ export default function DashboardEmpresa() {
           return undefined
         })
 
-        let bemEstarResults = await Promise.all(bemEstarPromises)
+        const bemEstarResults = await Promise.all(bemEstarPromises)
         let validResults = bemEstarResults.filter((r): r is BemEstarData => r !== undefined)
 
         // Se não encontrou por usuário, tente buscar todos os registros da empresa
@@ -369,10 +407,15 @@ export default function DashboardEmpresa() {
               const resp = await get(`/wellBeing?${cq}`)
               const respAny = resp as any
               let items: any[] = []
-              if (Array.isArray(respAny)) items = respAny
-              else if (respAny && Array.isArray(respAny.data)) items = respAny.data
-              else if (respAny && Array.isArray(respAny.items)) items = respAny.items
-              else if (respAny) items = [respAny]
+              if (Array.isArray(respAny)) {
+                items = respAny
+              } else if (respAny && Array.isArray(respAny.data)) {
+                items = respAny.data
+              } else if (respAny && Array.isArray(respAny.items)) {
+                items = respAny.items
+              } else if (respAny) {
+                items = [respAny]
+              }
 
               if (items.length === 0) {
                 console.debug('wellBeing: no company items for query', cq, respAny)
@@ -384,7 +427,14 @@ export default function DashboardEmpresa() {
               // Agrupar por usuário e pegar o mais recente por usuário
               const grouped = new Map<string, any[]>()
               for (const it of items) {
-                const uid = String(it.id_usuario ?? it.userId ?? it.idUser ?? it.user_id ?? it.email ?? Math.random())
+                const uid = String(
+                  it.id_usuario ??
+                    it.userId ??
+                    it.idUser ??
+                    it.user_id ??
+                    it.email ??
+                    Math.random(),
+                )
                 const arr = grouped.get(uid) ?? []
                 arr.push(it)
                 grouped.set(uid, arr)
@@ -441,7 +491,9 @@ export default function DashboardEmpresa() {
           const kSono = findKey(sonoKeys)
 
           const toNumber = (v: any) => {
-            if (v == null) return 0
+            if (v == null) {
+              return 0
+            }
             const n = Number(v)
             return Number.isNaN(n) ? 0 : n
           }
@@ -469,9 +521,7 @@ export default function DashboardEmpresa() {
                 ? Math.round((somaMotivacao / validResults.length) * 10) / 10
                 : 0,
             sono:
-              validResults.length > 0
-                ? Math.round((somaSono / validResults.length) * 10) / 10
-                : 0,
+              validResults.length > 0 ? Math.round((somaSono / validResults.length) * 10) / 10 : 0,
           })
         }
       }
@@ -521,9 +571,7 @@ export default function DashboardEmpresa() {
               <h1 className="text-xl font-bold text-[var(--text-primary)] sm:text-2xl">
                 Dashboard - {empresa?.nome_empresa}
               </h1>
-              <p className="text-xs text-[var(--text-muted)] sm:text-sm">
-                CNPJ: {empresa?.cnpj}
-              </p>
+              <p className="text-xs text-[var(--text-muted)] sm:text-sm">CNPJ: {empresa?.cnpj}</p>
             </div>
           </div>
         </div>
@@ -545,16 +593,12 @@ export default function DashboardEmpresa() {
 
           <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4 shadow-sm sm:p-6">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-medium text-[var(--text-secondary)]">
-                Média Estresse
-              </h3>
+              <h3 className="text-sm font-medium text-[var(--text-secondary)]">Média Estresse</h3>
               <FaHeart className="h-5 w-5 text-red-600 dark:text-red-400" />
             </div>
             <p className="text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
               {medias.estresse.toFixed(1)}
-              <span className="text-base font-normal text-[var(--text-muted)]">
-                /10
-              </span>
+              <span className="text-base font-normal text-[var(--text-muted)]">/10</span>
             </p>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
               <div
@@ -566,16 +610,12 @@ export default function DashboardEmpresa() {
 
           <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4 shadow-sm sm:p-6">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-medium text-[var(--text-secondary)]">
-                Média Motivação
-              </h3>
+              <h3 className="text-sm font-medium text-[var(--text-secondary)]">Média Motivação</h3>
               <FaBatteryFull className="h-5 w-5 text-green-600 dark:text-green-400" />
             </div>
             <p className="text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
               {medias.motivacao.toFixed(1)}
-              <span className="text-base font-normal text-[var(--text-muted)]">
-                /10
-              </span>
+              <span className="text-base font-normal text-[var(--text-muted)]">/10</span>
             </p>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
               <div
@@ -587,16 +627,12 @@ export default function DashboardEmpresa() {
 
           <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4 shadow-sm sm:p-6">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-medium text-[var(--text-secondary)]">
-                Média Sono
-              </h3>
+              <h3 className="text-sm font-medium text-[var(--text-secondary)]">Média Sono</h3>
               <FaMoon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             </div>
             <p className="text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
               {medias.sono.toFixed(1)}
-              <span className="text-base font-normal text-[var(--text-muted)]">
-                /10
-              </span>
+              <span className="text-base font-normal text-[var(--text-muted)]">/10</span>
             </p>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
               <div
@@ -618,12 +654,9 @@ export default function DashboardEmpresa() {
           {funcionarios.length === 0 ? (
             <div className="rounded-lg bg-[var(--bg-tertiary)] p-6 text-center sm:p-8">
               <FaChartBar className="mx-auto mb-3 h-12 w-12 text-[var(--text-muted)]" />
-              <p className="text-[var(--text-secondary)]">
-                Nenhum funcionário cadastrado ainda
-              </p>
+              <p className="text-[var(--text-secondary)]">Nenhum funcionário cadastrado ainda</p>
               <p className="mt-2 text-sm text-[var(--text-muted)]">
-                Os funcionários podem se cadastrar informando o ID da sua
-                empresa
+                Os funcionários podem se cadastrar informando o ID da sua empresa
               </p>
             </div>
           ) : (
@@ -646,15 +679,11 @@ export default function DashboardEmpresa() {
                     <th className="px-3 py-3 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase sm:px-4">
                       Data Cadastro
                     </th>
-                    
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-color)]">
                   {funcionarios.map((func) => (
-                    <tr
-                      key={func.$id}
-                      className="transition-colors hover:bg-[var(--bg-tertiary)]"
-                    >
+                    <tr key={func.$id} className="transition-colors hover:bg-[var(--bg-tertiary)]">
                       <td className="px-3 py-3 text-sm text-[var(--text-primary)] sm:px-4">
                         {func.nome_completo}
                       </td>
@@ -691,8 +720,7 @@ export default function DashboardEmpresa() {
             ID da Empresa
           </h3>
           <p className="text-sm text-blue-800 dark:text-blue-300">
-            Compartilhe este ID com seus funcionários para que eles possam se
-            cadastrar:
+            Compartilhe este ID com seus funcionários para que eles possam se cadastrar:
           </p>
           <div className="mt-2 flex items-center gap-3">
             <div className="flex-1 rounded bg-white p-3 font-mono text-sm font-bold text-blue-900 dark:bg-gray-900 dark:text-blue-200">

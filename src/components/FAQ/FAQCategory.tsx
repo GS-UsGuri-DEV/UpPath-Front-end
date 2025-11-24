@@ -10,7 +10,9 @@ export default function FAQCategory({
   onToggleItem,
   allItems,
 }: FAQCategoryProps) {
-  if (items.length === 0) return null
+  if (items.length === 0) {
+    return null
+  }
 
   return (
     <div>

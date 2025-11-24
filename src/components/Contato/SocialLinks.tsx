@@ -1,9 +1,4 @@
-import {
-  FaFacebookF,
-  FaInstagram,
-  FaLinkedinIn,
-  FaTwitter,
-} from 'react-icons/fa'
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTwitter } from 'react-icons/fa'
 import { contactInfo } from '../../data/contactData'
 
 import type { SocialLink } from '../../types/social'

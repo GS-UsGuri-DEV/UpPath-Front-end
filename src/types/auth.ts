@@ -1,11 +1,11 @@
 export type UserData = Record<string, unknown>
 
-export interface SimpleUser {
+export type SimpleUser = {
   name?: string
   email?: string
 }
 
-export interface AuthContextType {
+export type AuthContextType = {
   user: SimpleUser | null
   userData: UserData | null
   loading: boolean
@@ -13,12 +13,12 @@ export interface AuthContextType {
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
 }
-export interface LoginFormData {
+export type LoginFormData = {
   email: string
   password: string
 }
 
-export interface CompanyFormData {
+export type CompanyFormData = {
   id_empresa?: number | string
   nome_empresa: string
   cnpj: string
@@ -26,7 +26,7 @@ export interface CompanyFormData {
   data_cadastro?: string
 }
 
-export interface UserFormData {
+export type UserFormData = {
   id_usuario?: number | string
   id_empresa?: number | string | null
   nome_completo: string

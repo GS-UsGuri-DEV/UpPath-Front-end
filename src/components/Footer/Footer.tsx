@@ -19,12 +19,8 @@ export default function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Sobre */}
           <div>
-            <h3 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">
-              UpPath
-            </h3>
-            <p className="mb-4 text-sm text-[var(--text-muted)]">
-              {contactInfo.tagline}
-            </p>
+            <h3 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">UpPath</h3>
+            <p className="mb-4 text-sm text-[var(--text-muted)]">{contactInfo.tagline}</p>
             <div className="flex gap-3">
               <a
                 href={contactInfo.socialMedia.facebook}
@@ -67,9 +63,7 @@ export default function Footer() {
 
           {/* Links Rápidos */}
           <div>
-            <h3 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">
-              Links Rápidos
-            </h3>
+            <h3 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">Links Rápidos</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
@@ -116,9 +110,7 @@ export default function Footer() {
 
           {/* Suporte */}
           <div>
-            <h3 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">
-              Suporte
-            </h3>
+            <h3 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">Suporte</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
@@ -149,9 +141,7 @@ export default function Footer() {
 
           {/* Contato */}
           <div>
-            <h3 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">
-              Contato
-            </h3>
+            <h3 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">Contato</h3>
             <ul className="space-y-3 text-sm text-[var(--text-muted)]">
               <li className="flex items-start gap-2">
                 <FaEnvelope className="mt-1 flex-shrink-0 text-indigo-600" />

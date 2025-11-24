@@ -1,7 +1,7 @@
 import { FaClock, FaBook, FaChartLine } from 'react-icons/fa'
 import type { TrilhaCompleta } from '../../data/cursosData'
 
-interface TrilhaCardProps {
+type TrilhaCardProps = {
   trilha: TrilhaCompleta
   onClick: () => void
 }
@@ -48,30 +48,22 @@ export default function TrilhaCard({ trilha, onClick }: TrilhaCardProps) {
       <div className="mb-4 grid grid-cols-3 gap-2 text-xs">
         <div className="flex flex-col items-center rounded-lg bg-gray-300 p-2.5 dark:bg-gray-600">
           <FaClock className="mb-1 text-indigo-600 dark:text-indigo-400" />
-          <span className="font-bold text-black dark:text-white">
-            {trilha.duracao_total}
-          </span>
+          <span className="font-bold text-black dark:text-white">{trilha.duracao_total}</span>
         </div>
         <div className="flex flex-col items-center rounded-lg bg-gray-300 p-2.5 dark:bg-gray-600">
           <FaBook className="mb-1 text-indigo-600 dark:text-indigo-400" />
-          <span className="font-bold text-black dark:text-white">
-            {trilha.num_cursos} cursos
-          </span>
+          <span className="font-bold text-black dark:text-white">{trilha.num_cursos} cursos</span>
         </div>
         <div className="flex flex-col items-center rounded-lg bg-gray-300 p-2.5 dark:bg-gray-600">
           <FaChartLine className={`mb-1 ${getNivelColor(trilha.nivel)}`} />
-          <span className="font-bold text-black dark:text-white">
-            {trilha.nivel}
-          </span>
+          <span className="font-bold text-black dark:text-white">{trilha.nivel}</span>
         </div>
       </div>
 
       {trilha.progresso !== undefined && trilha.progresso > 0 && (
         <div className="mt-4">
           <div className="mb-1 flex items-center justify-between text-xs font-medium">
-            <span className="text-black dark:text-[var(--text-muted)]">
-              Progresso
-            </span>
+            <span className="text-black dark:text-[var(--text-muted)]">Progresso</span>
             <span className="font-bold text-purple-700 dark:text-indigo-600">
               {trilha.progresso}%
             </span>

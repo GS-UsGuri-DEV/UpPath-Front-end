@@ -28,9 +28,7 @@ export default function PreferenciasTrabalho({
           <h2 className="text-2xl font-bold text-[var(--text-primary)]">
             Preferências de Trabalho
           </h2>
-          <p className="text-sm text-[var(--text-muted)]">
-            Seu ambiente de trabalho ideal
-          </p>
+          <p className="text-sm text-[var(--text-muted)]">Seu ambiente de trabalho ideal</p>
         </div>
       </div>
 

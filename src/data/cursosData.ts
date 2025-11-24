@@ -1,4 +1,4 @@
-export interface Curso {
+export type Curso = {
   id: number
   titulo: string
   descricao: string
@@ -11,7 +11,7 @@ export interface Curso {
   progresso?: number
 }
 
-export interface TrilhaCompleta {
+export type TrilhaCompleta = {
   id: number
   nome: string
   descricao: string
@@ -38,8 +38,7 @@ export const cursosDisponiveis: Curso[] = [
   {
     id: 1,
     titulo: 'React Avançado',
-    descricao:
-      'Aprenda hooks avançados, performance optimization, e padrões de projeto no React.',
+    descricao: 'Aprenda hooks avançados, performance optimization, e padrões de projeto no React.',
     categoria: 'Desenvolvimento',
     nivel: 'Avançado',
     duracao: '40 horas',
@@ -51,8 +50,7 @@ export const cursosDisponiveis: Curso[] = [
   {
     id: 2,
     titulo: 'TypeScript Pro',
-    descricao:
-      'Domine TypeScript com tipos avançados, generics, decorators e melhores práticas.',
+    descricao: 'Domine TypeScript com tipos avançados, generics, decorators e melhores práticas.',
     categoria: 'Desenvolvimento',
     nivel: 'Intermediário',
     duracao: '30 horas',
@@ -64,8 +62,7 @@ export const cursosDisponiveis: Curso[] = [
   {
     id: 3,
     titulo: 'Node.js Backend',
-    descricao:
-      'Construa APIs robustas com Node.js, Express, autenticação e banco de dados.',
+    descricao: 'Construa APIs robustas com Node.js, Express, autenticação e banco de dados.',
     categoria: 'Desenvolvimento',
     nivel: 'Intermediário',
     duracao: '50 horas',
@@ -77,8 +74,7 @@ export const cursosDisponiveis: Curso[] = [
   {
     id: 4,
     titulo: 'UI/UX Design Fundamentals',
-    descricao:
-      'Princípios de design, prototipagem, pesquisa com usuários e ferramentas Figma.',
+    descricao: 'Princípios de design, prototipagem, pesquisa com usuários e ferramentas Figma.',
     categoria: 'Design',
     nivel: 'Iniciante',
     duracao: '25 horas',
@@ -90,8 +86,7 @@ export const cursosDisponiveis: Curso[] = [
   {
     id: 5,
     titulo: 'Python para Data Science',
-    descricao:
-      'Análise de dados com Pandas, NumPy, visualização com Matplotlib e Seaborn.',
+    descricao: 'Análise de dados com Pandas, NumPy, visualização com Matplotlib e Seaborn.',
     categoria: 'Data Science',
     nivel: 'Intermediário',
     duracao: '45 horas',
@@ -103,8 +98,7 @@ export const cursosDisponiveis: Curso[] = [
   {
     id: 6,
     titulo: 'Machine Learning Essentials',
-    descricao:
-      'Algoritmos de ML, scikit-learn, regressão, classificação e clustering.',
+    descricao: 'Algoritmos de ML, scikit-learn, regressão, classificação e clustering.',
     categoria: 'Data Science',
     nivel: 'Avançado',
     duracao: '60 horas',
@@ -116,8 +110,7 @@ export const cursosDisponiveis: Curso[] = [
   {
     id: 7,
     titulo: 'Liderança e Gestão de Equipes',
-    descricao:
-      'Desenvolva habilidades de liderança, comunicação e gestão de conflitos.',
+    descricao: 'Desenvolva habilidades de liderança, comunicação e gestão de conflitos.',
     categoria: 'Soft Skills',
     nivel: 'Intermediário',
     duracao: '20 horas',
@@ -129,8 +122,7 @@ export const cursosDisponiveis: Curso[] = [
   {
     id: 8,
     titulo: 'Marketing Digital',
-    descricao:
-      'SEO, redes sociais, Google Ads e estratégias de growth hacking.',
+    descricao: 'SEO, redes sociais, Google Ads e estratégias de growth hacking.',
     categoria: 'Business',
     nivel: 'Iniciante',
     duracao: '35 horas',
@@ -163,8 +155,7 @@ export const trilhasDisponiveis: TrilhaCompleta[] = [
   {
     id: 2,
     nome: 'Data Scientist',
-    descricao:
-      'Torne-se um cientista de dados completo, desde análise até machine learning.',
+    descricao: 'Torne-se um cientista de dados completo, desde análise até machine learning.',
     categoria: 'Data Science',
     nivel: 'Avançado',
     duracao_total: '150 horas',
@@ -180,8 +171,7 @@ export const trilhasDisponiveis: TrilhaCompleta[] = [
   {
     id: 3,
     nome: 'Product Manager',
-    descricao:
-      'Desenvolva habilidades essenciais para gerenciar produtos digitais de sucesso.',
+    descricao: 'Desenvolva habilidades essenciais para gerenciar produtos digitais de sucesso.',
     categoria: 'Business',
     nivel: 'Intermediário',
     duracao_total: '80 horas',
@@ -197,8 +187,7 @@ export const trilhasDisponiveis: TrilhaCompleta[] = [
   {
     id: 4,
     nome: 'UX/UI Designer',
-    descricao:
-      'Trilha completa de design de experiência e interface do usuário.',
+    descricao: 'Trilha completa de design de experiência e interface do usuário.',
     categoria: 'Design',
     nivel: 'Iniciante',
     duracao_total: '60 horas',

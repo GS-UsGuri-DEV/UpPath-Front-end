@@ -12,9 +12,7 @@ export default function Login() {
   const [msg, setMsg] = useState('')
   const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [loginType, setLoginType] = useState<'usuario' | 'empresa'>('usuario')
-  const [accountType, setAccountType] = useState<'usuario' | 'empresa'>(
-    'usuario',
-  )
+  const [accountType, setAccountType] = useState<'usuario' | 'empresa'>('usuario')
   const [resetEmail, setResetEmail] = useState('')
   const [resetCpf, setResetCpf] = useState('')
   const [resetBirthdate, setResetBirthdate] = useState('')
@@ -26,10 +24,9 @@ export default function Login() {
   const nav = useNavigate()
   const { login } = useAuth()
 
-  const { register, handleSubmit, formState, setValue, watch } =
-    useForm<LoginFormData>({
-      defaultValues: { email: '', password: '' },
-    })
+  const { register, handleSubmit, formState, setValue, watch } = useForm<LoginFormData>({
+    defaultValues: { email: '', password: '' },
+  })
   const { errors } = formState
   const [showPassword, setShowPassword] = useState(false)
   const [remember, setRemember] = useState(false)
@@ -39,7 +36,9 @@ export default function Login() {
 
   function formatCNPJ(value: string) {
     const digits = value.replace(/\D/g, '').slice(0, 14)
-    if (digits.length === 0) return ''
+    if (digits.length === 0) {
+      return ''
+    }
 
     return digits
       .replace(/(\d{2})(\d)/, '$1.$2')
@@ -116,10 +115,7 @@ export default function Login() {
     }
 
     const cpfCnpjClean = resetCpf.replace(/\D/g, '')
-    if (
-      !resetCpf ||
-      (cpfCnpjClean.length !== 11 && cpfCnpjClean.length !== 14)
-    ) {
+    if (!resetCpf || (cpfCnpjClean.length !== 11 && cpfCnpjClean.length !== 14)) {
       setResetMsg('Por favor, insira um CPF ou CNPJ válido')
       return
     }
@@ -133,8 +129,7 @@ export default function Login() {
       const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
 
       if (accountType === 'empresa') {
-        const COLLECTION_COMPANIES = import.meta.env
-          .VITE_APPWRITE_COLLECTION_COMPANIES
+        const COLLECTION_COMPANIES = import.meta.env.VITE_APPWRITE_COLLECTION_COMPANIES
         const response = await db.listDocuments(DB_ID, COLLECTION_COMPANIES)
         const companyDoc = response.documents.find((doc) => {
           const d = doc as unknown as Record<string, unknown>
@@ -145,9 +140,7 @@ export default function Login() {
           setVerificationStep(2)
           setResetMsg('')
         } else {
-          setResetMsg(
-            'Dados não conferem. Verifique as informações e tente novamente.',
-          )
+          setResetMsg('Dados não conferem. Verifique as informações e tente novamente.')
         }
       } else {
         const COLLECTION_USERS = import.meta.env.VITE_APPWRITE_COLLECTION_USERS
@@ -171,8 +164,7 @@ export default function Login() {
               : d.data_nascimento
 
           // Normaliza CPF para comparar só números
-          const docCpf =
-            typeof d.cpf === 'string' ? d.cpf.replace(/\D/g, '') : d.cpf
+          const docCpf = typeof d.cpf === 'string' ? d.cpf.replace(/\D/g, '') : d.cpf
 
           console.log(
             'Comparando:',
@@ -187,11 +179,7 @@ export default function Login() {
             }),
           )
 
-          return (
-            d.email === resetEmail &&
-            docCpf === cpfCnpjClean &&
-            docDate === resetBirthdate
-          )
+          return d.email === resetEmail && docCpf === cpfCnpjClean && docDate === resetBirthdate
         })
 
         console.log('Encontrou?', !!userDoc)
@@ -200,9 +188,7 @@ export default function Login() {
           setVerificationStep(2)
           setResetMsg('')
         } else {
-          setResetMsg(
-            'Dados não conferem. Verifique as informações e tente novamente.',
-          )
+          setResetMsg('Dados não conferem. Verifique as informações e tente novamente.')
         }
       }
     } catch (error) {
@@ -228,8 +214,7 @@ export default function Login() {
       const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
 
       if (accountType === 'empresa') {
-        const COLLECTION_COMPANIES = import.meta.env
-          .VITE_APPWRITE_COLLECTION_COMPANIES
+        const COLLECTION_COMPANIES = import.meta.env.VITE_APPWRITE_COLLECTION_COMPANIES
         const response = await db.listDocuments(DB_ID, COLLECTION_COMPANIES)
         const companyDoc = response.documents.find((doc) => {
           const d = doc as unknown as Record<string, unknown>
@@ -299,14 +284,9 @@ export default function Login() {
 
           <FormInput
             label={loginType === 'empresa' ? 'CNPJ' : 'E-mail'}
-            placeholder={
-              loginType === 'empresa' ? '00.000.000/0000-00' : 'seu@email.com'
-            }
+            placeholder={loginType === 'empresa' ? '00.000.000/0000-00' : 'seu@email.com'}
             {...register('email', {
-              required:
-                loginType === 'empresa'
-                  ? 'CNPJ é obrigatório'
-                  : 'E-mail é obrigatório',
+              required: loginType === 'empresa' ? 'CNPJ é obrigatório' : 'E-mail é obrigatório',
               onChange: handleInputChange,
             })}
             error={errors.email?.message as string | undefined}
@@ -321,12 +301,8 @@ export default function Login() {
               type={showPassword ? 'text' : 'password'}
               {...register('password', { required: 'Senha é obrigatória' })}
               error={errors.password?.message as string | undefined}
-              isValid={
-                !errors.password && !!passwordValue && passwordValue.length >= 8
-              }
-              rightIcon={
-                showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />
-              }
+              isValid={!errors.password && !!passwordValue && passwordValue.length >= 8}
+              rightIcon={showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
               onRightIconClick={() => setShowPassword((s) => !s)}
               required
             />
@@ -376,9 +352,7 @@ export default function Login() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-lg bg-[var(--bg-secondary)] p-6 shadow-xl">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-[var(--text-primary)]">
-                Recuperar Senha
-              </h2>
+              <h2 className="text-xl font-bold text-[var(--text-primary)]">Recuperar Senha</h2>
               <button
                 onClick={() => {
                   setShowForgotPassword(false)

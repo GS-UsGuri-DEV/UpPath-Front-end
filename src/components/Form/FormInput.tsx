@@ -14,7 +14,7 @@ export default function FormInput({
   } ${rightIcon ? 'pr-10' : ''}`
 
   return (
-    <div className={'space-y-2 ' + (className ?? '')}>
+    <div className={`space-y-2 ${className ?? ''}`}>
       {label && (
         <label className="input-label">
           {label}
@@ -22,11 +22,7 @@ export default function FormInput({
         </label>
       )}
       <div className="relative">
-        <input
-          className={inputClassName}
-          aria-invalid={error ? 'true' : 'false'}
-          {...rest}
-        />
+        <input className={inputClassName} aria-invalid={error ? 'true' : 'false'} {...rest} />
         {rightIcon && (
           <button
             type="button"

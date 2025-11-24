@@ -1,19 +1,19 @@
 import type { ReactNode } from 'react'
 
-export interface ControlsAPI {
+export type ControlsAPI = {
   prev: () => void
   next: () => void
   index: number
   total: number
 }
 
-export interface IndicatorsAPI {
+export type IndicatorsAPI = {
   goTo: (index: number) => void
   index: number
   total: number
 }
 
-export interface CarrosselBaseProps {
+export type CarrosselBaseProps = {
   total: number
   startIndex?: number
   autoMs?: number | null

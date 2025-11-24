@@ -2,7 +2,8 @@
 export const API_URL = import.meta.env.VITE_API_URL_JAVA ?? 'https://uppath.onrender.com'
 
 // API Python (Analytics - dashboards)
-export const API_PYTHON_URL = import.meta.env.VITE_API_URL_PYTHON ?? 'https://uppath-python.onrender.com'
+export const API_PYTHON_URL =
+  import.meta.env.VITE_API_URL_PYTHON ?? 'https://uppath-python.onrender.com'
 
 import type { RequestOptions } from '../types/request'
 
@@ -10,9 +11,7 @@ export async function request<T = unknown>(
   path: string,
   { method = 'GET', body, headers = {} }: RequestOptions = {},
 ): Promise<T> {
-  const url = path.startsWith('http')
-    ? path
-    : `${API_URL}${path.startsWith('/') ? '' : '/'}${path}`
+  const url = path.startsWith('http') ? path : `${API_URL}${path.startsWith('/') ? '' : '/'}${path}`
 
   // Debug: log every request URL so we can verify which endpoint the bundle calls
   try {
@@ -40,8 +39,7 @@ export async function request<T = unknown>(
   const init: RequestInit = { method, headers: defaultHeaders }
 
   if (body != null) {
-    ;(init.headers as Record<string, string>)['Content-Type'] =
-      'application/json'
+    ;(init.headers as Record<string, string>)['Content-Type'] = 'application/json'
     init.body = JSON.stringify(body)
   }
 
@@ -99,10 +97,7 @@ export async function request<T = unknown>(
   return data as T
 }
 
-export async function get<T = unknown>(
-  path: string,
-  headers?: Record<string, string>,
-) {
+export async function get<T = unknown>(path: string, headers?: Record<string, string>) {
   return request<T>(path, { method: 'GET', headers })
 }
 
@@ -122,9 +117,6 @@ export async function put<T = unknown>(
   return request<T>(path, { method: 'PUT', body, headers })
 }
 
-export async function del<T = unknown>(
-  path: string,
-  headers?: Record<string, string>,
-) {
+export async function del<T = unknown>(path: string, headers?: Record<string, string>) {
   return request<T>(path, { method: 'DELETE', headers })
 }

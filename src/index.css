@@ -14,7 +14,7 @@
 .dark-mode .nav-btn:hover {
   background-color: rgb(31 41 55); /* gray-800 */
 }
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* ===========================================
    ANIMATIONS
@@ -562,9 +562,7 @@
   --accent-primary-hover: rgb(37 99 235); /* blue-600 */
   --accent-indigo: rgb(79 70 229); /* indigo-600 */
   --accent-indigo-hover: rgb(67 56 202);
-  --accent-success: rgb(
-    22 163 74
-  ); /* slightly darker green for better visibility */
+  --accent-success: rgb(22 163 74); /* slightly darker green for better visibility */
   --accent-success-hover: rgb(16 120 74);
   /* Success tint/backing used for small info cards and progress bands */
   --accent-success-bg: rgb(220 252 231);

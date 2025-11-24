@@ -4,11 +4,7 @@ import { put, get } from '../../api/client'
 
 import type { ProfileCardProps } from '../../types/profile'
 
-export default function ProfileCard({
-  profileImage,
-  displayName,
-  displayEmail,
-}: ProfileCardProps) {
+export default function ProfileCard({ profileImage, displayName, displayEmail }: ProfileCardProps) {
   const { userData, checkAuth } = useAuth()
   const [editMode, setEditMode] = useState(false)
   const [editNome, setEditNome] = useState('')
@@ -17,11 +13,15 @@ export default function ProfileCard({
   const [editMessage, setEditMessage] = useState<string | null>(null)
 
   const formatDate = (dateStr: string | undefined | null) => {
-    if (!dateStr) return '—'
+    if (!dateStr) {
+      return '—'
+    }
     try {
       const d = String(dateStr).split('T')[0]
       const parts = d.split('-')
-      if (parts.length >= 3) return `${parts[2]}/${parts[1]}/${parts[0]}`
+      if (parts.length >= 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`
+      }
       return d
     } catch {
       return dateStr
@@ -29,7 +29,9 @@ export default function ProfileCard({
   }
 
   function findDateField(obj: any) {
-    if (!obj) return ''
+    if (!obj) {
+      return ''
+    }
     const candidates = [
       'data_nascimento',
       'dataNasc',
@@ -40,24 +42,34 @@ export default function ProfileCard({
       'nascimento',
     ]
     for (const k of candidates) {
-      if (obj[k]) return obj[k]
+      if (obj[k]) {
+        return obj[k]
+      }
     }
     for (const key of Object.keys(obj)) {
-      if (/birth|nasc/i.test(key) && obj[key]) return obj[key]
+      if (/birth|nasc/i.test(key) && obj[key]) {
+        return obj[key]
+      }
     }
     return ''
   }
 
   function toDateInput(value: string | undefined | null) {
-    if (!value) return ''
+    if (!value) {
+      return ''
+    }
     const v = String(value).trim()
-    if (/^\d{4}-\d{2}-\d{2}/.test(v)) return v.split('T')[0]
+    if (/^\d{4}-\d{2}-\d{2}/.test(v)) {
+      return v.split('T')[0]
+    }
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(v)) {
       const [d, m, y] = v.split('/')
       return `${y}-${m}-${d}`
     }
     const dt = new Date(v)
-    if (!Number.isNaN(dt.getTime())) return dt.toISOString().slice(0, 10)
+    if (!Number.isNaN(dt.getTime())) {
+      return dt.toISOString().slice(0, 10)
+    }
     return ''
   }
 
@@ -72,9 +84,7 @@ export default function ProfileCard({
       )
       setEditEmail(
         String(
-          (userData as unknown as Record<string, unknown>)?.email ??
-            (userData as any)?.email ??
-            '',
+          (userData as unknown as Record<string, unknown>)?.email ?? (userData as any)?.email ?? '',
         ),
       )
       const rawDate = findDateField(userData as any)
@@ -103,18 +113,11 @@ export default function ProfileCard({
       }
 
       console.debug('PUT /users/{id} payload:', { id, payload, headers })
-      const putRes = await put(
-        `https://uppath.onrender.com/users/${id}`,
-        payload,
-        headers,
-      )
+      const putRes = await put(`https://uppath.onrender.com/users/${id}`, payload, headers)
       console.debug('PUT /users/{id} response:', putRes)
 
       try {
-        const updated = await get(
-          `https://uppath.onrender.com/users/${id}`,
-          headers,
-        )
+        const updated = await get(`https://uppath.onrender.com/users/${id}`, headers)
         console.debug('GET /users/{id} response:', updated)
         if (updated) {
           localStorage.setItem('userData', JSON.stringify(updated))
@@ -144,9 +147,7 @@ export default function ProfileCard({
             src={profileImage}
             alt="avatar"
             className="h-full w-full object-cover"
-            onError={() =>
-              console.error('Avatar failed to load:', profileImage)
-            }
+            onError={() => console.error('Avatar failed to load:', profileImage)}
           />
         ) : (
           <span className="inline-block">
@@ -159,9 +160,7 @@ export default function ProfileCard({
         )}
       </div>
       <div className="flex-1">
-        <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-          {displayName}
-        </h2>
+        <h2 className="text-lg font-semibold text-[var(--text-primary)]">{displayName}</h2>
 
         {editMode ? (
           <form onSubmit={handleSaveProfile} className="mt-3 space-y-2">
@@ -208,9 +207,7 @@ export default function ProfileCard({
               </button>
             </div>
             {editMessage && (
-              <div className="text-sm text-[var(--accent-success)]">
-                {editMessage}
-              </div>
+              <div className="text-sm text-[var(--accent-success)]">{editMessage}</div>
             )}
           </form>
         ) : (

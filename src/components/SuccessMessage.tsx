@@ -1,14 +1,11 @@
 import React from 'react'
 
-interface SuccessMessageProps {
+type SuccessMessageProps = {
   message: string
   onClose: () => void
 }
 
-const SuccessMessage: React.FC<SuccessMessageProps> = ({
-  message,
-  onClose,
-}) => {
+const SuccessMessage: React.FC<SuccessMessageProps> = ({ message, onClose }) => {
   return (
     <div
       role="dialog"
@@ -25,11 +22,7 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
             strokeWidth="2"
             viewBox="0 0 24 24"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 13l4 4L19 7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
           <p className="mb-4 text-center text-lg font-semibold">{message}</p>
           <button

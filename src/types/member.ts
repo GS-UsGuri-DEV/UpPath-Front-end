@@ -8,7 +8,7 @@ export type Member = {
   github?: string
 }
 
-export interface CarrosselIntegrantesProps {
+export type CarrosselIntegrantesProps = {
   members: Array<{
     name: string
     rm: string
@@ -24,7 +24,7 @@ export interface CarrosselIntegrantesProps {
   className?: string
   autoMs?: number
 }
-export interface MembroCardProps {
+export type MembroCardProps = {
   member: {
     name: string
     rm: string
@@ -37,13 +37,13 @@ export interface MembroCardProps {
   className?: string
 }
 
-export interface MembroAvatarProps {
+export type MembroAvatarProps = {
   src: string
   alt: string
   className?: string
 }
 
-export interface MembrosSocialProps {
+export type MembrosSocialProps = {
   socials: Array<{
     href: string
     alt: string

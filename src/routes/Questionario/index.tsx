@@ -86,21 +86,15 @@ export default function Questionario() {
       case 1:
         return <DadosBasicos data={formData} updateData={updateFormData} />
       case 2:
-        return (
-          <PerfilProfissional data={formData} updateData={updateFormData} />
-        )
+        return <PerfilProfissional data={formData} updateData={updateFormData} />
       case 3:
         return <ObjetivosCarreira data={formData} updateData={updateFormData} />
       case 4:
         return <EstiloAprendizado data={formData} updateData={updateFormData} />
       case 5:
-        return (
-          <PreferenciasTrabalho data={formData} updateData={updateFormData} />
-        )
+        return <PreferenciasTrabalho data={formData} updateData={updateFormData} />
       case 6:
-        return (
-          <BemEstarEquilibrio data={formData} updateData={updateFormData} />
-        )
+        return <BemEstarEquilibrio data={formData} updateData={updateFormData} />
       case 7:
         return <UsoPlataforma data={formData} updateData={updateFormData} />
       default:
@@ -123,8 +117,7 @@ export default function Questionario() {
             Personalize sua jornada
           </h1>
           <p className="text-[var(--text-muted)]">
-            Responda algumas perguntas para criarmos a melhor experiência para
-            você
+            Responda algumas perguntas para criarmos a melhor experiência para você
           </p>
         </div>
 

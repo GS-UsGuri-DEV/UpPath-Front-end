@@ -1,7 +1,7 @@
 import { FaClock, FaBook, FaStar } from 'react-icons/fa'
 import type { Curso } from '../../data/cursosData'
 
-interface CursoCardProps {
+type CursoCardProps = {
   curso: Curso
   onClick: () => void
 }
@@ -56,9 +56,7 @@ export default function CursoCard({ curso, onClick }: CursoCardProps) {
           <FaBook className="text-indigo-600 dark:text-indigo-500" />
           <span>{curso.plataforma}</span>
         </div>
-        <span
-          className={`flex items-center gap-1 font-semibold ${getNivelColor(curso.nivel)}`}
-        >
+        <span className={`flex items-center gap-1 font-semibold ${getNivelColor(curso.nivel)}`}>
           <FaStar />
           {curso.nivel}
         </span>
@@ -67,9 +65,7 @@ export default function CursoCard({ curso, onClick }: CursoCardProps) {
       {curso.progresso !== undefined && curso.progresso > 0 && (
         <div className="mt-3">
           <div className="mb-1 flex items-center justify-between text-xs font-medium">
-            <span className="text-black dark:text-[var(--text-muted)]">
-              Progresso
-            </span>
+            <span className="text-black dark:text-[var(--text-muted)]">Progresso</span>
             <span className="font-bold text-indigo-700 dark:text-indigo-600">
               {curso.progresso}%
             </span>

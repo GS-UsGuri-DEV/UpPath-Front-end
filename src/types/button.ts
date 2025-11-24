@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react'
 
-export interface ButtonBaseProps {
+export type ButtonBaseProps = {
   children: ReactNode
   className?: string
   disabled?: boolean
   'aria-label'?: string
 }
 
-export interface BtnExternoProps extends ButtonBaseProps {
+export type BtnExternoProps = {
   href: string
   target: '_blank'
-}
+} & ButtonBaseProps

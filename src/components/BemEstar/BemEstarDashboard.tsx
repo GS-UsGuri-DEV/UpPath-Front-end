@@ -10,9 +10,7 @@ import BemEstarGrid from '../GraphicsDashboard/BemEstarGrid'
  */
 export default function BemEstarDashboard() {
   const { userData } = useAuth()
-  const [bemEstar, setBemEstar] = useState<Array<
-    Record<string, unknown>
-  > | null>(null)
+  const [bemEstar, setBemEstar] = useState<Array<Record<string, unknown>> | null>(null)
   const [bemLoading, setBemLoading] = useState(false)
   const [bemError, setBemError] = useState<string | null>(null)
 
@@ -43,29 +41,35 @@ export default function BemEstarDashboard() {
       const idUser = Number.isFinite(parsedId) ? parsedId : undefined
 
       const url = new URL('https://uppath.onrender.com/wellBeing')
-      if (idUser !== undefined) url.searchParams.append('idUser', String(idUser))
-      else if (identifier) url.searchParams.append('identifier', identifier)
-      if (bemFrom) url.searchParams.append('from', bemFrom)
-      if (bemTo) url.searchParams.append('to', bemTo)
-      if (bemLimit) url.searchParams.append('limit', bemLimit)
+      if (idUser !== undefined) {
+        url.searchParams.append('idUser', String(idUser))
+      } else if (identifier) {
+        url.searchParams.append('identifier', identifier)
+      }
+      if (bemFrom) {
+        url.searchParams.append('from', bemFrom)
+      }
+      if (bemTo) {
+        url.searchParams.append('to', bemTo)
+      }
+      if (bemLimit) {
+        url.searchParams.append('limit', bemLimit)
+      }
 
       const resp = await fetch(String(url))
-      if (!resp.ok) throw new Error(`API externa retornou ${resp.status}`)
+      if (!resp.ok) {
+        throw new Error(`API externa retornou ${resp.status}`)
+      }
       const data = await resp.json()
 
-      const items = Array.isArray(data)
-      ? data
-      : data?.data ?? data?.items ?? (data ? [data] : []);
+      const items = Array.isArray(data) ? data : (data?.data ?? data?.items ?? (data ? [data] : []))
 
       const filtered = items.filter((r: { idUser: any }) => {
-        const rId = Number(
-          r.idUser 
-        );
-        return rId === idUser;
-      });
+        const rId = Number(r.idUser)
+        return rId === idUser
+      })
 
-      setBemEstar(filtered);
-
+      setBemEstar(filtered)
     } catch (err) {
       setBemError(String((err as Error)?.message ?? err))
       setBemEstar(null)
@@ -75,19 +79,27 @@ export default function BemEstarDashboard() {
   }
 
   useEffect(() => {
-    if (userData) fetchBemEstar()
+    if (userData) {
+      fetchBemEstar()
+    }
   }, [userData])
 
   const num = (v: unknown) => {
-    if (v === null || v === undefined) return NaN
-    if (typeof v === 'number') return v
+    if (v === null || v === undefined) {
+      return NaN
+    }
+    if (typeof v === 'number') {
+      return v
+    }
     const s = String(v).replace(',', '.')
     const n = Number(s)
     return Number.isFinite(n) ? n : NaN
   }
 
   const lastNRecords = (n = 7) => {
-    if (!Array.isArray(bemEstar)) return [] as Array<Record<string, unknown>>
+    if (!Array.isArray(bemEstar)) {
+      return [] as Array<Record<string, unknown>>
+    }
     const copy = [...bemEstar]
     copy.sort((a, b) => {
       const da = String(a.data_registro ?? a.DATA_REGISTRO ?? '')
@@ -99,8 +111,7 @@ export default function BemEstarDashboard() {
 
   const records7 = lastNRecords(7)
 
-  const avg = (arr: number[]) =>
-    arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN
+  const avg = (arr: number[]) => (arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN)
 
   const stressValues = records7.map((r) =>
     num((r as any).stressLevel ?? r.nivel_estresse ?? r.NIVEL_ESTRESSE),
@@ -118,13 +129,19 @@ export default function BemEstarDashboard() {
 
   const calculateTrend = (values: number[]): 'up' | 'down' | 'neutral' => {
     const validValues = values.filter((v) => !isNaN(v))
-    if (validValues.length < 2) return 'neutral'
+    if (validValues.length < 2) {
+      return 'neutral'
+    }
     const recent = validValues.slice(0, Math.ceil(validValues.length / 2))
     const older = validValues.slice(Math.ceil(validValues.length / 2))
     const recentAvg = avg(recent)
     const olderAvg = avg(older)
-    if (recentAvg > olderAvg + 0.5) return 'up'
-    if (recentAvg < olderAvg - 0.5) return 'down'
+    if (recentAvg > olderAvg + 0.5) {
+      return 'up'
+    }
+    if (recentAvg < olderAvg - 0.5) {
+      return 'down'
+    }
     return 'neutral'
   }
 
@@ -132,11 +149,10 @@ export default function BemEstarDashboard() {
   const motivationTrend = calculateTrend(motivationValues)
   const sleepTrend = calculateTrend(sleepValues)
 
-  const getStatus = (
-    trend: 'up' | 'down' | 'neutral',
-    isInverted = false,
-  ): string => {
-    if (trend === 'neutral') return 'Estável'
+  const getStatus = (trend: 'up' | 'down' | 'neutral', isInverted = false): string => {
+    if (trend === 'neutral') {
+      return 'Estável'
+    }
     if (isInverted) {
       return trend === 'down' ? 'Melhorando' : 'Piorando'
     }
@@ -162,11 +178,15 @@ export default function BemEstarDashboard() {
         : { label: 'Bronze', color: 'text-[var(--accent-warning-dark)]' }
 
   const computeStreak = () => {
-    if (!Array.isArray(bemEstar) || bemEstar.length === 0) return 0
+    if (!Array.isArray(bemEstar) || bemEstar.length === 0) {
+      return 0
+    }
     const days = new Set<string>()
     bemEstar.forEach((r) => {
       const d = String(r.data_registro ?? r.DATA_REGISTRO ?? '')
-      if (!d) return
+      if (!d) {
+        return
+      }
       const day = new Date(d).toISOString().slice(0, 10)
       days.add(day)
     })
@@ -176,8 +196,11 @@ export default function BemEstarDashboard() {
       const d = new Date(today)
       d.setDate(today.getDate() - i)
       const key = d.toISOString().slice(0, 10)
-      if (days.has(key)) streak++
-      else break
+      if (days.has(key)) {
+        streak++
+      } else {
+        break
+      }
     }
     return streak
   }
@@ -214,12 +237,7 @@ export default function BemEstarDashboard() {
       value: isNaN(avgStress) ? 0 : Math.round(avgStress * 10) / 10,
       values: stressValues.filter((v) => !isNaN(v)).reverse(),
       media: isNaN(avgStress) ? '0.0' : avgStress.toFixed(1),
-      tendencia:
-        stressTrend === 'up'
-          ? 'down'
-          : stressTrend === 'down'
-            ? 'up'
-            : 'neutral',
+      tendencia: stressTrend === 'up' ? 'down' : stressTrend === 'down' ? 'up' : 'neutral',
       status: getStatus(stressTrend, true),
     },
   ]
@@ -228,9 +246,7 @@ export default function BemEstarDashboard() {
     <section className="space-y-6">
       <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-            Bem-estar
-          </h2>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Bem-estar</h2>
           <div className="text-sm text-[var(--text-muted)]">
             {recordCount} registro{recordCount !== 1 ? 's' : ''}
           </div>
@@ -242,21 +258,15 @@ export default function BemEstarDashboard() {
               <FaMedal className={badge.color} />
             </div>
             <div>
-              <div className="text-sm text-[var(--text-muted)]">
-                Score Geral
-              </div>
+              <div className="text-sm text-[var(--text-muted)]">Score Geral</div>
               <div className="text-3xl font-bold">{score}</div>
-              <div className="text-xs text-[var(--text-muted)]">
-                {badge.label}
-              </div>
+              <div className="text-xs text-[var(--text-muted)]">{badge.label}</div>
             </div>
           </div>
           <div className="flex items-center gap-2 rounded-lg border border-[var(--accent-warning-border)] bg-[var(--accent-warning-bg)] px-4 py-3">
             <FaFire className="text-2xl text-[var(--accent-warning)]" />
             <div>
-              <div className="text-sm font-medium text-[var(--text-secondary)]">
-                Sequência
-              </div>
+              <div className="text-sm font-medium text-[var(--text-secondary)]">Sequência</div>
               <div className="text-2xl font-bold text-[var(--text-primary)]">
                 {streak} dia{streak !== 1 ? 's' : ''}
               </div>
@@ -291,9 +301,7 @@ export default function BemEstarDashboard() {
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--text-muted)]">
-                Limite:
-              </label>
+              <label className="text-xs text-[var(--text-muted)]">Limite:</label>
               <input
                 type="number"
                 min={1}
@@ -346,9 +354,7 @@ export default function BemEstarDashboard() {
 
       {showDetails && Array.isArray(bemEstar) && bemEstar.length > 0 && (
         <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-6">
-          <h3 className="mb-4 font-semibold text-[var(--text-primary)]">
-            Histórico Detalhado
-          </h3>
+          <h3 className="mb-4 font-semibold text-[var(--text-primary)]">Histórico Detalhado</h3>
           <div className="overflow-x-auto text-xs">
             <table className="w-full border-collapse">
               <thead>
@@ -364,16 +370,30 @@ export default function BemEstarDashboard() {
                 {bemEstar.map((r, idx) => {
                   const row = r as Record<string, unknown>
                   const data = String(
-                    row['data_registro'] ?? row['DATA_REGISTRO'] ?? row['date'] ?? row['createdAt'] ?? row['created_at'] ?? '—',
+                    row['data_registro'] ??
+                      row['DATA_REGISTRO'] ??
+                      row['date'] ??
+                      row['createdAt'] ??
+                      row['created_at'] ??
+                      '—',
                   )
                   const estresse = String(
-                    (row as any).stressLevel ?? row['nivel_estresse'] ?? row['NIVEL_ESTRESSE'] ?? '—',
+                    (row as any).stressLevel ??
+                      row['nivel_estresse'] ??
+                      row['NIVEL_ESTRESSE'] ??
+                      '—',
                   )
                   const motivacao = String(
-                    (row as any).motivationLevel ?? row['nivel_motivacao'] ?? row['NIVEL_MOTIVACAO'] ?? '—',
+                    (row as any).motivationLevel ??
+                      row['nivel_motivacao'] ??
+                      row['NIVEL_MOTIVACAO'] ??
+                      '—',
                   )
                   const sono = String(
-                    (row as any).sleepQuality ?? row['qualidade_sono'] ?? row['QUALIDADE_SONO'] ?? '—',
+                    (row as any).sleepQuality ??
+                      row['qualidade_sono'] ??
+                      row['QUALIDADE_SONO'] ??
+                      '—',
                   )
                   const obs = String(
                     (row as any).observations ?? row['observacao'] ?? row['OBSERVACAO'] ?? '—',

@@ -1,4 +1,4 @@
-export interface SpinnerProps {
+export type SpinnerProps = {
   text?: string
   className?: string
   size?: number

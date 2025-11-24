@@ -67,6 +67,7 @@ O **UpPath** é uma plataforma inovadora que combina tecnologia e empatia para p
 ### Problema que Resolve
 
 Profissionais enfrentam dificuldades em:
+
 - Identificar quais habilidades desenvolver
 - Encontrar trilhas de capacitação personalizadas
 - Manter equilíbrio emocional durante o aprendizado
@@ -184,26 +185,31 @@ Após a instalação, acesse `http://localhost:5173` no navegador.
 ### Funcionalidades Principais
 
 #### 1. Cadastro e Login
+
 - Cadastre-se como **Usuário** (CPF) ou **Empresa** (CNPJ)
 - Faça login com email/CPF/CNPJ e senha
 - Autenticação segura via Appwrite
 
 #### 2. Dashboard Personalizado
+
 - Visualize métricas de bem-estar emocional
 - Acompanhe progresso nas trilhas de aprendizado
 - Veja recomendações personalizadas
 
 #### 3. Trilhas de Aprendizado
+
 - Explore cursos recomendados baseados no seu perfil
 - Acompanhe progresso em cada trilha
 - Acesse conteúdos de parceiros (Coursera, Alura, FIAP ON)
 
 #### 4. Bem-Estar Emocional
+
 - Realize check-ins diários de humor
 - Receba alertas e sugestões de pausas
 - Acesse recursos de apoio emocional
 
 #### 5. Perfil
+
 - Gerencie suas informações pessoais
 - Atualize foto de perfil
 - Altere senha
@@ -213,20 +219,24 @@ Após a instalação, acesse `http://localhost:5173` no navegador.
 ## 📸 Screenshots
 
 ### Página Inicial
+
 ![Página Inicial - Seção Hero](docs/screenshots/Captura%20de%20tela%202025-11-24%20025212.png)
 
 ### Dashboard de Usuário
+
 ![Dashboard - Métricas e Bem-Estar](docs/screenshots/Captura%20de%20tela%202025-11-24%20025149.png)
 
-### Perfil do Usuário 
+### Perfil do Usuário
+
 ![Gerenciamento de Perfil](docs/screenshots/Captura%20de%20tela%202025-11-24%20025203.png)
 
 ### Módulo de Bem-Estar
+
 ![Bem-Estar Emocional](docs/screenshots/Captura%20de%20tela%202025-11-24%20025412.png)
 
 ### Trilhas de Aprendizado
-![Trilhas de Aprendizado](docs/screenshots/Captura%20de%20tela%202025-11-24%20025119.png)
 
+![Trilhas de Aprendizado](docs/screenshots/Captura%20de%20tela%202025-11-24%20025119.png)
 
 ---
 
@@ -297,35 +307,35 @@ UpPath-Front-end/
 
 ### Rotas Públicas
 
-| Rota | Descrição | Componente |
-|------|-----------|------------|
-| `/` | Página inicial com apresentação do projeto | `Home` |
-| `/login` | Autenticação de usuários e empresas | `Login` |
-| `/cadastro` | Registro de novos usuários/empresas | `Cadastro` |
-| `/faq` | Perguntas frequentes | `FAQ` |
-| `/contato` | Formulário de contato | `Contato` |
-| `/cursos` | Catálogo de cursos e trilhas | `Cursos` |
-| `/dicas` | Dicas de bem-estar e desenvolvimento | `Dicas` |
+| Rota        | Descrição                                  | Componente |
+| ----------- | ------------------------------------------ | ---------- |
+| `/`         | Página inicial com apresentação do projeto | `Home`     |
+| `/login`    | Autenticação de usuários e empresas        | `Login`    |
+| `/cadastro` | Registro de novos usuários/empresas        | `Cadastro` |
+| `/faq`      | Perguntas frequentes                       | `FAQ`      |
+| `/contato`  | Formulário de contato                      | `Contato`  |
+| `/cursos`   | Catálogo de cursos e trilhas               | `Cursos`   |
+| `/dicas`    | Dicas de bem-estar e desenvolvimento       | `Dicas`    |
 
 ### Rotas Protegidas (Requer Login - Usuário)
 
-| Rota | Descrição | Componente |
-|------|-----------|------------|
-| `/dashboard` | Dashboard com métricas personalizadas | `Dashboard` |
-| `/perfil` | Gerenciamento de perfil do usuário | `Perfil` |
-| `/questionario` | Questionário de perfil profissional | `Questionario` |
+| Rota            | Descrição                             | Componente     |
+| --------------- | ------------------------------------- | -------------- |
+| `/dashboard`    | Dashboard com métricas personalizadas | `Dashboard`    |
+| `/perfil`       | Gerenciamento de perfil do usuário    | `Perfil`       |
+| `/questionario` | Questionário de perfil profissional   | `Questionario` |
 
 ### Rotas Protegidas (Requer Login - Empresa)
 
-| Rota | Descrição | Componente |
-|------|-----------|------------|
+| Rota                 | Descrição                                    | Componente         |
+| -------------------- | -------------------------------------------- | ------------------ |
 | `/dashboard-empresa` | Dashboard corporativo com métricas de equipe | `DashboardEmpresa` |
 
 ### Rota de Erro
 
-| Rota | Descrição | Componente |
-|------|-----------|------------|
-| `*` | Página 404 - Não encontrado | `Error404` |
+| Rota | Descrição                   | Componente |
+| ---- | --------------------------- | ---------- |
+| `*`  | Página 404 - Não encontrado | `Error404` |
 
 ### Navegação Dinâmica
 
@@ -334,7 +344,6 @@ UpPath-Front-end/
 - Proteção de rotas baseada no tipo de conta (usuário/empresa)
 
 ---
-
 
 ## 👥 Autores e Créditos
 
@@ -380,15 +389,14 @@ Projeto desenvolvido para a **Global Solution 2025** - Disciplina de Front-End D
 
 ---
 
-
 ## 🔗 Links Importantes
 
 ### Repositórios do Projeto
 
-| Repositório | Descrição | Link |
-|-------------|-----------|------|
-| **Front-End** | Interface React + TypeScript | [GitHub - UpPath-Front-end](https://github.com/GS-UsGuri-DEV/UpPath-Front-end) |
-| **Back-End Java** | API RESTful em Java | [Link](https://uppath.onrender.com) |
+| Repositório       | Descrição                    | Link                                                                           |
+| ----------------- | ---------------------------- | ------------------------------------------------------------------------------ |
+| **Front-End**     | Interface React + TypeScript | [GitHub - UpPath-Front-end](https://github.com/GS-UsGuri-DEV/UpPath-Front-end) |
+| **Back-End Java** | API RESTful em Java          | [Link](https://uppath.onrender.com)                                            |
 
 ### Recursos Externos
 

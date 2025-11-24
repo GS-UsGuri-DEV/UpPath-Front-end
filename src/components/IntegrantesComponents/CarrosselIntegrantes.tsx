@@ -11,14 +11,14 @@ export default function CarrosselIntegrantes({
   showIndicators = true,
   className,
 }: CarrosselIntegrantesProps) {
-  if (!members.length) return null
+  if (!members.length) {
+    return null
+  }
 
   return (
     <section aria-label={title || 'Integrantes'} className={className}>
       {title && (
-        <h2 className="text-fontPrimary mb-4 text-center text-xl font-bold sm:text-2xl">
-          {title}
-        </h2>
+        <h2 className="text-fontPrimary mb-4 text-center text-xl font-bold sm:text-2xl">{title}</h2>
       )}
 
       <div className="relative mx-auto max-w-[900px]">
@@ -32,7 +32,9 @@ export default function CarrosselIntegrantes({
           )}
           renderControls={(api) => {
             const { prev, next, total } = api
-            if (!(showControls && total > 1)) return null
+            if (!(showControls && total > 1)) {
+              return null
+            }
 
             return (
               <>
@@ -58,7 +60,9 @@ export default function CarrosselIntegrantes({
           }}
           renderIndicators={(api) => {
             const { goTo, index, total } = api
-            if (!(showIndicators && total > 1)) return null
+            if (!(showIndicators && total > 1)) {
+              return null
+            }
 
             const wrap = (n: number) => (n + total) % total
 
