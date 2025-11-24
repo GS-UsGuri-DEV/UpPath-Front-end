@@ -1,4 +1,8 @@
-export const API_URL = import.meta.env.VITE_API_URL ?? 'https://uppath.onrender.com'
+// API Java (CRUD - empresas, users, login)
+export const API_URL = import.meta.env.VITE_API_URL_JAVA ?? 'https://uppath.onrender.com'
+
+// API Python (Analytics - dashboards)
+export const API_PYTHON_URL = import.meta.env.VITE_API_URL_PYTHON ?? 'https://uppath-python.onrender.com'
 
 import type { RequestOptions } from '../types/request'
 

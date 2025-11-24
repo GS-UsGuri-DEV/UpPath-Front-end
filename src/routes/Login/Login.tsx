@@ -11,6 +11,7 @@ import type { LoginFormData } from '../../types/auth'
 export default function Login() {
   const [msg, setMsg] = useState('')
   const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [loginType, setLoginType] = useState<'usuario' | 'empresa'>('usuario')
   const [accountType, setAccountType] = useState<'usuario' | 'empresa'>(
     'usuario',
   )
@@ -36,32 +37,25 @@ export default function Login() {
   const emailValue = watch('email')
   const passwordValue = watch('password')
 
-  function formatCPFOrEmail(value: string) {
-    const raw = value.trim()
-
-    if (/@/.test(raw) || /[A-Za-z]/.test(raw)) return raw
-
-    const digits = raw.replace(/\D/g, '').slice(0, 14)
+  function formatCNPJ(value: string) {
+    const digits = value.replace(/\D/g, '').slice(0, 14)
     if (digits.length === 0) return ''
 
-    // Formata como CPF (11 dígitos) ou CNPJ (14 dígitos)
-    if (digits.length <= 11) {
-      return digits
-        .replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-    } else {
-      return digits
-        .replace(/(\d{2})(\d)/, '$1.$2')
-        .replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})(\d)/, '$1/$2')
-        .replace(/(\d{4})(\d{1,2})$/, '$1-$2')
-    }
+    return digits
+      .replace(/(\d{2})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1/$2')
+      .replace(/(\d{4})(\d{1,2})$/, '$1-$2')
   }
 
-  function handleEmailChange(e: ChangeEvent<HTMLInputElement>) {
-    const formatted = formatCPFOrEmail(e.target.value)
-    setValue('email', formatted)
+  function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value
+    if (loginType === 'empresa') {
+      const formatted = formatCNPJ(value)
+      setValue('email', formatted)
+    } else {
+      setValue('email', value)
+    }
   }
 
   useEffect(() => {
@@ -76,7 +70,22 @@ export default function Login() {
 
   async function onSubmit(data: LoginFormData) {
     try {
-      await login(data.email, data.password)
+      // Limpar mensagens de erro anteriores
+      setMsg('')
+
+      // Se for empresa, converter CNPJ formatado para apenas números
+      let loginIdentifier = data.email
+      if (loginType === 'empresa') {
+        loginIdentifier = data.email.replace(/\D/g, '')
+      } else {
+        // Para usuário, só aceita e-mail válido contendo @ e .com
+        if (!/^[^@\s]+@[^@\s]+\.com$/.test(data.email)) {
+          setMsg('Digite um e-mail válido (deve conter @ e .com)')
+          return
+        }
+      }
+
+      await login(loginIdentifier, data.password, loginType)
 
       if (remember) {
         localStorage.setItem('rememberedEmail', data.email)
@@ -86,7 +95,11 @@ export default function Login() {
         localStorage.removeItem('rememberedPassword')
       }
 
-      nav('/')
+      if (loginType === 'empresa') {
+        nav('/dashboardempresa')
+      } else {
+        nav('/')
+      }
     } catch (e: unknown) {
       const msgText = e instanceof Error ? e.message : String(e)
       setMsg(msgText)
@@ -254,12 +267,47 @@ export default function Login() {
             </div>
           )}
 
+          {/* Tabs para escolher tipo de login */}
+          <div className="radio-group">
+            <label className="radio-label">
+              <input
+                type="radio"
+                value="usuario"
+                className="radio-input"
+                checked={loginType === 'usuario'}
+                onChange={() => {
+                  setLoginType('usuario')
+                  setValue('email', '')
+                }}
+              />
+              Usuário
+            </label>
+            <label className="radio-label">
+              <input
+                type="radio"
+                value="empresa"
+                className="radio-input"
+                checked={loginType === 'empresa'}
+                onChange={() => {
+                  setLoginType('empresa')
+                  setValue('email', '')
+                }}
+              />
+              Empresa
+            </label>
+          </div>
+
           <FormInput
-            label="CNPJ ou E-mail"
-            placeholder="CNPJ ou e-mail"
+            label={loginType === 'empresa' ? 'CNPJ' : 'E-mail'}
+            placeholder={
+              loginType === 'empresa' ? '00.000.000/0000-00' : 'seu@email.com'
+            }
             {...register('email', {
-              required: 'CNPJ ou email é obrigatório',
-              onChange: handleEmailChange,
+              required:
+                loginType === 'empresa'
+                  ? 'CNPJ é obrigatório'
+                  : 'E-mail é obrigatório',
+              onChange: handleInputChange,
             })}
             error={errors.email?.message as string | undefined}
             isValid={!errors.email && !!emailValue && emailValue.length > 0}
