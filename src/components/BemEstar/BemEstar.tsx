@@ -1,8 +1,6 @@
-import { Query } from 'appwrite'
 import { useEffect, useState } from 'react'
 import { FaFire, FaMedal } from 'react-icons/fa'
 import { useAuth } from '../../contexts/useAuth'
-import { db } from '../../shared/appwrite'
 import Spinner from '../Spinner/Spinner'
 
 export default function BemEstar() {
@@ -21,33 +19,37 @@ export default function BemEstar() {
     setBemError(null)
     setBemLoading(true)
     try {
-      const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
-      const COLLECTION = import.meta.env.VITE_APPWRITE_COLLECTION_BEMESTAR
-      if (!DB_ID || !COLLECTION) {
-        setBemError('VITE_APPWRITE_COLLECTION_BEMESTAR não configurado')
-        setBemEstar(null)
-        return
-      }
-
       const identifier = String(
         (userData as unknown as Record<string, unknown>)?.$id ??
+          (userData as unknown as Record<string, unknown>)?.id ??
           (userData as unknown as Record<string, unknown>)?.email ??
           '',
       )
-      const queries: string[] = []
-      if (identifier) queries.push(Query.equal('id_usuario', identifier))
-      if (bemFrom)
-        queries.push(
-          Query.greaterThanEqual('data_registro', `${bemFrom}T00:00:00.000Z`),
-        )
-      if (bemTo)
-        queries.push(
-          Query.lessThanEqual('data_registro', `${bemTo}T23:59:59.999Z`),
-        )
-      if (bemLimit) queries.push(Query.limit(Number(bemLimit)))
-      queries.push(Query.orderDesc('data_registro'))
-      const res = await db.listDocuments(DB_ID, COLLECTION, queries)
-      setBemEstar(res.documents ?? res)
+
+      const idUserCandidate =
+        (userData as any)?.id ??
+        (userData as any)?.ID ??
+        (userData as any)?.userId ??
+        (userData as any)?.idUser ??
+        (userData as any)?.$id ??
+        undefined
+      const parsedId = Number(idUserCandidate)
+      const idUser = Number.isFinite(parsedId) ? parsedId : undefined
+
+      const url = new URL('https://uppath.onrender.com/wellBeing')
+      if (idUser !== undefined) url.searchParams.append('idUser', String(idUser))
+      else if (identifier) url.searchParams.append('identifier', identifier)
+      if (bemFrom) url.searchParams.append('from', bemFrom)
+      if (bemTo) url.searchParams.append('to', bemTo)
+      if (bemLimit) url.searchParams.append('limit', bemLimit)
+
+      const resp = await fetch(String(url))
+      if (!resp.ok) throw new Error(`API externa retornou ${resp.status}`)
+      const data = await resp.json()
+      const items = Array.isArray(data)
+        ? data
+        : data?.data ?? data?.items ?? (data ? [data] : [])
+      setBemEstar(items)
     } catch (err) {
       setBemError(String((err as Error)?.message ?? err))
       setBemEstar(null)
@@ -85,13 +87,13 @@ export default function BemEstar() {
     arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN
 
   const avgStress = avg(
-    records7.map((r) => num(r.nivel_estresse ?? r.NIVEL_ESTRESSE)),
+    records7.map((r) => num((r as any).stressLevel ?? r.nivel_estresse ?? r.NIVEL_ESTRESSE)),
   )
   const avgMotivation = avg(
-    records7.map((r) => num(r.nivel_motivacao ?? r.NIVEL_MOTIVACAO)),
+    records7.map((r) => num((r as any).motivationLevel ?? r.nivel_motivacao ?? r.NIVEL_MOTIVACAO)),
   )
   const avgSleep = avg(
-    records7.map((r) => num(r.qualidade_sono ?? r.QUALIDADE_SONO)),
+    records7.map((r) => num((r as any).sleepQuality ?? r.qualidade_sono ?? r.QUALIDADE_SONO)),
   )
 
   const computeScore = () => {
@@ -299,20 +301,28 @@ export default function BemEstar() {
                       const row = r as Record<string, unknown>
                       const id = (row['id_registro'] ??
                         row['ID_REGISTRO'] ??
+                        (row as any).id ??
                         '—') as string | number
                       const data = (row['data_registro'] ??
                         row['DATA_REGISTRO'] ??
+                        (row as any).date ??
+                        (row as any).createdAt ??
+                        (row as any).created_at ??
                         '—') as string
-                      const estresse = (row['nivel_estresse'] ??
+                      const estresse = ((row as any).stressLevel ??
+                        row['nivel_estresse'] ??
                         row['NIVEL_ESTRESSE'] ??
                         '—') as string | number
-                      const motivacao = (row['nivel_motivacao'] ??
+                      const motivacao = ((row as any).motivationLevel ??
+                        row['nivel_motivacao'] ??
                         row['NIVEL_MOTIVACAO'] ??
                         '—') as string | number
-                      const sono = (row['qualidade_sono'] ??
+                      const sono = ((row as any).sleepQuality ??
+                        row['qualidade_sono'] ??
                         row['QUALIDADE_SONO'] ??
                         '—') as string | number
-                      const obs = (row['observacao'] ??
+                      const obs = ((row as any).observations ??
+                        row['observacao'] ??
                         row['OBSERVACAO'] ??
                         '—') as string
                       return (

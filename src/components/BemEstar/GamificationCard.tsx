@@ -1,10 +1,8 @@
-import { Query } from 'appwrite'
 import { useEffect, useState } from 'react'
 import { FaTimes } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/useAuth'
 import useTheme from '../../hooks/useTheme'
-import { db, ID, Permission, Role } from '../../shared/appwrite'
 import Spinner from '../Spinner/Spinner'
 
 export default function GamificationCard({
@@ -42,21 +40,37 @@ export default function GamificationCard({
     setError(null)
     setLoading(true)
     try {
-      const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
-      const COLLECTION = import.meta.env.VITE_APPWRITE_COLLECTION_BEMESTAR
-      if (!DB_ID || !COLLECTION)
-        throw new Error('VITE_APPWRITE_COLLECTION_BEMESTAR não configurado')
       const identifier = String(
         (userData as unknown as Record<string, unknown>)?.$id ??
+          (userData as unknown as Record<string, unknown>)?.id ??
           (userData as unknown as Record<string, unknown>)?.email ??
           '',
       )
-      const queries: string[] = []
-      if (identifier) queries.push(Query.equal('id_usuario', identifier))
-      queries.push(Query.orderDesc('data_registro'))
-      queries.push(Query.limit(7))
-      const res = await db.listDocuments(DB_ID, COLLECTION, queries)
-      setRecords(res.documents ?? res)
+
+      // Prefer numeric idUser when available
+      const idUserCandidate =
+        (userData as any)?.id ??
+        (userData as any)?.ID ??
+        (userData as any)?.userId ??
+        (userData as any)?.idUser ??
+        (userData as any)?.$id ??
+        undefined
+
+      const parsedId = Number(idUserCandidate)
+      const idUser = Number.isFinite(parsedId) ? parsedId : undefined
+
+      const url = new URL('https://uppath.onrender.com/wellBeing')
+      if (idUser !== undefined) url.searchParams.append('idUser', String(idUser))
+      else if (identifier) url.searchParams.append('identifier', identifier)
+
+      const resp = await fetch(String(url))
+      if (!resp.ok) throw new Error(`API externa retornou ${resp.status}`)
+      const data = await resp.json()
+      // normalize different shapes
+      const items = Array.isArray(data)
+        ? data
+        : data?.data ?? data?.items ?? (data ? [data] : [])
+      setRecords(items)
     } catch (err) {
       setError(String((err as Error)?.message ?? err))
       setRecords(null)
@@ -73,15 +87,7 @@ export default function GamificationCard({
     setSubmitMessage(null)
     setSubmitLoading(true)
     try {
-      const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
-      const COLLECTION = import.meta.env.VITE_APPWRITE_COLLECTION_BEMESTAR
-      if (!DB_ID || !COLLECTION)
-        throw new Error('VITE_APPWRITE_COLLECTION_BEMESTAR não configurado')
-      const identifier = String(
-        (userData as unknown as Record<string, unknown>)?.$id ??
-          (userData as unknown as Record<string, unknown>)?.email ??
-          '',
-      )
+      // register via external API only
       if (stress === '' || motivation === '' || sleepQuality === '') {
         throw new Error('Preencha Estresse, Motivação e Sono antes de salvar.')
       }
@@ -128,27 +134,7 @@ export default function GamificationCard({
           `Falha ao enviar para API externa: ${resp.status} ${resp.statusText} ${t}`,
         )
       }
-      const payload: Record<string, unknown> = {
-        id_usuario: identifier || 'unknown',
-        data_registro: new Date().toISOString(),
-        nivel_estresse: s,
-        nivel_motivacao: m,
-        qualidade_sono: q,
-        observacao: observation ?? '',
-      }
 
-      const permissions = [
-        Permission.read(Role.any()),
-        Permission.write(Role.users()),
-      ]
-
-      await (db as any).createDocument(
-        DB_ID,
-        COLLECTION,
-        ID.unique(),
-        payload,
-        permissions,
-      )
       setSubmitMessage('Registro salvo com sucesso!')
       setStress('')
       setMotivation('')
