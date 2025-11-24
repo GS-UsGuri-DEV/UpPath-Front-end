@@ -1,16 +1,18 @@
 import { createContext, useEffect, useState, type ReactNode } from 'react'
 import type { ThemeContextType } from '../types/themeContext'
 
-export const ThemeContext = createContext<ThemeContextType | undefined>(
-  undefined,
-)
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export default function ThemeProvider({ children }: { children: ReactNode }) {
   const getInitial = () => {
     try {
       const stored = localStorage.getItem('theme')
-      if (stored === 'dark') return true
-      if (stored === 'light') return false
+      if (stored === 'dark') {
+        return true
+      }
+      if (stored === 'light') {
+        return false
+      }
       return (
         typeof window !== 'undefined' &&
         window.matchMedia &&
@@ -29,9 +31,7 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
     } catch {}
     if (typeof document !== 'undefined' && document.documentElement) {
       document.documentElement.classList.remove('dark-mode', 'light-mode')
-      document.documentElement.classList.add(
-        isDark ? 'dark-mode' : 'light-mode',
-      )
+      document.documentElement.classList.add(isDark ? 'dark-mode' : 'light-mode')
     }
   }, [isDark])
 
@@ -39,9 +39,5 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
     setisDark((prevIsDark) => !prevIsDark)
   }
 
-  return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  )
+  return <ThemeContext.Provider value={{ isDark, toggleTheme }}>{children}</ThemeContext.Provider>
 }

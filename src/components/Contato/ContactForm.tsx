@@ -13,9 +13,7 @@ export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState('')
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
@@ -26,9 +24,7 @@ export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
     setSubmitMessage('')
 
     setTimeout(() => {
-      setSubmitMessage(
-        'Mensagem enviada com sucesso! Entraremos em contato em breve.',
-      )
+      setSubmitMessage('Mensagem enviada com sucesso! Entraremos em contato em breve.')
       setIsSubmitting(false)
       setFormData({ nome: '', email: '', assunto: '', mensagem: '' })
       onSubmitSuccess?.()
@@ -38,9 +34,7 @@ export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">
-          Nome:
-        </label>
+        <label className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">Nome:</label>
         <input
           type="text"
           name="nome"

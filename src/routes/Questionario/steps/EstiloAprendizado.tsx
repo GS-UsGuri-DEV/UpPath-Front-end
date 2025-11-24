@@ -11,16 +11,10 @@ import {
 
 type EstiloAprendizadoData = Pick<
   QuestionarioData,
-  | 'preferenciasAprendizado'
-  | 'tempoDisponivel'
-  | 'horariosEstudo'
-  | 'intensidadeTrilha'
+  'preferenciasAprendizado' | 'tempoDisponivel' | 'horariosEstudo' | 'intensidadeTrilha'
 >
 
-export default function EstiloAprendizado({
-  data,
-  updateData,
-}: StepProps<EstiloAprendizadoData>) {
+export default function EstiloAprendizado({ data, updateData }: StepProps<EstiloAprendizadoData>) {
   return (
     <div className="space-y-6">
       {/* Header da Etapa */}
@@ -29,12 +23,8 @@ export default function EstiloAprendizado({
           <FaBrain className="text-2xl text-blue-600 dark:text-blue-400" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-[var(--text-primary)]">
-            Estilo de Aprendizado
-          </h2>
-          <p className="text-sm text-[var(--text-muted)]">
-            Como você aprende melhor
-          </p>
+          <h2 className="text-2xl font-bold text-[var(--text-primary)]">Estilo de Aprendizado</h2>
+          <p className="text-sm text-[var(--text-muted)]">Como você aprende melhor</p>
         </div>
       </div>
 
@@ -44,9 +34,7 @@ export default function EstiloAprendizado({
         helperText="Selecione todas as formas que funcionam para você"
         options={PREFERENCIAS_APRENDIZADO_OPTIONS}
         values={data.preferenciasAprendizado}
-        onChange={(values: string[]) =>
-          updateData({ preferenciasAprendizado: values })
-        }
+        onChange={(values: string[]) => updateData({ preferenciasAprendizado: values })}
       />
 
       {/* Questão 2 */}

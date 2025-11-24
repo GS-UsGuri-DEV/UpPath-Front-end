@@ -1,9 +1,9 @@
-interface RadioOption {
+type RadioOption = {
   value: string
   label: string
 }
 
-interface RadioGroupProps {
+type RadioGroupProps = {
   label: string
   name: string
   options: RadioOption[]
@@ -22,9 +22,7 @@ export default function RadioGroup({
 }: RadioGroupProps) {
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-semibold text-[var(--text-primary)]">
-        {label}
-      </label>
+      <label className="block text-sm font-semibold text-[var(--text-primary)]">{label}</label>
 
       <div className="space-y-2">
         {options.map((option) => (
@@ -40,16 +38,12 @@ export default function RadioGroup({
               onChange={(e) => onChange(e.target.value)}
               className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-2 focus:ring-indigo-500"
             />
-            <span className="text-sm text-[var(--text-primary)]">
-              {option.label}
-            </span>
+            <span className="text-sm text-[var(--text-primary)]">{option.label}</span>
           </label>
         ))}
       </div>
 
-      {helperText && (
-        <p className="text-xs text-[var(--text-muted)]">{helperText}</p>
-      )}
+      {helperText && <p className="text-xs text-[var(--text-muted)]">{helperText}</p>}
     </div>
   )
 }

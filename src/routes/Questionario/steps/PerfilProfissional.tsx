@@ -11,10 +11,7 @@ import {
 
 type PerfilProfissionalData = Pick<
   QuestionarioData,
-  | 'nivelExperiencia'
-  | 'modalidadesTrabalho'
-  | 'tecnologias'
-  | 'competenciasTecnicas'
+  'nivelExperiencia' | 'modalidadesTrabalho' | 'tecnologias' | 'competenciasTecnicas'
 >
 
 export default function PerfilProfissional({
@@ -29,12 +26,8 @@ export default function PerfilProfissional({
           <FaBriefcase className="text-2xl text-purple-600 dark:text-purple-400" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-[var(--text-primary)]">
-            Perfil Profissional
-          </h2>
-          <p className="text-sm text-[var(--text-muted)]">
-            Conte sobre sua experiência
-          </p>
+          <h2 className="text-2xl font-bold text-[var(--text-primary)]">Perfil Profissional</h2>
+          <p className="text-sm text-[var(--text-muted)]">Conte sobre sua experiência</p>
         </div>
       </div>
 
@@ -53,9 +46,7 @@ export default function PerfilProfissional({
         helperText="Pode marcar mais de uma"
         options={MODALIDADES_TRABALHO_OPTIONS}
         values={data.modalidadesTrabalho}
-        onChange={(values: string[]) =>
-          updateData({ modalidadesTrabalho: values })
-        }
+        onChange={(values: string[]) => updateData({ modalidadesTrabalho: values })}
       />
 
       {/* Questão 3 */}

@@ -3,11 +3,7 @@ import type { TrilhasCardProps } from '../../types/graphicsDashboard'
 
 export default function TrilhasCard({ trilhas }: TrilhasCardProps) {
   if (!trilhas || trilhas.length === 0) {
-    return (
-      <p className="text-sm text-[var(--text-muted)]">
-        Nenhuma trilha encontrada
-      </p>
-    )
+    return <p className="text-sm text-[var(--text-muted)]">Nenhuma trilha encontrada</p>
   }
   return (
     <div
@@ -19,23 +15,19 @@ export default function TrilhasCard({ trilhas }: TrilhasCardProps) {
         <span className="text-xl text-indigo-600" aria-hidden>
           <FiBook />
         </span>
-        <h3 className="text-lg font-semibold text-[var(--text-primary)]">
-          Trilhas
-        </h3>
+        <h3 className="text-lg font-semibold text-[var(--text-primary)]">Trilhas</h3>
       </div>
       <div className="space-y-3">
-        {trilhas.map((trilha, idx) => (
+        {trilhas.map((trilha) => (
           <div
-            key={idx}
+            key={trilha.nome_trilha}
             className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] p-3"
             tabIndex={0}
             aria-label={`Trilha ${trilha.nome_trilha}, progresso ${trilha.progresso_percentual}%`}
           >
             <div className="mb-2 flex items-center justify-between">
               <span className="font-medium">{trilha.nome_trilha}</span>
-              <span className="text-sm text-[var(--text-muted)]">
-                {trilha.status}
-              </span>
+              <span className="text-sm text-[var(--text-muted)]">{trilha.status}</span>
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--bg-tertiary)]">
               <div

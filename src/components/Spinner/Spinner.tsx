@@ -1,10 +1,6 @@
 import type { SpinnerProps } from '../../types/spinner'
 
-export default function Spinner({
-  text,
-  className = '',
-  size = 64,
-}: SpinnerProps) {
+export default function Spinner({ text, className = '', size = 64 }: SpinnerProps) {
   return (
     <div
       className={`flex items-center justify-center gap-4 ${className}`}

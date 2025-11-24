@@ -3,22 +3,15 @@ import { FaBook, FaRoad, FaSearch, FaTimes } from 'react-icons/fa'
 import CursoCard from '../../components/Cursos/CursoCard'
 import TrilhaCard from '../../components/Cursos/TrilhaCard'
 import Footer from '../../components/Footer'
-import {
-  categorias,
-  cursosDisponiveis,
-  trilhasDisponiveis,
-} from '../../data/cursosData'
+import { categorias, cursosDisponiveis, trilhasDisponiveis } from '../../data/cursosData'
 
 export default function Cursos() {
-  const [visualizacao, setVisualizacao] = useState<'cursos' | 'trilhas'>(
-    'trilhas',
-  )
+  const [visualizacao, setVisualizacao] = useState<'cursos' | 'trilhas'>('trilhas')
   const [categoriaFiltro, setCategoriaFiltro] = useState('Todas')
   const [busca, setBusca] = useState('')
 
   const cursosFiltrados = cursosDisponiveis.filter((curso) => {
-    const matchCategoria =
-      categoriaFiltro === 'Todas' || curso.categoria === categoriaFiltro
+    const matchCategoria = categoriaFiltro === 'Todas' || curso.categoria === categoriaFiltro
     const matchBusca =
       busca === '' ||
       curso.titulo.toLowerCase().includes(busca.toLowerCase()) ||
@@ -28,8 +21,7 @@ export default function Cursos() {
   })
 
   const trilhasFiltradas = trilhasDisponiveis.filter((trilha) => {
-    const matchCategoria =
-      categoriaFiltro === 'Todas' || trilha.categoria === categoriaFiltro
+    const matchCategoria = categoriaFiltro === 'Todas' || trilha.categoria === categoriaFiltro
     const matchBusca =
       busca === '' ||
       trilha.nome.toLowerCase().includes(busca.toLowerCase()) ||
@@ -43,9 +35,7 @@ export default function Cursos() {
       <div className="mx-auto max-w-7xl px-4 py-8 pb-16 sm:px-6 sm:py-12 sm:pb-24">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="mb-4 text-4xl font-bold text-[var(--text-primary)]">
-            Cursos e Trilhas
-          </h1>
+          <h1 className="mb-4 text-4xl font-bold text-[var(--text-primary)]">Cursos e Trilhas</h1>
           <p className="text-lg text-[var(--text-muted)]">
             Descubra trilhas personalizadas e cursos para acelerar sua carreira
           </p>
@@ -134,7 +124,7 @@ export default function Cursos() {
                 key={trilha.id}
                 trilha={trilha}
                 onClick={() => {
-                  console.log('Trilha clicada:', trilha.id)
+                  // Trilha clicada
                 }}
               />
             ))}
@@ -146,7 +136,7 @@ export default function Cursos() {
                 key={curso.id}
                 curso={curso}
                 onClick={() => {
-                  console.log('Curso clicado:', curso.id)
+                  // Curso clicado
                 }}
               />
             ))}
@@ -157,9 +147,7 @@ export default function Cursos() {
         {((visualizacao === 'cursos' && cursosFiltrados.length === 0) ||
           (visualizacao === 'trilhas' && trilhasFiltradas.length === 0)) && (
           <div className="py-12 text-center">
-            <p className="mb-2 text-lg text-[var(--text-muted)]">
-              Nenhum resultado encontrado
-            </p>
+            <p className="mb-2 text-lg text-[var(--text-muted)]">Nenhum resultado encontrado</p>
             <button
               onClick={() => {
                 setBusca('')

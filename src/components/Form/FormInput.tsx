@@ -9,12 +9,17 @@ export default function FormInput({
   isValid,
   ...rest
 }: FormInputProps) {
-  const inputClassName = `input-field ${
-    error ? 'input-error' : isValid ? 'input-success' : ''
-  } ${rightIcon ? 'pr-10' : ''}`
+  let statusClass = ''
+  if (error) {
+    statusClass = 'input-error'
+  } else if (isValid) {
+    statusClass = 'input-success'
+  }
+
+  const inputClassName = `input-field ${statusClass} ${rightIcon ? 'pr-10' : ''}`
 
   return (
-    <div className={'space-y-2 ' + (className ?? '')}>
+    <div className={`space-y-2 ${className ?? ''}`}>
       {label && (
         <label className="input-label">
           {label}
@@ -22,11 +27,7 @@ export default function FormInput({
         </label>
       )}
       <div className="relative">
-        <input
-          className={inputClassName}
-          aria-invalid={error ? 'true' : 'false'}
-          {...rest}
-        />
+        <input className={inputClassName} aria-invalid={error ? 'true' : 'false'} {...rest} />
         {rightIcon && (
           <button
             type="button"

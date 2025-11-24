@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import SuccessMessage from '../../components/SuccessMessage'
-import { FaArrowRight, FaArrowLeft } from 'react-icons/fa'
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import DadosBasicos from './steps/DadosBasicos'
-import PerfilProfissional from './steps/PerfilProfissional'
-import ObjetivosCarreira from './steps/ObjetivosCarreira'
-import EstiloAprendizado from './steps/EstiloAprendizado'
-import PreferenciasTrabalho from './steps/PreferenciasTrabalho'
-import BemEstarEquilibrio from './steps/BemEstarEquilibrio'
-import UsoPlataforma from './steps/UsoPlataforma'
+import SuccessMessage from '../../components/SuccessMessage'
 import type { QuestionarioData } from '../../types/quest'
+import BemEstarEquilibrio from './steps/BemEstarEquilibrio'
+import DadosBasicos from './steps/DadosBasicos'
+import EstiloAprendizado from './steps/EstiloAprendizado'
+import ObjetivosCarreira from './steps/ObjetivosCarreira'
+import PerfilProfissional from './steps/PerfilProfissional'
+import PreferenciasTrabalho from './steps/PreferenciasTrabalho'
+import UsoPlataforma from './steps/UsoPlataforma'
 
 export default function Questionario() {
   const navigate = useNavigate()
@@ -73,7 +73,7 @@ export default function Questionario() {
 
   const handleFinish = () => {
     // Aqui você pode enviar os dados para o backend
-    console.log('Dados do questionário:', formData)
+    // Dados do questionário processados
     setShowSuccess(true)
     setTimeout(() => {
       setShowSuccess(false)
@@ -86,26 +86,30 @@ export default function Questionario() {
       case 1:
         return <DadosBasicos data={formData} updateData={updateFormData} />
       case 2:
-        return (
-          <PerfilProfissional data={formData} updateData={updateFormData} />
-        )
+        return <PerfilProfissional data={formData} updateData={updateFormData} />
       case 3:
         return <ObjetivosCarreira data={formData} updateData={updateFormData} />
       case 4:
         return <EstiloAprendizado data={formData} updateData={updateFormData} />
       case 5:
-        return (
-          <PreferenciasTrabalho data={formData} updateData={updateFormData} />
-        )
+        return <PreferenciasTrabalho data={formData} updateData={updateFormData} />
       case 6:
-        return (
-          <BemEstarEquilibrio data={formData} updateData={updateFormData} />
-        )
+        return <BemEstarEquilibrio data={formData} updateData={updateFormData} />
       case 7:
         return <UsoPlataforma data={formData} updateData={updateFormData} />
       default:
         return <DadosBasicos data={formData} updateData={updateFormData} />
     }
+  }
+
+  const getStepColor = (index: number, current: number) => {
+    if (index + 1 === current) {
+      return 'w-8 bg-indigo-600'
+    }
+    if (index + 1 < current) {
+      return 'bg-indigo-400'
+    }
+    return 'bg-gray-300 dark:bg-gray-600'
   }
 
   return (
@@ -123,8 +127,7 @@ export default function Questionario() {
             Personalize sua jornada
           </h1>
           <p className="text-[var(--text-muted)]">
-            Responda algumas perguntas para criarmos a melhor experiência para
-            você
+            Responda algumas perguntas para criarmos a melhor experiência para você
           </p>
         </div>
 
@@ -171,16 +174,10 @@ export default function Questionario() {
 
         {/* Steps Indicator */}
         <div className="mt-6 flex justify-center gap-2">
-          {Array.from({ length: totalSteps }).map((_, index) => (
+          {Array.from({ length: totalSteps }, (_, i) => i).map((stepIndex) => (
             <div
-              key={index}
-              className={`h-2 w-2 rounded-full transition-all ${
-                index + 1 === currentStep
-                  ? 'w-8 bg-indigo-600'
-                  : index + 1 < currentStep
-                    ? 'bg-indigo-400'
-                    : 'bg-gray-300 dark:bg-gray-600'
-              }`}
+              key={`step-indicator-${stepIndex}`}
+              className={`h-2 w-2 rounded-full transition-all ${getStepColor(stepIndex, currentStep)}`}
             />
           ))}
         </div>

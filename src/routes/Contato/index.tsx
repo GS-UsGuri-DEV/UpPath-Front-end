@@ -24,12 +24,8 @@ export default function Contato() {
                 <FaPhoneAlt className="text-2xl text-[var(--accent-indigo)]" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-[var(--text-primary)]">
-                  Fale Conosco
-                </h2>
-                <p className="text-sm text-[var(--text-muted)]">
-                  Preencha o formulário abaixo
-                </p>
+                <h2 className="text-2xl font-bold text-[var(--text-primary)]">Fale Conosco</h2>
+                <p className="text-sm text-[var(--text-muted)]">Preencha o formulário abaixo</p>
               </div>
             </div>
 

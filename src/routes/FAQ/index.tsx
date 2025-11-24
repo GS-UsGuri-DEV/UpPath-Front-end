@@ -48,9 +48,7 @@ export default function FAQ() {
 
         <div className="space-y-6">
           {categories.map((category) => {
-            const categoryItems = filteredFAQ.filter(
-              (item) => item.category === category,
-            )
+            const categoryItems = filteredFAQ.filter((item) => item.category === category)
 
             return (
               <FAQCategory
@@ -67,9 +65,7 @@ export default function FAQ() {
         </div>
 
         <div className="mt-12 rounded-lg border-t-4 border-[var(--accent-indigo)] bg-[var(--bg-secondary)] p-8 text-center shadow-sm">
-          <h3 className="mb-2 text-xl font-bold text-[var(--text-primary)]">
-            Precisa de ajuda?
-          </h3>
+          <h3 className="mb-2 text-xl font-bold text-[var(--text-primary)]">Precisa de ajuda?</h3>
           <div className="mb-4 flex items-center justify-center gap-2">
             <p className="text-xl font-semibold text-[var(--accent-indigo)] sm:text-2xl">
               Ainda tem dúvidas?

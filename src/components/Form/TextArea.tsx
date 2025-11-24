@@ -1,4 +1,4 @@
-interface TextAreaProps {
+type TextAreaProps = {
   label: string
   placeholder?: string
   value: string
@@ -17,9 +17,7 @@ export default function TextArea({
 }: TextAreaProps) {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-semibold text-[var(--text-primary)]">
-        {label}
-      </label>
+      <label className="block text-sm font-semibold text-[var(--text-primary)]">{label}</label>
 
       <textarea
         placeholder={placeholder}
@@ -29,9 +27,7 @@ export default function TextArea({
         className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)] placeholder-gray-400 transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none"
       />
 
-      {helperText && (
-        <p className="text-xs text-[var(--text-muted)]">{helperText}</p>
-      )}
+      {helperText && <p className="text-xs text-[var(--text-muted)]">{helperText}</p>}
     </div>
   )
 }

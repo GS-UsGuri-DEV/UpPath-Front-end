@@ -1,5 +1,5 @@
 import { Query } from 'appwrite'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   FaBatteryFull,
   FaBrain,
@@ -7,16 +7,16 @@ import {
   FaLightbulb,
   FaMoon,
   FaRedo,
+  FaSignInAlt,
   FaSmile,
   FaSyncAlt,
-  FaSignInAlt,
 } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
+import Spinner from '../../components/Spinner/Spinner'
 import { useAuth } from '../../contexts/useAuth'
 import { db } from '../../shared/appwrite'
-import { DICAS_ESTRESSE, DICAS_MOTIVACAO, DICAS_SONO } from '../../types/dicas'
 import type { Dica, NiveisBemEstar } from '../../types/dicas'
-import Spinner from '../../components/Spinner/Spinner'
+import { DICAS_ESTRESSE, DICAS_MOTIVACAO, DICAS_SONO } from '../../types/dicas'
 
 export default function Dicas() {
   const { userData, user } = useAuth()
@@ -24,20 +24,11 @@ export default function Dicas() {
   const [error, setError] = useState<string | null>(null)
   const [niveis, setNiveis] = useState<NiveisBemEstar | null>(null)
   const [dicaSelecionada, setDicaSelecionada] = useState<Dica | null>(null)
-  const [categoriaAtiva, setCategoriaAtiva] = useState<
-    'sono' | 'estresse' | 'motivacao' | null
-  >(null)
+  const [categoriaAtiva, setCategoriaAtiva] = useState<'sono' | 'estresse' | 'motivacao' | null>(
+    null,
+  )
 
-  useEffect(() => {
-    if (userData) {
-      fetchUltimoRegistro()
-    } else if (user === null) {
-      // Usuário não está logado
-      setLoading(false)
-    }
-  }, [userData, user])
-
-  async function fetchUltimoRegistro() {
+  const fetchUltimoRegistro = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -54,7 +45,9 @@ export default function Dicas() {
       )
 
       const queries: string[] = []
-      if (identifier) queries.push(Query.equal('id_usuario', identifier))
+      if (identifier) {
+        queries.push(Query.equal('id_usuario', identifier))
+      }
       queries.push(Query.orderDesc('data_registro'))
       queries.push(Query.limit(1))
 
@@ -63,13 +56,15 @@ export default function Dicas() {
 
       if (Array.isArray(docs) && docs.length > 0) {
         const doc = docs[0]
-        const niveisData: NiveisBemEstar = {
-          sono: Number(doc.qualidade_sono ?? doc.QUALIDADE_SONO ?? 7),
-          estresse: Number(doc.nivel_estresse ?? doc.NIVEL_ESTRESSE ?? 5),
-          motivacao: Number(doc.nivel_motivacao ?? doc.NIVEL_MOTIVACAO ?? 7),
+        if (doc) {
+          const niveisData: NiveisBemEstar = {
+            sono: Number(doc.qualidade_sono ?? doc.QUALIDADE_SONO ?? 7),
+            estresse: Number(doc.nivel_estresse ?? doc.NIVEL_ESTRESSE ?? 5),
+            motivacao: Number(doc.nivel_motivacao ?? doc.NIVEL_MOTIVACAO ?? 7),
+          }
+          setNiveis(niveisData)
+          selecionarDicaAutomatica(niveisData)
         }
-        setNiveis(niveisData)
-        selecionarDicaAutomatica(niveisData)
       } else {
         // Sem registros, usar valores padrão
         const niveisDefault: NiveisBemEstar = {
@@ -85,15 +80,30 @@ export default function Dicas() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [userData])
+
+  useEffect(() => {
+    if (userData) {
+      fetchUltimoRegistro()
+    } else if (user === null) {
+      // Usuário não está logado
+      setLoading(false)
+    }
+  }, [userData, user, fetchUltimoRegistro])
 
   function selecionarDicaAutomatica(niveisData: NiveisBemEstar) {
     const categorias: Array<'sono' | 'estresse' | 'motivacao'> = []
 
     // Verifica quais categorias precisam de atenção
-    if (niveisData.sono < 7) categorias.push('sono')
-    if (niveisData.estresse > 6) categorias.push('estresse')
-    if (niveisData.motivacao < 6) categorias.push('motivacao')
+    if (niveisData.sono < 7) {
+      categorias.push('sono')
+    }
+    if (niveisData.estresse > 6) {
+      categorias.push('estresse')
+    }
+    if (niveisData.motivacao < 6) {
+      categorias.push('motivacao')
+    }
 
     // Se nenhuma categoria crítica, escolhe aleatoriamente
     if (categorias.length === 0) {
@@ -101,38 +111,48 @@ export default function Dicas() {
     }
 
     // Escolhe categoria aleatória das disponíveis
-    const categoriaEscolhida =
-      categorias[Math.floor(Math.random() * categorias.length)]
+    const categoriaEscolhida = categorias[Math.floor(Math.random() * categorias.length)] || 'sono'
     setCategoriaAtiva(categoriaEscolhida)
 
     // Seleciona dica aleatória da categoria
     let dicasDisponiveis: Dica[] = []
-    if (categoriaEscolhida === 'sono') dicasDisponiveis = DICAS_SONO
-    else if (categoriaEscolhida === 'estresse')
+    if (categoriaEscolhida === 'sono') {
+      dicasDisponiveis = DICAS_SONO
+    } else if (categoriaEscolhida === 'estresse') {
       dicasDisponiveis = DICAS_ESTRESSE
-    else dicasDisponiveis = DICAS_MOTIVACAO
+    } else {
+      dicasDisponiveis = DICAS_MOTIVACAO
+    }
 
     const dicaAleatoria =
-      dicasDisponiveis[Math.floor(Math.random() * dicasDisponiveis.length)]
+      dicasDisponiveis[Math.floor(Math.random() * dicasDisponiveis.length)] ||
+      dicasDisponiveis[0] ||
+      null
     setDicaSelecionada(dicaAleatoria)
   }
 
   function gerarNovaDica() {
-    if (!niveis) return
+    if (!niveis) {
+      return
+    }
     selecionarDicaAutomatica(niveis)
   }
 
-  function selecionarPorCategoria(
-    categoria: 'sono' | 'estresse' | 'motivacao',
-  ) {
+  function selecionarPorCategoria(categoria: 'sono' | 'estresse' | 'motivacao') {
     setCategoriaAtiva(categoria)
     let dicasDisponiveis: Dica[] = []
-    if (categoria === 'sono') dicasDisponiveis = DICAS_SONO
-    else if (categoria === 'estresse') dicasDisponiveis = DICAS_ESTRESSE
-    else dicasDisponiveis = DICAS_MOTIVACAO
+    if (categoria === 'sono') {
+      dicasDisponiveis = DICAS_SONO
+    } else if (categoria === 'estresse') {
+      dicasDisponiveis = DICAS_ESTRESSE
+    } else {
+      dicasDisponiveis = DICAS_MOTIVACAO
+    }
 
     const dicaAleatoria =
-      dicasDisponiveis[Math.floor(Math.random() * dicasDisponiveis.length)]
+      dicasDisponiveis[Math.floor(Math.random() * dicasDisponiveis.length)] ||
+      dicasDisponiveis[0] ||
+      null
     setDicaSelecionada(dicaAleatoria)
   }
 
@@ -145,8 +165,7 @@ export default function Dicas() {
         bgClass: 'bg-blue-50 dark:bg-blue-950/30',
         borderClass: 'border-blue-500 dark:border-blue-800',
         textClass: 'text-blue-700 dark:text-blue-300',
-        badgeClass:
-          'bg-blue-600 text-white dark:bg-blue-900/50 dark:text-blue-200',
+        badgeClass: 'bg-blue-600 text-white dark:bg-blue-900/50 dark:text-blue-200',
       }
     } else if (categoria === 'estresse') {
       return {
@@ -156,8 +175,7 @@ export default function Dicas() {
         bgClass: 'bg-red-50 dark:bg-red-950/30',
         borderClass: 'border-red-500 dark:border-red-800',
         textClass: 'text-red-700 dark:text-red-300',
-        badgeClass:
-          'bg-red-600 text-white dark:bg-red-900/50 dark:text-red-200',
+        badgeClass: 'bg-red-600 text-white dark:bg-red-900/50 dark:text-red-200',
       }
     } else {
       return {
@@ -167,21 +185,28 @@ export default function Dicas() {
         bgClass: 'bg-green-50 dark:bg-green-950/30',
         borderClass: 'border-green-500 dark:border-green-800',
         textClass: 'text-green-700 dark:text-green-300',
-        badgeClass:
-          'bg-green-600 text-white dark:bg-green-900/50 dark:text-green-200',
+        badgeClass: 'bg-green-600 text-white dark:bg-green-900/50 dark:text-green-200',
       }
     }
   }
 
   const getTipoIcon = (tipo: 'frase' | 'pratica' | 'motivacional') => {
-    if (tipo === 'frase') return <FaSmile className="h-5 w-5" />
-    if (tipo === 'pratica') return <FaLightbulb className="h-5 w-5" />
+    if (tipo === 'frase') {
+      return <FaSmile className="h-5 w-5" />
+    }
+    if (tipo === 'pratica') {
+      return <FaLightbulb className="h-5 w-5" />
+    }
     return <FaBrain className="h-5 w-5" />
   }
 
   const getTipoLabel = (tipo: 'frase' | 'pratica' | 'motivacional') => {
-    if (tipo === 'frase') return 'Frase Rápida'
-    if (tipo === 'pratica') return 'Dica Prática'
+    if (tipo === 'frase') {
+      return 'Frase Rápida'
+    }
+    if (tipo === 'pratica') {
+      return 'Dica Prática'
+    }
     return 'Texto Motivacional'
   }
 
@@ -206,8 +231,8 @@ export default function Dicas() {
             Faça login para ver suas dicas
           </h2>
           <p className="mb-6 text-base text-[var(--text-secondary)] sm:text-lg">
-            As dicas personalizadas são baseadas nos seus níveis de bem-estar.
-            Entre para acessar conteúdo exclusivo!
+            As dicas personalizadas são baseadas nos seus níveis de bem-estar. Entre para acessar
+            conteúdo exclusivo!
           </p>
           <Link
             to="/login"

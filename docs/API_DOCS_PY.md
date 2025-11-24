@@ -81,35 +81,33 @@ curl https://uppath-python.onrender.com/api/v1/dashboard/company/1/nivel-carreir
 ### Usando JavaScript (Fetch API)
 
 ```javascript
-const API_URL = "https://uppath-python.onrender.com";
+const API_URL = 'https://uppath-python.onrender.com'
 
 // Dashboard completo do usuário
 fetch(`${API_URL}/api/v1/dashboard/user/1/completo`)
   .then((response) => response.json())
   .then((data) => {
-    console.log("Dashboard do usuário:", data);
+    console.log('Dashboard do usuário:', data)
     // Atualizar gráficos de bem-estar, trilhas, recomendações
-    updateUserCharts(data.data);
+    updateUserCharts(data.data)
   })
-  .catch((error) => console.error("Erro:", error));
+  .catch((error) => console.error('Erro:', error))
 
 // Dashboard completo da empresa
 fetch(`${API_URL}/api/v1/dashboard/company/1/completo`)
   .then((response) => response.json())
   .then((data) => {
-    console.log("Dashboard da empresa:", data);
+    console.log('Dashboard da empresa:', data)
     // Atualizar gráficos corporativos
-    updateCompanyCharts(data.data);
+    updateCompanyCharts(data.data)
   })
-  .catch((error) => console.error("Erro:", error));
+  .catch((error) => console.error('Erro:', error))
 
 // Consulta específica: Bem-estar do usuário
 async function getBemEstarUsuario(userId) {
-  const response = await fetch(
-    `${API_URL}/api/v1/dashboard/user/${userId}/bem-estar`,
-  );
-  const data = await response.json();
-  return data.data;
+  const response = await fetch(`${API_URL}/api/v1/dashboard/user/${userId}/bem-estar`)
+  const data = await response.json()
+  return data.data
 }
 ```
 

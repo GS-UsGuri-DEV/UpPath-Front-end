@@ -11,10 +11,7 @@ import {
 
 type BemEstarEquilibrioData = Pick<
   QuestionarioData,
-  | 'nivelBemEstar'
-  | 'frequenciaSobrecarga'
-  | 'situacoesDiarias'
-  | 'apoioDesejado'
+  'nivelBemEstar' | 'frequenciaSobrecarga' | 'situacoesDiarias' | 'apoioDesejado'
 >
 
 export default function BemEstarEquilibrio({
@@ -29,20 +26,15 @@ export default function BemEstarEquilibrio({
           <FaHeart className="text-2xl text-pink-600 dark:text-pink-400" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-[var(--text-primary)]">
-            Bem-Estar e Equilíbrio
-          </h2>
-          <p className="text-sm text-[var(--text-muted)]">
-            Cuidando da sua saúde mental
-          </p>
+          <h2 className="text-2xl font-bold text-[var(--text-primary)]">Bem-Estar e Equilíbrio</h2>
+          <p className="text-sm text-[var(--text-muted)]">Cuidando da sua saúde mental</p>
         </div>
       </div>
 
       {/* Questão 1 */}
       <div className="space-y-3">
         <label className="block text-sm font-semibold text-[var(--text-primary)]">
-          Como você classificaria seu nível atual de bem-estar em relação ao
-          trabalho/estudos?
+          Como você classificaria seu nível atual de bem-estar em relação ao trabalho/estudos?
         </label>
         <div className="space-y-2">
           {NIVEL_BEM_ESTAR_OPTIONS.map((option) => (
@@ -64,9 +56,7 @@ export default function BemEstarEquilibrio({
                 }
                 className="h-4 w-4 border-gray-300 text-pink-600 focus:ring-2 focus:ring-pink-500"
               />
-              <span className="text-sm text-[var(--text-primary)]">
-                {option.label}
-              </span>
+              <span className="text-sm text-[var(--text-primary)]">{option.label}</span>
             </label>
           ))}
         </div>
@@ -81,9 +71,7 @@ export default function BemEstarEquilibrio({
         name="frequenciaSobrecarga"
         options={FREQUENCIA_SOBRECARGA_OPTIONS}
         value={data.frequenciaSobrecarga}
-        onChange={(value: string) =>
-          updateData({ frequenciaSobrecarga: value })
-        }
+        onChange={(value: string) => updateData({ frequenciaSobrecarga: value })}
       />
 
       {/* Questão 3 */}
@@ -92,9 +80,7 @@ export default function BemEstarEquilibrio({
         helperText="Selecione todas que se aplicam"
         options={SITUACOES_DIARIAS_OPTIONS}
         values={data.situacoesDiarias}
-        onChange={(values: string[]) =>
-          updateData({ situacoesDiarias: values })
-        }
+        onChange={(values: string[]) => updateData({ situacoesDiarias: values })}
       />
 
       {/* Questão 4 */}

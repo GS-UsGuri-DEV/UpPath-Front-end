@@ -37,10 +37,21 @@ export default function BemEstarCard({
         return 'var(--accent-primary)'
     }
   }
+
+  const getStatusColor = (s: string) => {
+    if (s === 'Melhorando') {
+      return 'text-[var(--accent-success)]'
+    }
+    if (s === 'Piorando') {
+      return 'text-[var(--accent-danger)]'
+    }
+    return 'text-[var(--text-muted)]'
+  }
+
   const accent = getAccentVar(color)
   return (
     <div
-      className={`bemestar-card group relative overflow-hidden border-2 border-[var(--border-color)] bg-[var(--bg-secondary)] p-6 shadow-sm transition-all hover:shadow-md`}
+      className="bemestar-card group relative overflow-hidden border-2 border-[var(--border-color)] bg-[var(--bg-secondary)] p-6 shadow-sm transition-all hover:shadow-md"
       style={{ borderRadius: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
     >
       <div className="bemestar-sparkline absolute top-4 right-4">
@@ -48,15 +59,10 @@ export default function BemEstarCard({
       </div>
       <div className="relative z-10">
         <div className="mb-2 flex items-center gap-2">
-          <div className={`rounded-full bg-[var(--bg-tertiary)] p-2`}>
-            <div
-              className="h-3 w-3 rounded-full"
-              style={{ backgroundColor: accent }}
-            />
+          <div className="rounded-full bg-[var(--bg-tertiary)] p-2">
+            <div className="h-3 w-3 rounded-full" style={{ backgroundColor: accent }} />
           </div>
-          <span className="text-sm font-medium text-[var(--text-muted)]">
-            {label}
-          </span>
+          <span className="text-sm font-medium text-[var(--text-muted)]">{label}</span>
           <TrendIcon trend={tendencia} />
         </div>
         <div className="mb-3 flex items-baseline gap-2">
@@ -76,18 +82,7 @@ export default function BemEstarCard({
         </div>
         <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
           <span>Média: {media}</span>
-          <span
-            className={
-              'bemestar-status ' +
-              (status === 'Melhorando'
-                ? 'text-[var(--accent-success)]'
-                : status === 'Piorando'
-                  ? 'text-[var(--accent-danger)]'
-                  : 'text-[var(--text-muted)]')
-            }
-          >
-            {status}
-          </span>
+          <span className={`bemestar-status ${getStatusColor(status)}`}>{status}</span>
         </div>
       </div>
     </div>

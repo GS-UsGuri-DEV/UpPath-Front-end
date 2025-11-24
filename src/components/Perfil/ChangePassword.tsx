@@ -17,15 +17,10 @@ export default function ChangePassword() {
     }
     try {
       const acct = account as unknown as {
-        updatePassword?: (
-          newPassword: string,
-          oldPassword?: string,
-        ) => Promise<unknown>
+        updatePassword?: (newPassword: string, oldPassword?: string) => Promise<unknown>
       }
       if (typeof acct.updatePassword !== 'function') {
-        throw new Error(
-          'SDK não expõe updatePassword (verifique a versão do Appwrite)',
-        )
+        throw new Error('SDK não expõe updatePassword (verifique a versão do Appwrite)')
       }
       await acct.updatePassword(newPass, currentPass)
       setPwMessage('Senha atualizada com sucesso')
@@ -87,11 +82,7 @@ export default function ChangePassword() {
               Cancelar
             </button>
           </div>
-          {pwMessage && (
-            <div className="text-sm text-[var(--accent-success)]">
-              {pwMessage}
-            </div>
-          )}
+          {pwMessage && <div className="text-sm text-[var(--accent-success)]">{pwMessage}</div>}
         </form>
       )}
     </section>

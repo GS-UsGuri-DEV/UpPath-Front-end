@@ -1,20 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { FaTimes } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/useAuth'
 import useTheme from '../../hooks/useTheme'
 import Spinner from '../Spinner/Spinner'
 
-export default function GamificationCard({
-  notification = false,
-}: {
-  notification?: boolean
-}) {
+export default function GamificationCard({ notification = false }: { notification?: boolean }) {
   const { userData } = useAuth()
   const nav = useNavigate()
-  const [records, setRecords] = useState<Array<Record<string, unknown>> | null>(
-    null,
-  )
+  const [records, setRecords] = useState<Array<Record<string, unknown>> | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
@@ -36,7 +30,7 @@ export default function GamificationCard({
     }
   }, [])
 
-  async function fetchLatest() {
+  const fetchLatest = useCallback(async () => {
     setError(null)
     setLoading(true)
     try {
@@ -48,28 +42,32 @@ export default function GamificationCard({
       )
 
       // Prefer numeric idUser when available
+      const userDataObj = userData as unknown as Record<string, unknown>
       const idUserCandidate =
-        (userData as any)?.id ??
-        (userData as any)?.ID ??
-        (userData as any)?.userId ??
-        (userData as any)?.idUser ??
-        (userData as any)?.$id ??
+        userDataObj?.id ??
+        userDataObj?.ID ??
+        userDataObj?.userId ??
+        userDataObj?.idUser ??
+        userDataObj?.$id ??
         undefined
 
       const parsedId = Number(idUserCandidate)
       const idUser = Number.isFinite(parsedId) ? parsedId : undefined
 
       const url = new URL('https://uppath.onrender.com/wellBeing')
-      if (idUser !== undefined) url.searchParams.append('idUser', String(idUser))
-      else if (identifier) url.searchParams.append('identifier', identifier)
+      if (idUser !== undefined) {
+        url.searchParams.append('idUser', String(idUser))
+      } else if (identifier) {
+        url.searchParams.append('identifier', identifier)
+      }
 
       const resp = await fetch(String(url))
-      if (!resp.ok) throw new Error(`API externa retornou ${resp.status}`)
+      if (!resp.ok) {
+        throw new Error(`API externa retornou ${resp.status}`)
+      }
       const data = await resp.json()
       // normalize different shapes
-      const items = Array.isArray(data)
-        ? data
-        : data?.data ?? data?.items ?? (data ? [data] : [])
+      const items = Array.isArray(data) ? data : (data?.data ?? data?.items ?? (data ? [data] : []))
       setRecords(items)
     } catch (err) {
       setError(String((err as Error)?.message ?? err))
@@ -77,11 +75,13 @@ export default function GamificationCard({
     } finally {
       setLoading(false)
     }
-  }
+  }, [userData])
 
   useEffect(() => {
-    if (userData) fetchLatest()
-  }, [userData])
+    if (userData) {
+      fetchLatest()
+    }
+  }, [userData, fetchLatest])
 
   async function registerToday() {
     setSubmitMessage(null)
@@ -95,16 +95,15 @@ export default function GamificationCard({
       const m = Number(motivation)
       const q = Number(sleepQuality)
       if ([s, m, q].some((v) => Number.isNaN(v) || v < 0 || v > 10)) {
-        throw new Error(
-          'Estresse, Motivação e Sono devem ser números entre 0 e 10.',
-        )
+        throw new Error('Estresse, Motivação e Sono devem ser números entre 0 e 10.')
       }
+      const userDataObj2 = userData as unknown as Record<string, unknown>
       const idUserCandidate =
-        (userData as any)?.id ??
-        (userData as any)?.ID ??
-        (userData as any)?.userId ??
-        (userData as any)?.idUser ??
-        (userData as any)?.$id ??
+        userDataObj2?.id ??
+        userDataObj2?.ID ??
+        userDataObj2?.userId ??
+        userDataObj2?.idUser ??
+        userDataObj2?.$id ??
         undefined
 
       const parsedId = Number(idUserCandidate)
@@ -116,11 +115,15 @@ export default function GamificationCard({
         sleepQuality: q,
         observations: observation ?? '',
       }
-      if (idUser !== undefined) apiPayload.idUser = idUser
+      if (idUser !== undefined) {
+        apiPayload.idUser = idUser
+      }
 
       const token = localStorage.getItem('authToken')
       const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-      if (token) headers['Authorization'] = `Bearer ${token}`
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
 
       const resp = await fetch('https://uppath.onrender.com/wellBeing', {
         method: 'POST',
@@ -130,9 +133,7 @@ export default function GamificationCard({
 
       if (!resp.ok) {
         const t = await resp.text().catch(() => '')
-        throw new Error(
-          `Falha ao enviar para API externa: ${resp.status} ${resp.statusText} ${t}`,
-        )
+        throw new Error(`Falha ao enviar para API externa: ${resp.status} ${resp.statusText} ${t}`)
       }
 
       setSubmitMessage('Registro salvo com sucesso!')
@@ -152,26 +153,23 @@ export default function GamificationCard({
   }
 
   const num = (v: unknown) => {
-    if (v === null || v === undefined) return NaN
-    if (typeof v === 'number') return v
+    if (v === null || v === undefined) {
+      return NaN
+    }
+    if (typeof v === 'number') {
+      return v
+    }
     const s = String(v).replace(',', '.')
     const n = Number(s)
     return Number.isFinite(n) ? n : NaN
   }
 
-  const avg = (arr: number[]) =>
-    arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN
+  const avg = (arr: number[]) => (arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN)
 
   const records7 = Array.isArray(records) ? records : []
-  const avgStress = avg(
-    records7.map((r) => num(r.nivel_estresse ?? r.NIVEL_ESTRESSE)),
-  )
-  const avgMotivation = avg(
-    records7.map((r) => num(r.nivel_motivacao ?? r.NIVEL_MOTIVACAO)),
-  )
-  const avgSleep = avg(
-    records7.map((r) => num(r.qualidade_sono ?? r.QUALIDADE_SONO)),
-  )
+  const avgStress = avg(records7.map((r) => num(r.nivel_estresse ?? r.NIVEL_ESTRESSE)))
+  const avgMotivation = avg(records7.map((r) => num(r.nivel_motivacao ?? r.NIVEL_MOTIVACAO)))
+  const avgSleep = avg(records7.map((r) => num(r.qualidade_sono ?? r.QUALIDADE_SONO)))
 
   void avgStress
   void avgMotivation
@@ -181,7 +179,9 @@ export default function GamificationCard({
     ? `fixed bottom-4 right-4 left-4 sm:bottom-6 sm:right-6 sm:left-auto z-50 transition-transform duration-600 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`
     : `max-w-md mx-auto transition-transform duration-600 ease-out ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`
 
-  if (!userData || hideCard) return null
+  if (!userData || hideCard) {
+    return null
+  }
 
   return (
     <div className={containerClass}>
@@ -192,9 +192,7 @@ export default function GamificationCard({
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
             <div className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)] sm:text-sm">
-              <span className="hidden sm:inline">
-                Registre seu bem-estar hoje
-              </span>
+              <span className="hidden sm:inline">Registre seu bem-estar hoje</span>
               <span className="sm:hidden">Bem-estar hoje</span>
             </div>
             <img
@@ -228,9 +226,7 @@ export default function GamificationCard({
                 min={0}
                 max={10}
                 value={stress}
-                onChange={(e) =>
-                  setStress(e.target.value === '' ? '' : Number(e.target.value))
-                }
+                onChange={(e) => setStress(e.target.value === '' ? '' : Number(e.target.value))}
                 className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 text-xs sm:p-2 sm:text-sm"
                 placeholder="0 = bom, 10 = ruim"
                 required
@@ -244,11 +240,7 @@ export default function GamificationCard({
                 min={0}
                 max={10}
                 value={motivation}
-                onChange={(e) =>
-                  setMotivation(
-                    e.target.value === '' ? '' : Number(e.target.value),
-                  )
-                }
+                onChange={(e) => setMotivation(e.target.value === '' ? '' : Number(e.target.value))}
                 className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 text-xs sm:p-2 sm:text-sm"
                 placeholder="0 = ruim, 10 = bom"
                 required
@@ -265,9 +257,7 @@ export default function GamificationCard({
                 max={10}
                 value={sleepQuality}
                 onChange={(e) =>
-                  setSleepQuality(
-                    e.target.value === '' ? '' : Number(e.target.value),
-                  )
+                  setSleepQuality(e.target.value === '' ? '' : Number(e.target.value))
                 }
                 className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 text-xs sm:p-2 sm:text-sm"
                 placeholder="0 = ruim, 10 = bom"
@@ -330,9 +320,7 @@ export default function GamificationCard({
           </div>
         )}
         {error && (
-          <div className="mt-2 text-center text-xs text-[var(--accent-danger)]">
-            {error}
-          </div>
+          <div className="mt-2 text-center text-xs text-[var(--accent-danger)]">{error}</div>
         )}
       </div>
     </div>

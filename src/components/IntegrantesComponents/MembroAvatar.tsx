@@ -1,10 +1,6 @@
 import type { MembroAvatarProps } from '../../types/member'
 
-export default function MembroAvatar({
-  src,
-  alt,
-  className = '',
-}: MembroAvatarProps) {
+export default function MembroAvatar({ src, alt, className = '' }: MembroAvatarProps) {
   return (
     <img
       src={src}

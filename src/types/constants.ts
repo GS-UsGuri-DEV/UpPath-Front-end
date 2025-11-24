@@ -1,7 +1,16 @@
-// Opções e constantes para os campos do questionário
+/**
+ * Opções e constantes para campos do questionário de perfil
+ * @module types/constants
+ */
 
-export interface Option {
+/**
+ * Estrutura de uma opção de seleção
+ * Usado em dropdowns, radio buttons e checkboxes
+ */
+export type Option = {
+  /** Valor a ser salvo no banco de dados */
   value: string
+  /** Texto exibido ao usuário */
   label: string
 }
 

@@ -1,7 +1,7 @@
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io'
-import MembroCard from './MembroCard'
 import type { CarrosselIntegrantesProps } from '../../types/member'
 import CarrosselBase from './CarrosselBase'
+import MembroCard from './MembroCard'
 
 export default function CarrosselIntegrantes({
   members,
@@ -11,28 +11,36 @@ export default function CarrosselIntegrantes({
   showIndicators = true,
   className,
 }: CarrosselIntegrantesProps) {
-  if (!members.length) return null
+  if (!members.length) {
+    return null
+  }
 
   return (
     <section aria-label={title || 'Integrantes'} className={className}>
       {title && (
-        <h2 className="text-fontPrimary mb-4 text-center text-xl font-bold sm:text-2xl">
-          {title}
-        </h2>
+        <h2 className="text-fontPrimary mb-4 text-center text-xl font-bold sm:text-2xl">{title}</h2>
       )}
 
       <div className="relative mx-auto max-w-[900px]">
         <CarrosselBase
           total={members.length}
           autoMs={autoMs}
-          renderItem={(i) => (
-            <ul className="m-0 flex list-none justify-center p-0">
-              <MembroCard member={members[i]} />
-            </ul>
-          )}
+          renderItem={(i) => {
+            const member = members[i]
+            if (!member) {
+              return null
+            }
+            return (
+              <ul className="m-0 flex list-none justify-center p-0">
+                <MembroCard member={member} />
+              </ul>
+            )
+          }}
           renderControls={(api) => {
             const { prev, next, total } = api
-            if (!(showControls && total > 1)) return null
+            if (!(showControls && total > 1)) {
+              return null
+            }
 
             return (
               <>
@@ -58,7 +66,9 @@ export default function CarrosselIntegrantes({
           }}
           renderIndicators={(api) => {
             const { goTo, index, total } = api
-            if (!(showIndicators && total > 1)) return null
+            if (!(showIndicators && total > 1)) {
+              return null
+            }
 
             const wrap = (n: number) => (n + total) % total
 
@@ -90,18 +100,18 @@ export default function CarrosselIntegrantes({
                   className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4"
                   role="tablist"
                 >
-                  {Array.from({ length: total }).map((_, i) => (
+                  {Array.from({ length: total }, (_, i) => i).map((pageIndex) => (
                     <button
-                      key={i}
+                      key={`carousel-page-${pageIndex}`}
                       type="button"
                       role="tab"
-                      aria-label={`Ir ao passo ${i + 1}`}
-                      aria-selected={i === index}
-                      onClick={() => goTo(i)}
+                      aria-label={`Ir ao passo ${pageIndex + 1}`}
+                      aria-selected={pageIndex === index}
+                      onClick={() => goTo(pageIndex)}
                       className={[
                         'rounded-full transition',
                         'h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5',
-                        i === index
+                        pageIndex === index
                           ? 'dark:bg-backBtn dark:ring-fontPrimary bg-gray-800 ring-2 ring-gray-300'
                           : 'bg-gray-300 hover:bg-gray-400',
                       ].join(' ')}

@@ -1,10 +1,4 @@
-import {
-  FaBook,
-  FaBullseye,
-  FaEnvelope,
-  FaLightbulb,
-  FaQuestionCircle,
-} from 'react-icons/fa'
+import { FaBook, FaBullseye, FaEnvelope, FaLightbulb, FaQuestionCircle } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 
 export default function ResourcesSection() {
@@ -12,9 +6,7 @@ export default function ResourcesSection() {
 
   return (
     <section className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-6">
-      <h2 className="mb-3 text-lg font-semibold text-[var(--text-primary)]">
-        Recursos e Suporte
-      </h2>
+      <h2 className="mb-3 text-lg font-semibold text-[var(--text-primary)]">Recursos e Suporte</h2>
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         <button
           onClick={() => navigate('/faq')}

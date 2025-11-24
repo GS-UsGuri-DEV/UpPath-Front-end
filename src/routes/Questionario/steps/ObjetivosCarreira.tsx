@@ -10,16 +10,10 @@ import {
 
 type ObjetivosCarreiraData = Pick<
   QuestionarioData,
-  | 'objetivoPrincipal'
-  | 'areasInteresse'
-  | 'areasInteresseOutra'
-  | 'valoresCarreira'
+  'objetivoPrincipal' | 'areasInteresse' | 'areasInteresseOutra' | 'valoresCarreira'
 >
 
-export default function ObjetivosCarreira({
-  data,
-  updateData,
-}: StepProps<ObjetivosCarreiraData>) {
+export default function ObjetivosCarreira({ data, updateData }: StepProps<ObjetivosCarreiraData>) {
   return (
     <div className="space-y-6">
       {/* Header da Etapa */}
@@ -28,12 +22,8 @@ export default function ObjetivosCarreira({
           <FaBullseye className="text-2xl text-green-600 dark:text-green-400" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-[var(--text-primary)]">
-            Objetivos de Carreira
-          </h2>
-          <p className="text-sm text-[var(--text-muted)]">
-            Onde você quer chegar
-          </p>
+          <h2 className="text-2xl font-bold text-[var(--text-primary)]">Objetivos de Carreira</h2>
+          <p className="text-sm text-[var(--text-muted)]">Onde você quer chegar</p>
         </div>
       </div>
 
@@ -101,24 +91,17 @@ export default function ObjetivosCarreira({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     if (e.target.checked) {
                       updateData({
-                        valoresCarreira: [
-                          ...data.valoresCarreira,
-                          option.value,
-                        ],
+                        valoresCarreira: [...data.valoresCarreira, option.value],
                       })
                     } else {
                       updateData({
-                        valoresCarreira: data.valoresCarreira.filter(
-                          (v) => v !== option.value,
-                        ),
+                        valoresCarreira: data.valoresCarreira.filter((v) => v !== option.value),
                       })
                     }
                   }}
                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-2 focus:ring-indigo-500 disabled:cursor-not-allowed"
                 />
-                <span className="text-sm text-[var(--text-primary)]">
-                  {option.label}
-                </span>
+                <span className="text-sm text-[var(--text-primary)]">{option.label}</span>
               </label>
             )
           })}
