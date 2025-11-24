@@ -139,7 +139,7 @@ export default function Cadastro() {
 
         try {
           await login(company.email_contato ?? '', senha ?? '', 'empresa')
-        } catch (err) {
+        } catch (_err) {
           // Login automático após criar empresa falhou, tentando fallback
           try {
             const fallback = (await post('https://uppath.onrender.com/login', {
@@ -240,7 +240,7 @@ export default function Cadastro() {
 
         try {
           await login(user.email ?? '', senha ?? '')
-        } catch (err) {
+        } catch (_err) {
           // Login automático após criar usuário falhou, tentando fallback
           try {
             const fallback = (await post('https://uppath.onrender.com/login', {

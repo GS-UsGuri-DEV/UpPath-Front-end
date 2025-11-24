@@ -1,5 +1,5 @@
 import { MdOutlineLightbulb } from 'react-icons/md'
-import type { RecomendacoesCardProps } from '../../types/graphicsDashboard'
+import type { RecomendacoesCardProps, Recomendacao } from '../../types/graphicsDashboard'
 
 export default function RecomendacoesCard({ recomendacoes }: RecomendacoesCardProps) {
   if (!recomendacoes || recomendacoes.length === 0) {
@@ -18,24 +18,22 @@ export default function RecomendacoesCard({ recomendacoes }: RecomendacoesCardPr
         <h3 className="text-lg font-semibold text-[var(--text-primary)]">Recomendações</h3>
       </div>
       <div className="space-y-3">
-        {recomendacoes
-          .slice(0, 3)
-          .map((rec: import('../../types/graphicsDashboard').Recomendacao, idx: number) => (
-            <div
-              key={idx}
-              className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] p-3"
-              tabIndex={0}
-              aria-label={`Recomendação ${rec.tipo}, motivo: ${rec.motivo}`}
-            >
-              <div className="mb-1 flex items-center justify-between">
-                <span className="text-sm font-medium text-[var(--text-primary)]">{rec.tipo}</span>
-                <span className="text-xs text-[var(--text-muted)]">
-                  {new Date(rec.data_recomendacao).toLocaleDateString('pt-BR')}
-                </span>
-              </div>
-              <p className="text-xs text-[var(--text-secondary)]">{rec.motivo}</p>
+        {recomendacoes.slice(0, 3).map((rec: Recomendacao, idx: number) => (
+          <div
+            key={idx}
+            className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] p-3"
+            tabIndex={0}
+            aria-label={`Recomendação ${rec.tipo}, motivo: ${rec.motivo}`}
+          >
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-sm font-medium text-[var(--text-primary)]">{rec.tipo}</span>
+              <span className="text-xs text-[var(--text-muted)]">
+                {new Date(rec.data_recomendacao).toLocaleDateString('pt-BR')}
+              </span>
             </div>
-          ))}
+            <p className="text-xs text-[var(--text-secondary)]">{rec.motivo}</p>
+          </div>
+        ))}
       </div>
     </div>
   )

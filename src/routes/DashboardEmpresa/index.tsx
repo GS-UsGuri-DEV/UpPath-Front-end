@@ -59,7 +59,7 @@ export default function DashboardEmpresa() {
               empresasResRaw = r
               break
             }
-          } catch (e) {
+          } catch (_e) {
             // ignora e tenta próximo formato
           }
         }
@@ -132,7 +132,7 @@ export default function DashboardEmpresa() {
             funcionariosData = items as unknown as Funcionario[]
             break
           }
-        } catch (e) {
+        } catch (_e) {
           // tenta próximo formato
         }
       }
@@ -312,7 +312,7 @@ export default function DashboardEmpresa() {
                 })
 
                 return items[0] as BemEstarData
-              } catch (e) {
+              } catch (_e) {
                 // tenta próxima
               }
             }
@@ -353,7 +353,7 @@ export default function DashboardEmpresa() {
               })
 
               return items[0] as BemEstarData
-            } catch (e) {
+            } catch (_e) {
               // ignore
             }
           }
@@ -389,11 +389,8 @@ export default function DashboardEmpresa() {
               }
 
               if (items.length === 0) {
-                console.debug('wellBeing: no company items for query', cq, respAny)
                 continue
               }
-
-              console.debug('wellBeing: company items for query', cq, items)
 
               // Agrupar por usuário e pegar o mais recente por usuário
               const grouped = new Map<string, any[]>()
@@ -423,7 +420,7 @@ export default function DashboardEmpresa() {
 
               validResults = latestPerUser
               break
-            } catch (e) {
+            } catch (_e) {
               // tenta próxima query
             }
           }
