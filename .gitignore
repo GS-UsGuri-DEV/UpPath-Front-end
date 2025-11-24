@@ -30,3 +30,6 @@ dist-ssr
 *.sw?
 .vite
 .vercel
+
+# Vercel config (use vercel.json.example como template)
+vercel.json
