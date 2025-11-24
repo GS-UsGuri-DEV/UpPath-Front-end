@@ -89,7 +89,11 @@ export default function Login() {
         localStorage.removeItem('rememberedPassword')
       }
 
-      nav('/')
+      if (loginType === 'empresa') {
+        nav('/dashboard-empresa')
+      } else {
+        nav('/')
+      }
     } catch (e: unknown) {
       const msgText = e instanceof Error ? e.message : String(e)
       setMsg(msgText)
