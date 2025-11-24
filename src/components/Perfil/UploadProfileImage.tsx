@@ -1,13 +1,11 @@
 import { useState } from 'react'
-import { useAuth } from '../../contexts/useAuth'
-import { BUCKET_PUBLIC, ID, db, storage } from '../../shared/appwrite'
+import { BUCKET_PUBLIC, ID, storage } from '../../shared/appwrite'
 
 import type { UploadProfileImageProps } from '../../types/profile'
 
 export default function UploadProfileImage({
   onUploadSuccess,
 }: UploadProfileImageProps) {
-  const { userData, checkAuth } = useAuth()
   const [uploadError, setUploadError] = useState<string | null>(null)
 
   async function upload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -21,22 +19,9 @@ export default function UploadProfileImage({
     }
     try {
       const r = await storage.createFile(BUCKET_PUBLIC, ID.unique(), f)
-      const url = storage.getFileView(BUCKET_PUBLIC, r.$id).toString()
-      onUploadSuccess(url)
-
-      const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
-      const COLLECTION_USERS = import.meta.env.VITE_APPWRITE_COLLECTION_USERS
-      if (DB_ID && COLLECTION_USERS && userData?.$id) {
-        try {
-          await db.updateDocument(DB_ID, COLLECTION_USERS, userData.$id, {
-            profile_image: url,
-          })
-          await checkAuth()
-        } catch (err) {
-          console.error('Error saving profile image in DB', err)
-          setUploadError(String((err as Error)?.message ?? err))
-        }
-      }
+      const url = storage.getFileView(BUCKET_PUBLIC, r.$id)
+      onUploadSuccess(url.toString())
+      setUploadError(null)
     } catch (err) {
       console.error('Error uploading file', err)
       const msg = String((err as Error)?.message ?? err ?? '')
