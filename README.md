@@ -16,7 +16,9 @@
 - [Sobre o Projeto](#-sobre-o-projeto)
 - [Tecnologias Utilizadas](#-tecnologias-utilizadas)
 - [Instalação](#-instalação)
+- [Configuração](#-configuração)
 - [Como Usar](#-como-usar)
+- [Deploy](#-deploy)
 - [Estrutura de Pastas](#-estrutura-de-pastas)
 - [Rotas Principais](#-rotas-principais)
 - [Autores e Créditos](#-autores-e-créditos)
@@ -154,6 +156,18 @@ pnpm dev
 ```
 
 A aplicação estará disponível em `http://localhost:5173`
+
+---
+
+### Variáveis de Ambiente
+
+Crie um arquivo `.env.local` na raiz do projeto (use `.env.example` como base):
+
+```env
+# API Endpoints
+VITE_API_URL_JAVA=https://uppath.onrender.com
+VITE_API_URL_PYTHON=https://uppath-python.onrender.com
+```
 
 ---
 
