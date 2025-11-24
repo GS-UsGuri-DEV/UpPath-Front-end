@@ -1,4 +1,4 @@
-import { FaClock, FaBook, FaStar } from 'react-icons/fa'
+import { FaBook, FaClock, FaStar } from 'react-icons/fa'
 import type { Curso } from '../../data/cursosData'
 
 type CursoCardProps = {

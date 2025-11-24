@@ -1,4 +1,4 @@
-import { FaClock, FaBook, FaChartLine } from 'react-icons/fa'
+import { FaBook, FaChartLine, FaClock } from 'react-icons/fa'
 import type { TrilhaCompleta } from '../../data/cursosData'
 
 type TrilhaCardProps = {

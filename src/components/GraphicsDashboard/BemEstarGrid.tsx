@@ -1,5 +1,5 @@
-import BemEstarCard from './BemEstarCard'
 import type { BemEstarGridProps } from '../../types/graphicsDashboard'
+import BemEstarCard from './BemEstarCard'
 
 /**
  * BemEstarGrid - Grid de cards de bem-estar
