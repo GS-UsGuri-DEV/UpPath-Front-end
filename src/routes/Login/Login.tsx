@@ -96,7 +96,7 @@ export default function Login() {
       }
 
       if (loginType === 'empresa') {
-        nav('/dashboardempresa')
+        nav('/dashboard-empresa')
       } else {
         nav('/')
       }
