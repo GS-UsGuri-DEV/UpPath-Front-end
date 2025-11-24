@@ -1,22 +1,19 @@
-import { useState } from 'react'
 
 import ChangePassword from '../../components/Perfil/ChangePassword'
 import ProfileCard from '../../components/Perfil/ProfileCard'
-import UploadProfileImage from '../../components/Perfil/UploadProfileImage'
 import Spinner from '../../components/Spinner/Spinner'
 import { useAuth } from '../../contexts/useAuth'
 
 export default function Perfil() {
-  const [fileUrl, setFileUrl] = useState<string | undefined>()
   const { userData, loading } = useAuth()
+
 
   const displayName =
     (userData as any)?.nome_completo ?? (userData as any)?.name ?? '—'
   const displayEmail = String(userData?.email ?? '—')
   const profileImage = String(
-    (userData && (userData.profile_image as unknown)) ?? fileUrl ?? '',
+    (userData && (userData.profile_image as unknown)) ?? '',
   )
-
   const nivelCarreira =
     (userData as any)?.nivel_carreira ?? (userData as any)?.nivelCarreira ?? '—'
   const occupation =
@@ -27,7 +24,6 @@ export default function Perfil() {
     (userData as any)?.dateRegistered ??
     (userData as any)?.dateRegistered ??
     ''
-
   function fmtDate(d: string | undefined) {
     if (!d) return '—'
     try {
@@ -51,6 +47,11 @@ export default function Perfil() {
     )
   }
 
+  // Oculta o perfil para empresas
+  if (userData?.tipo_conta === 'empresa') {
+    return null
+  }
+
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
       <div className="mx-auto max-w-3xl space-y-6 p-6">
@@ -64,7 +65,6 @@ export default function Perfil() {
           displayEmail={displayEmail}
         />
 
-        <UploadProfileImage onUploadSuccess={(url) => setFileUrl(url)} />
 
         <section className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4">
           <h3 className="mb-2 font-semibold text-[var(--text-primary)]">
