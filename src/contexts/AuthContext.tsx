@@ -67,8 +67,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const full = await get(`https://uppath.onrender.com/users/${id}`, headers)
           const normalized = { ...(full as UserResponse), id }
           return normalized as UserData
-        } catch (_e) {
+        } catch (error) {
           // Could not fetch full user by id, returning first match
+          console.warn(`Failed to fetch full user data for id ${id}:`, error)
           const normalizedFirst = { ...first, id }
           return normalizedFirst as UserData
         }
@@ -99,7 +100,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             email: (parsedObj?.email as string | undefined) ?? undefined,
           }
           setUser(su)
-        } catch (_e) {
+        } catch (error) {
+          console.error('Failed to parse stored userData:', error)
           if (token) {
             setUser({ name: undefined, email: undefined })
             setUserData(null)
@@ -115,7 +117,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null)
         setUserData(null)
       }
-    } catch (_e) {
+    } catch (error) {
+      console.error('Error during auth check:', error)
       setUser(null)
       setUserData(null)
     } finally {
@@ -196,8 +199,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         let data: UserData | null = null
         try {
           data = await fetchUserData(identifier)
-        } catch (_e) {
-          // fetchUserData failed
+        } catch (error) {
+          console.error('Failed to fetch user data after login:', error)
         }
 
         let result: UserData | null = null
