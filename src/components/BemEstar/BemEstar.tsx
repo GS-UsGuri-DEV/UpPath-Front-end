@@ -102,7 +102,10 @@ export default function BemEstar() {
 
   const records7 = useMemo(() => lastNRecords(7), [lastNRecords])
 
-  const avg = useCallback((arr: number[]) => (arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN), [])
+  const avg = useCallback(
+    (arr: number[]) => (arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN),
+    [],
+  )
 
   const avgStress = useMemo(
     () =>

@@ -10,7 +10,9 @@
 const safeLocalStorage = {
   getItem(key: string): string | null {
     try {
-      if (typeof localStorage === 'undefined') return null
+      if (typeof localStorage === 'undefined') {
+        return null
+      }
       return localStorage.getItem(key)
     } catch (error) {
       console.error(`Error reading from localStorage (${key}):`, error)
@@ -20,7 +22,9 @@ const safeLocalStorage = {
 
   setItem(key: string, value: string): boolean {
     try {
-      if (typeof localStorage === 'undefined') return false
+      if (typeof localStorage === 'undefined') {
+        return false
+      }
       localStorage.setItem(key, value)
       return true
     } catch (error) {
@@ -31,7 +35,9 @@ const safeLocalStorage = {
 
   removeItem(key: string): boolean {
     try {
-      if (typeof localStorage === 'undefined') return false
+      if (typeof localStorage === 'undefined') {
+        return false
+      }
       localStorage.removeItem(key)
       return true
     } catch (error) {

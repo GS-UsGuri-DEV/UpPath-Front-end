@@ -7,7 +7,7 @@
  * Resposta da API para dados de usuário
  * Estrutura específica retornada pelos endpoints de usuário
  */
-export interface UserResponse {
+export type UserResponse = {
   /** ID único do usuário */
   id_usuario?: number | string
   /** ID da empresa vinculada (null se independente) */
@@ -40,7 +40,7 @@ export interface UserResponse {
  * Resposta da API para dados de empresa
  * Estrutura específica retornada pelos endpoints de empresa
  */
-export interface CompanyResponse {
+export type CompanyResponse = {
   /** ID único da empresa */
   id_empresa?: number | string
   /** Nome da empresa */

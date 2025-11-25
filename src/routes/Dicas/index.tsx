@@ -1,15 +1,15 @@
 import { Query } from 'appwrite'
 import { useCallback, useEffect, useState } from 'react'
 import {
-    FaBatteryFull,
-    FaBrain,
-    FaHeart,
-    FaLightbulb,
-    FaMoon,
-    FaRedo,
-    FaSignInAlt,
-    FaSmile,
-    FaSyncAlt,
+  FaBatteryFull,
+  FaBrain,
+  FaHeart,
+  FaLightbulb,
+  FaMoon,
+  FaRedo,
+  FaSignInAlt,
+  FaSmile,
+  FaSyncAlt,
 } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import Spinner from '../../components/Spinner/Spinner'

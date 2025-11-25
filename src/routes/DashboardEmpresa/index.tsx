@@ -451,7 +451,10 @@ export default function DashboardEmpresa() {
               validResults = latestPerUser
               break
             } catch (error) {
-              console.warn('Failed to fetch bem-estar data for all users, trying next query:', error)
+              console.warn(
+                'Failed to fetch bem-estar data for all users, trying next query:',
+                error,
+              )
             }
           }
         }
