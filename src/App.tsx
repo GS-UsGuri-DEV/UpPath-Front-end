@@ -11,9 +11,11 @@ import FAQ from './routes/FAQ'
 import Home from './routes/Home'
 import Login from './routes/Login/Login'
 import Perfil from './routes/Perfil/Perfil'
+import Privacidade from './routes/Privacidade'
 import Protected from './routes/Protected/Protected'
 import ProtectedCompany from './routes/ProtectedCompany/ProtectedCompany'
 import Questionario from './routes/Questionario'
+import Termos from './routes/Termos'
 import Integrantes from './routes/integrantes/integrantes'
 
 export default function App() {
@@ -33,6 +35,8 @@ export default function App() {
         <Route path="/cursos" element={<Cursos />} />
         <Route path="/dicas" element={<Dicas />} />
         <Route path="/questionario" element={<Questionario />} />
+        <Route path="/termos" element={<Termos />} />
+        <Route path="/privacidade" element={<Privacidade />} />
         <Route element={<Protected />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/perfil" element={<Perfil />} />

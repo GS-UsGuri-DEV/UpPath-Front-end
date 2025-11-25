@@ -113,8 +113,8 @@ export default function ProfileCard({ profileImage, displayName, displayEmail }:
         if (updated) {
           localStorage.setItem('userData', JSON.stringify(updated))
         }
-      } catch (_e) {
-        // Could not fetch updated user after save
+      } catch (error) {
+        console.warn('Could not fetch updated user after save:', error)
       }
 
       setEditMessage(

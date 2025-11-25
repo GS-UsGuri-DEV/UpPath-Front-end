@@ -1,101 +1,53 @@
-import { useCallback, useEffect, useState } from 'react'
-import { FaTimes } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { useAuth } from '../../contexts/useAuth'
 import useTheme from '../../hooks/useTheme'
 import Spinner from '../Spinner/Spinner'
 
 export default function GamificationCard({ notification = false }: { notification?: boolean }) {
   const { userData } = useAuth()
-  const nav = useNavigate()
-  const [records, setRecords] = useState<Array<Record<string, unknown>> | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [mounted, setMounted] = useState(false)
+  const { isDark } = useTheme()
   const [submitLoading, setSubmitLoading] = useState(false)
   const [submitMessage, setSubmitMessage] = useState<string | null>(null)
   const [stress, setStress] = useState<number | ''>('')
   const [motivation, setMotivation] = useState<number | ''>('')
   const [sleepQuality, setSleepQuality] = useState<number | ''>('')
   const [observation, setObservation] = useState<string>('')
-  const [registeredOnce, setRegisteredOnce] = useState(false)
   const [hideCard, setHideCard] = useState(false)
-  const { isDark } = useTheme()
 
-  useEffect(() => {
-    setMounted(true)
-    const hasSeenGame = sessionStorage.getItem('hasSeenGame')
-    if (hasSeenGame) {
-      setHideCard(true)
-    }
-  }, [])
-
-  const fetchLatest = useCallback(async () => {
-    setError(null)
-    setLoading(true)
-    try {
-      const identifier = String(
-        (userData as unknown as Record<string, unknown>)?.$id ??
-          (userData as unknown as Record<string, unknown>)?.id ??
-          (userData as unknown as Record<string, unknown>)?.email ??
-          '',
+  // Verificar se já foi registrado hoje
+  const checkIfRegisteredToday = () => {
+    const lastRegistered = localStorage.getItem('lastWellBeingRegistration')
+    if (lastRegistered) {
+      const lastDate = new Date(lastRegistered)
+      const today = new Date()
+      return (
+        lastDate.getDate() === today.getDate() &&
+        lastDate.getMonth() === today.getMonth() &&
+        lastDate.getFullYear() === today.getFullYear()
       )
-
-      // Prefer numeric idUser when available
-      const userDataObj = userData as unknown as Record<string, unknown>
-      const idUserCandidate =
-        userDataObj?.id ??
-        userDataObj?.ID ??
-        userDataObj?.userId ??
-        userDataObj?.idUser ??
-        userDataObj?.$id ??
-        undefined
-
-      const parsedId = Number(idUserCandidate)
-      const idUser = Number.isFinite(parsedId) ? parsedId : undefined
-
-      const url = new URL('https://uppath.onrender.com/wellBeing')
-      if (idUser !== undefined) {
-        url.searchParams.append('idUser', String(idUser))
-      } else if (identifier) {
-        url.searchParams.append('identifier', identifier)
-      }
-
-      const resp = await fetch(String(url))
-      if (!resp.ok) {
-        throw new Error(`API externa retornou ${resp.status}`)
-      }
-      const data = await resp.json()
-      // normalize different shapes
-      const items = Array.isArray(data) ? data : (data?.data ?? data?.items ?? (data ? [data] : []))
-      setRecords(items)
-    } catch (err) {
-      setError(String((err as Error)?.message ?? err))
-      setRecords(null)
-    } finally {
-      setLoading(false)
     }
-  }, [userData])
+    return false
+  }
 
-  useEffect(() => {
-    if (userData) {
-      fetchLatest()
-    }
-  }, [userData, fetchLatest])
-
+  // Esconder card se já foi registrado hoje
+  if (hideCard || checkIfRegisteredToday()) {
+    return null
+  }
+  const containerClass = notification
+    ? `fixed bottom-4 right-4 left-4 sm:bottom-6 sm:right-6 sm:left-auto z-50 transition-transform duration-600`
+    : `max-w-md mx-auto transition-transform duration-600 ease-out`
   async function registerToday() {
     setSubmitMessage(null)
     setSubmitLoading(true)
     try {
-      // register via external API only
       if (stress === '' || motivation === '' || sleepQuality === '') {
         throw new Error('Preencha Estresse, Motivação e Sono antes de salvar.')
       }
       const s = Number(stress)
       const m = Number(motivation)
       const q = Number(sleepQuality)
-      if ([s, m, q].some((v) => Number.isNaN(v) || v < 0 || v > 10)) {
-        throw new Error('Estresse, Motivação e Sono devem ser números entre 0 e 10.')
+      if ([s, m, q].some((v) => Number.isNaN(v) || v < 1 || v > 10)) {
+        throw new Error('Estresse, Motivação e Sono devem ser números entre 1 e 10.')
       }
       const userDataObj2 = userData as unknown as Record<string, unknown>
       const idUserCandidate =
@@ -105,10 +57,8 @@ export default function GamificationCard({ notification = false }: { notificatio
         userDataObj2?.idUser ??
         userDataObj2?.$id ??
         undefined
-
       const parsedId = Number(idUserCandidate)
       const idUser = Number.isFinite(parsedId) ? parsedId : undefined
-
       const apiPayload: Record<string, unknown> = {
         stressLevel: s,
         motivationLevel: m,
@@ -118,69 +68,46 @@ export default function GamificationCard({ notification = false }: { notificatio
       if (idUser !== undefined) {
         apiPayload.idUser = idUser
       }
-
       const token = localStorage.getItem('authToken')
       const headers: Record<string, string> = { 'Content-Type': 'application/json' }
       if (token) {
         headers['Authorization'] = `Bearer ${token}`
       }
-
       const resp = await fetch('https://uppath.onrender.com/wellBeing', {
         method: 'POST',
         headers,
         body: JSON.stringify(apiPayload),
       })
-
       if (!resp.ok) {
         const t = await resp.text().catch(() => '')
         throw new Error(`Falha ao enviar para API externa: ${resp.status} ${resp.statusText} ${t}`)
       }
-
       setSubmitMessage('Registro salvo com sucesso!')
       setStress('')
       setMotivation('')
       setSleepQuality('')
       setObservation('')
-      setRegisteredOnce(true)
-      setHideCard(true)
+      // Salvar data do registro para não mostrar novamente hoje
+      localStorage.setItem('lastWellBeingRegistration', new Date().toISOString())
       sessionStorage.setItem('hasSeenGame', 'true')
-      await fetchLatest()
+      // Esconder o card após 2 segundos
+      setTimeout(() => setHideCard(true), 2000)
     } catch (err) {
       setSubmitMessage(String((err as Error)?.message ?? err))
     } finally {
       setSubmitLoading(false)
     }
   }
-
-  const num = (v: unknown) => {
-    if (v === null || v === undefined) {
-      return NaN
-    }
-    if (typeof v === 'number') {
-      return v
-    }
-    const s = String(v).replace(',', '.')
-    const n = Number(s)
-    return Number.isFinite(n) ? n : NaN
-  }
-
-  const avg = (arr: number[]) => (arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN)
-
-  const records7 = Array.isArray(records) ? records : []
-  const avgStress = avg(records7.map((r) => num(r.nivel_estresse ?? r.NIVEL_ESTRESSE)))
-  const avgMotivation = avg(records7.map((r) => num(r.nivel_motivacao ?? r.NIVEL_MOTIVACAO)))
-  const avgSleep = avg(records7.map((r) => num(r.qualidade_sono ?? r.QUALIDADE_SONO)))
-
-  void avgStress
-  void avgMotivation
-  void avgSleep
-
-  const containerClass = notification
-    ? `fixed bottom-4 right-4 left-4 sm:bottom-6 sm:right-6 sm:left-auto z-50 transition-transform duration-600 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`
-    : `max-w-md mx-auto transition-transform duration-600 ease-out ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`
-
-  if (!userData || hideCard) {
-    return null
+  if (submitLoading) {
+    return (
+      <div className={containerClass}>
+        <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-3 shadow-lg sm:p-4">
+          <div className="mt-2 text-center">
+            <Spinner text="Carregando..." size={20} />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -195,132 +122,106 @@ export default function GamificationCard({ notification = false }: { notificatio
               <span className="hidden sm:inline">Registre seu bem-estar hoje</span>
               <span className="sm:hidden">Bem-estar hoje</span>
             </div>
-            <img
-              src={isDark ? '/icon/icon-dark.svg' : '/icon/icon-light.svg'}
-              alt="UpPath Icon"
-              className="h-5 w-5 sm:h-6 sm:w-6"
-            />
           </div>
-          <button
-            onClick={() => setHideCard(true)}
-            className="text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
-            title="Minimizar"
-          >
-            <FaTimes />
-          </button>
+          <img
+            src={isDark ? '/icon/icon-dark.svg' : '/icon/icon-light.svg'}
+            alt="UpPath Icon"
+            className="h-6 w-6"
+          />
         </div>
-
         <form
-          onSubmit={(e) => {
+          className="flex flex-col gap-2"
+          onSubmit={async (e) => {
             e.preventDefault()
-            registerToday()
+            await registerToday()
           }}
-          className="grid grid-cols-1 gap-2"
         >
-          <div className="grid grid-cols-2 gap-2">
-            <label className="text-xs">
-              <span className="hidden sm:inline">Estresse (0-10)</span>
-              <span className="sm:hidden">Estresse</span>
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+            <div className="flex flex-col">
+              <label htmlFor="stress" className="text-xs font-medium text-[var(--text-secondary)]">
+                Estresse
+              </label>
               <input
+                id="stress"
                 type="number"
-                min={0}
+                min={1}
                 max={10}
                 value={stress}
                 onChange={(e) => setStress(e.target.value === '' ? '' : Number(e.target.value))}
-                className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 text-xs sm:p-2 sm:text-sm"
-                placeholder="0 = bom, 10 = ruim"
+                className="rounded border px-2 py-1 text-xs focus:ring-2 focus:ring-[var(--accent-primary)] focus:outline-none"
+                placeholder="1-10"
                 required
               />
-            </label>
-            <label className="text-xs">
-              <span className="hidden sm:inline">Motivação (0-10)</span>
-              <span className="sm:hidden">Motivação</span>
+            </div>
+            <div className="flex flex-col">
+              <label
+                htmlFor="motivation"
+                className="text-xs font-medium text-[var(--text-secondary)]"
+              >
+                Motivação
+              </label>
               <input
+                id="motivation"
                 type="number"
-                min={0}
+                min={1}
                 max={10}
                 value={motivation}
                 onChange={(e) => setMotivation(e.target.value === '' ? '' : Number(e.target.value))}
-                className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 text-xs sm:p-2 sm:text-sm"
-                placeholder="0 = ruim, 10 = bom"
+                className="rounded border px-2 py-1 text-xs focus:ring-2 focus:ring-[var(--accent-primary)] focus:outline-none"
+                placeholder="1-10"
                 required
               />
-            </label>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <label className="text-xs">
-              <span className="hidden sm:inline">Qualidade do Sono (0-10)</span>
-              <span className="sm:hidden">Qualidade do Sono</span>
+            </div>
+            <div className="flex flex-col">
+              <label
+                htmlFor="sleepQuality"
+                className="text-xs font-medium text-[var(--text-secondary)]"
+              >
+                Sono
+              </label>
               <input
+                id="sleepQuality"
                 type="number"
-                min={0}
+                min={1}
                 max={10}
                 value={sleepQuality}
                 onChange={(e) =>
                   setSleepQuality(e.target.value === '' ? '' : Number(e.target.value))
                 }
-                className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 text-xs sm:p-2 sm:text-sm"
-                placeholder="0 = ruim, 10 = bom"
+                className="rounded border px-2 py-1 text-xs focus:ring-2 focus:ring-[var(--accent-primary)] focus:outline-none"
+                placeholder="1-10"
                 required
               />
-            </label>
-            <label className="text-xs">
-              Observação
-              <input
-                type="text"
-                value={observation}
-                onChange={(e) => setObservation(e.target.value)}
-                className="mt-1 w-full rounded border border-[var(--input-border)] p-1.5 text-xs sm:p-2 sm:text-sm"
-                placeholder="Opcional"
-              />
-            </label>
-          </div>
-          <div className="mt-1 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-            {!registeredOnce ? (
-              <button
-                type="submit"
-                disabled={submitLoading}
-                className="flex-1 rounded bg-[var(--accent-success)] px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-success-hover)] sm:text-sm"
-              >
-                {submitLoading ? 'Salvando...' : 'Registrar hoje'}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => nav('/dashboard')}
-                className="flex-1 rounded bg-[var(--accent-indigo)] px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-indigo-hover)] sm:text-sm"
-              >
-                Registrar mais
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => {
-                setStress('')
-                setMotivation('')
-                setSleepQuality('')
-                setObservation('')
-                setSubmitMessage(null)
-              }}
-              className="rounded bg-[var(--bg-tertiary)] px-3 py-2 text-xs transition-colors hover:bg-[var(--bg-secondary)] sm:text-sm"
-            >
-              Limpar
-            </button>
-          </div>
-          {submitMessage && (
-            <div className="text-center text-xs text-[var(--accent-success)] sm:text-sm">
-              {submitMessage}
             </div>
-          )}
-        </form>
-
-        {loading && (
-          <div className="mt-2 text-center">
-            <Spinner text="Carregando..." size={20} />
           </div>
-        )}
-        {error && (
-          <div className="mt-2 text-center text-xs text-[var(--accent-danger)]">{error}</div>
+          <div className="flex flex-col">
+            <label
+              htmlFor="observation"
+              className="text-xs font-medium text-[var(--text-secondary)]"
+            >
+              Observação
+            </label>
+            <textarea
+              id="observation"
+              value={observation}
+              onChange={(e) => setObservation(e.target.value)}
+              className="rounded border px-2 py-1 text-xs focus:ring-2 focus:ring-[var(--accent-primary)] focus:outline-none"
+              rows={2}
+              placeholder="Como você está se sentindo hoje?"
+            />
+          </div>
+          <button
+            type="submit"
+            className="mt-2 rounded bg-[var(--accent-primary)] px-4 py-2 text-xs font-bold text-white shadow hover:bg-[var(--accent-primary-hover)] focus:ring-2 focus:ring-[var(--accent-primary)] focus:outline-none"
+            disabled={submitLoading}
+          >
+            Salvar
+          </button>
+        </form>
+        {submitMessage && !submitMessage.toLowerCase().includes('falha') && (
+          <div className="mt-2 text-center text-xs text-[var(--accent-success)]">
+            {submitMessage}
+          </div>
         )}
       </div>
     </div>

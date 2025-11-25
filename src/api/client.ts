@@ -25,8 +25,9 @@ export async function request<T = unknown>(
     if (token && !defaultHeaders.Authorization) {
       defaultHeaders.Authorization = `Bearer ${token}`
     }
-  } catch (_e) {
-    // ignore if localStorage not available or access denied
+  } catch (error) {
+    // Ignore if localStorage not available or access denied (SSR, incognito mode)
+    console.warn('Could not access localStorage for auth token:', error)
   }
 
   const init: RequestInit = { method, headers: defaultHeaders }
@@ -46,8 +47,9 @@ export async function request<T = unknown>(
     if (contentType.includes('application/json')) {
       try {
         data = JSON.parse(text)
-      } catch (_e) {
+      } catch (error) {
         // If parsing fails, keep raw text in data for better error messages
+        console.warn('Failed to parse JSON response:', error)
         data = text
       }
     } else {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { FaFire, FaMedal } from 'react-icons/fa'
 import { useAuth } from '../../contexts/useAuth'
 import Spinner from '../Spinner/Spinner'
@@ -72,7 +72,7 @@ export default function BemEstar() {
     }
   }, [userData, fetchBemEstar])
 
-  const num = (v: unknown) => {
+  const num = useCallback((v: unknown) => {
     if (v === null || v === undefined) {
       return NaN
     }
@@ -82,56 +82,76 @@ export default function BemEstar() {
     const s = String(v).replace(',', '.')
     const n = Number(s)
     return Number.isFinite(n) ? n : NaN
-  }
+  }, [])
 
-  const lastNRecords = (n = 7) => {
-    if (!Array.isArray(bemEstar)) {
-      return [] as Array<Record<string, unknown>>
-    }
-    const copy = [...bemEstar]
-    copy.sort((a, b) => {
-      const da = String(a.data_registro ?? a.DATA_REGISTRO ?? '')
-      const db = String(b.data_registro ?? b.DATA_REGISTRO ?? '')
-      return new Date(db).getTime() - new Date(da).getTime()
-    })
-    return copy.slice(0, n)
-  }
-
-  const records7 = lastNRecords(7)
-
-  const avg = (arr: number[]) => (arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN)
-
-  const avgStress = avg(
-    records7.map((r) => {
-      const record = r as Record<string, unknown>
-      return num(record.stressLevel ?? record.nivel_estresse ?? record.NIVEL_ESTRESSE)
-    }),
-  )
-  const avgMotivation = avg(
-    records7.map((r) => {
-      const record = r as Record<string, unknown>
-      return num(record.motivationLevel ?? record.nivel_motivacao ?? record.NIVEL_MOTIVACAO)
-    }),
-  )
-  const avgSleep = avg(
-    records7.map((r) => {
-      const record = r as Record<string, unknown>
-      return num(record.sleepQuality ?? record.qualidade_sono ?? record.QUALIDADE_SONO)
-    }),
+  const lastNRecords = useCallback(
+    (n = 7) => {
+      if (!Array.isArray(bemEstar)) {
+        return [] as Array<Record<string, unknown>>
+      }
+      const copy = [...bemEstar]
+      copy.sort((a, b) => {
+        const da = String(a.data_registro ?? a.DATA_REGISTRO ?? '')
+        const db = String(b.data_registro ?? b.DATA_REGISTRO ?? '')
+        return new Date(db).getTime() - new Date(da).getTime()
+      })
+      return copy.slice(0, n)
+    },
+    [bemEstar],
   )
 
-  const computeScore = () => {
+  const records7 = useMemo(() => lastNRecords(7), [lastNRecords])
+
+  const avg = useCallback(
+    (arr: number[]) => (arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : NaN),
+    [],
+  )
+
+  const avgStress = useMemo(
+    () =>
+      avg(
+        records7.map((r) => {
+          const record = r as Record<string, unknown>
+          return num(record.stressLevel ?? record.nivel_estresse ?? record.NIVEL_ESTRESSE)
+        }),
+      ),
+    [records7, avg, num],
+  )
+
+  const avgMotivation = useMemo(
+    () =>
+      avg(
+        records7.map((r) => {
+          const record = r as Record<string, unknown>
+          return num(record.motivationLevel ?? record.nivel_motivacao ?? record.NIVEL_MOTIVACAO)
+        }),
+      ),
+    [records7, avg, num],
+  )
+
+  const avgSleep = useMemo(
+    () =>
+      avg(
+        records7.map((r) => {
+          const record = r as Record<string, unknown>
+          return num(record.sleepQuality ?? record.qualidade_sono ?? record.QUALIDADE_SONO)
+        }),
+      ),
+    [records7, avg, num],
+  )
+
+  const computeScore = useCallback(() => {
     const s = isNaN(avgStress) ? 0 : avgStress
     const m = isNaN(avgMotivation) ? 0 : avgMotivation
     const q = isNaN(avgSleep) ? 0 : avgSleep
     const raw = (10 - s + m + q) / 30
     const score = Math.round(Math.max(0, Math.min(1, raw)) * 100)
     return score
-  }
+  }, [avgStress, avgMotivation, avgSleep])
 
-  const score = computeScore()
+  const score = useMemo(() => computeScore(), [computeScore])
 
-  const getBadge = (s: number) => {
+  const getBadge = useCallback((s: number) => {
     if (s >= 71) {
       return { label: 'Ouro', color: 'text-[var(--accent-warning)]' }
     }
@@ -139,10 +159,11 @@ export default function BemEstar() {
       return { label: 'Prata', color: 'text-[var(--text-muted)]' }
     }
     return { label: 'Bronze', color: 'text-[var(--accent-warning-dark)]' }
-  }
-  const badge = getBadge(score)
+  }, [])
 
-  const computeStreak = () => {
+  const badge = useMemo(() => getBadge(score), [getBadge, score])
+
+  const computeStreak = useCallback(() => {
     if (!Array.isArray(bemEstar) || bemEstar.length === 0) {
       return 0
     }
@@ -168,24 +189,24 @@ export default function BemEstar() {
       }
     }
     return streak
-  }
+  }, [bemEstar])
 
-  const streak = computeStreak()
+  const streak = useMemo(() => computeStreak(), [computeStreak])
 
-  const pct = (v: number) => {
+  const pct = useCallback((v: number) => {
     if (isNaN(v)) {
       return 0
     }
     return Math.round((Math.max(0, Math.min(10, v)) / 10) * 100)
-  }
+  }, [])
 
-  const sleepPct = pct(avgSleep)
-  const motPct = pct(avgMotivation)
-  const stressPct = 100 - pct(avgStress)
+  const sleepPct = useMemo(() => pct(avgSleep), [pct, avgSleep])
+  const motPct = useMemo(() => pct(avgMotivation), [pct, avgMotivation])
+  const stressPct = useMemo(() => 100 - pct(avgStress), [pct, avgStress])
 
-  const recordCount = Array.isArray(bemEstar) ? bemEstar.length : 0
+  const recordCount = useMemo(() => (Array.isArray(bemEstar) ? bemEstar.length : 0), [bemEstar])
 
-  const Ring = ({ label, percent }: { label: string; percent: number }) => {
+  const Ring = memo(({ label, percent }: { label: string; percent: number }) => {
     const size = 64
     const stroke = 8
     const radius = (size - stroke) / 2
@@ -211,7 +232,7 @@ export default function BemEstar() {
         <div className="text-sm font-semibold">{percent}%</div>
       </div>
     )
-  }
+  })
 
   return (
     <section className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4">

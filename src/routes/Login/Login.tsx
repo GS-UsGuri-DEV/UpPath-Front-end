@@ -8,6 +8,7 @@ import { useAuth } from '../../contexts/useAuth'
 import { account, db } from '../../shared/appwrite'
 import type { LoginFormData } from '../../types/auth'
 import { clearRememberedEmail, getRememberedEmail, rememberEmail } from '../../utils/storage'
+import { isValidEmail } from '../../utils/validation'
 
 export default function Login() {
   const [msg, setMsg] = useState('')
@@ -76,9 +77,9 @@ export default function Login() {
       if (loginType === 'empresa') {
         loginIdentifier = data.email.replace(/\D/g, '')
       } else {
-        // Para usuário, só aceita e-mail válido contendo @ e .com
-        if (!/^[^@\s]+@[^@\s]+\.com$/.test(data.email)) {
-          setMsg('Digite um e-mail válido (deve conter @ e .com)')
+        // Para usuário, validar e-mail
+        if (!isValidEmail(data.email)) {
+          setMsg('Digite um e-mail válido')
           return
         }
       }
@@ -310,12 +311,23 @@ export default function Login() {
                 </>
               )}
             </FormButton>
-            <Link to="/cadastro" className="block text-center text-sm">
-              <span className="text-[var(--text-muted)]">Não tem conta?</span>{' '}
-              <span className="font-semibold text-blue-400 transition-colors hover:text-blue-300">
-                Criar conta
-              </span>
-            </Link>
+            <div className="space-y-2">
+              <Link to="/cadastro" className="block text-center text-sm">
+                <span className="text-[var(--text-muted)]">Não tem conta?</span>{' '}
+                <span className="font-semibold text-blue-400 transition-colors hover:text-blue-300">
+                  Criar conta
+                </span>
+              </Link>
+              <p className="text-center text-xs text-[var(--text-muted)]">
+                Ao fazer login, você concorda com nossos{' '}
+                <Link
+                  to="/termos"
+                  className="text-blue-400 underline transition-colors hover:text-blue-300"
+                >
+                  Termos de Uso
+                </Link>
+              </p>
+            </div>
           </div>
         </form>
       </div>
