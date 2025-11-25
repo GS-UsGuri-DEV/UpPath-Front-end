@@ -2,6 +2,7 @@ import {
   FaArrowUp,
   FaEnvelope,
   FaFacebookF,
+  FaGithub,
   FaHeart,
   FaInstagram,
   FaLinkedinIn,
@@ -255,6 +256,15 @@ export default function Footer() {
               >
                 Equipe
               </Link>
+              <span className="text-[var(--text-muted)]">•</span>
+              <a
+                href="https://github.com/GS-UsGuri-DEV/UpPath-Front-end"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs text-[var(--text-muted)] transition-colors hover:text-indigo-600"
+              >
+                <FaGithub /> Repositório
+              </a>
               <span className="text-[var(--text-muted)]">•</span>
               <Link
                 to="/privacidade"
