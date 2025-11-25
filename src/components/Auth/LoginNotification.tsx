@@ -2,14 +2,12 @@ import { useEffect, useState } from 'react'
 import { FaTimes, FaUser } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/useAuth'
-import useTheme from '../../hooks/useTheme'
 
 export default function LoginNotification() {
   const { user } = useAuth()
   const nav = useNavigate()
   const [mounted, setMounted] = useState(false)
   const [hideCard, setHideCard] = useState(false)
-  const { isDark } = useTheme()
 
   useEffect(() => {
     setMounted(true)
@@ -38,47 +36,41 @@ export default function LoginNotification() {
 
   return (
     <div className={containerClass}>
-      <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-3 shadow-lg sm:w-80 sm:p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 animate-pulse rounded-full bg-blue-500" />
-            <div className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)] sm:text-sm">
-              <FaUser className="text-[var(--accent-indigo)]" />
-              <span className="hidden sm:inline">Faça login para acessar</span>
-              <span className="sm:hidden">Faça login</span>
+      <div className="rounded-xl border-2 border-[var(--accent-indigo)] bg-[var(--bg-secondary)] p-5 shadow-2xl sm:w-[420px] sm:p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-3 w-3 animate-pulse rounded-full bg-blue-500" />
+            <div className="flex items-center gap-3 text-base font-bold text-[var(--text-primary)] sm:text-lg">
+              <FaUser className="text-xl text-[var(--accent-indigo)]" />
+              <span>Faça login para acessar</span>
             </div>
-            <img
-              src={isDark ? '/icon/icon-dark.svg' : '/icon/icon-light.svg'}
-              alt="UpPath Icon"
-              className="h-5 w-5 sm:h-6 sm:w-6"
-            />
           </div>
           <button
             onClick={handleClose}
-            className="text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
+            className="text-lg text-[var(--text-muted)] transition-all duration-200 hover:scale-110 hover:rotate-90 hover:text-red-500"
             title="Fechar"
           >
             <FaTimes />
           </button>
         </div>
 
-        <div className="mb-3">
-          <p className="text-xs text-[var(--text-secondary)] sm:text-sm">
+        <div className="mb-5">
+          <p className="text-sm leading-relaxed text-[var(--text-secondary)] sm:text-base">
             Você precisa fazer login para acessar todos os recursos da plataforma UpPath, incluindo
             trilhas personalizadas, dashboard e muito mais!
           </p>
         </div>
 
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <button
             onClick={handleLoginRedirect}
-            className="flex-1 rounded bg-[var(--accent-indigo)] px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-indigo-hover)] sm:text-sm"
+            className="flex-1 transform rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:scale-105 hover:bg-indigo-700 hover:shadow-xl active:scale-95 sm:text-base"
           >
             Fazer Login
           </button>
           <button
             onClick={() => nav('/cadastro')}
-            className="flex-1 rounded border border-[var(--border-color)] bg-[var(--bg-tertiary)] px-4 py-2 text-xs font-medium transition-colors hover:bg-[var(--bg-secondary)] sm:text-sm"
+            className="flex-1 transform rounded-lg border-2 border-indigo-500 bg-transparent px-6 py-3 text-sm font-semibold text-[var(--text-primary)] shadow-md transition-all duration-300 hover:scale-105 hover:border-indigo-600 hover:bg-indigo-500 hover:text-white hover:shadow-xl active:scale-95 sm:text-base"
           >
             Criar Conta
           </button>
