@@ -12,6 +12,27 @@ export default function GamificationCard({ notification = false }: { notificatio
   const [motivation, setMotivation] = useState<number | ''>('')
   const [sleepQuality, setSleepQuality] = useState<number | ''>('')
   const [observation, setObservation] = useState<string>('')
+  const [hideCard, setHideCard] = useState(false)
+
+  // Verificar se já foi registrado hoje
+  const checkIfRegisteredToday = () => {
+    const lastRegistered = localStorage.getItem('lastWellBeingRegistration')
+    if (lastRegistered) {
+      const lastDate = new Date(lastRegistered)
+      const today = new Date()
+      return (
+        lastDate.getDate() === today.getDate() &&
+        lastDate.getMonth() === today.getMonth() &&
+        lastDate.getFullYear() === today.getFullYear()
+      )
+    }
+    return false
+  }
+
+  // Esconder card se já foi registrado hoje
+  if (hideCard || checkIfRegisteredToday()) {
+    return null
+  }
   const containerClass = notification
     ? `fixed bottom-4 right-4 left-4 sm:bottom-6 sm:right-6 sm:left-auto z-50 transition-transform duration-600`
     : `max-w-md mx-auto transition-transform duration-600 ease-out`
@@ -66,7 +87,11 @@ export default function GamificationCard({ notification = false }: { notificatio
       setMotivation('')
       setSleepQuality('')
       setObservation('')
+      // Salvar data do registro para não mostrar novamente hoje
+      localStorage.setItem('lastWellBeingRegistration', new Date().toISOString())
       sessionStorage.setItem('hasSeenGame', 'true')
+      // Esconder o card após 2 segundos
+      setTimeout(() => setHideCard(true), 2000)
     } catch (err) {
       setSubmitMessage(String((err as Error)?.message ?? err))
     } finally {
