@@ -71,3 +71,12 @@ export type UserDashboard = {
   /** Recomendações personalizadas (re-usa tipo de graphicsDashboard) */
   recomendacoes: Recomendacao[]
 }
+
+/**
+ * Props para o componente ProgressSection
+ * Exibe progresso do usuário baseado em registros de bem-estar
+ */
+export type ProgressSectionProps = {
+  /** Dados de bem-estar do usuário (opcional) */
+  bemEstarData?: BemEstarEntry[]
+}
