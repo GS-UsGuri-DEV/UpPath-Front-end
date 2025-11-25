@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { FaBook, FaRoad, FaSearch, FaTimes } from 'react-icons/fa'
 import CursoCard from '../../components/Cursos/CursoCard'
 import TrilhaCard from '../../components/Cursos/TrilhaCard'
-import Footer from '../../components/Footer'
+import Footer from '../../components/Footer/Footer'
 import { categorias, cursosDisponiveis, trilhasDisponiveis } from '../../data/cursosData'
 
 export default function Cursos() {

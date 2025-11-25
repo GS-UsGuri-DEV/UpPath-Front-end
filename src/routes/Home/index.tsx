@@ -1,6 +1,6 @@
 import LoginNotification from '../../components/Auth/LoginNotification'
 import GamificationCard from '../../components/BemEstar/GamificationCard'
-import Footer from '../../components/Footer'
+import Footer from '../../components/Footer/Footer'
 import ProgressSection from '../../components/Home/ProgressSection'
 import QuickAccessSection from '../../components/Home/QuickAccessSection'
 import ResourcesSection from '../../components/Home/ResourcesSection'
