@@ -1,3 +1,4 @@
+import LoginNotification from '../../components/Auth/LoginNotification'
 import GamificationCard from '../../components/BemEstar/GamificationCard'
 import Footer from '../../components/Footer'
 import ProgressSection from '../../components/Home/ProgressSection'
@@ -23,7 +24,11 @@ export default function Home() {
           <ResourcesSection />
         </div>
 
-        <GamificationCard notification />
+        {/* Mostra notificação de login se usuário não estiver logado */}
+        {!user && <LoginNotification />}
+
+        {/* Mostra gamificação se usuário estiver logado */}
+        {user && <GamificationCard notification />}
       </div>
 
       <Footer />
