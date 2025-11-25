@@ -7,7 +7,7 @@ import {
   FaLinkedinIn,
   FaMapMarkerAlt,
   FaPhone,
-  FaTwitter
+  FaTwitter,
 } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { contactInfo } from '../../data/contactData'
