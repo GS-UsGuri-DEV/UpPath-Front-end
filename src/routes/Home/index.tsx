@@ -6,9 +6,17 @@ import QuickAccessSection from '../../components/Home/QuickAccessSection'
 import ResourcesSection from '../../components/Home/ResourcesSection'
 import WelcomeSection from '../../components/Home/WelcomeSection'
 import { useAuth } from '../../contexts/useAuth'
+import { useUserDashboard } from '../../hooks/useUserDashboard'
 
 export default function Home() {
-  const { user } = useAuth()
+  const { user, userData } = useAuth()
+  const userDataObj = userData as unknown as Record<string, unknown>
+  const userId = (userDataObj?.id ??
+    userDataObj?.ID ??
+    userDataObj?.userId ??
+    userDataObj?.idUser ??
+    userDataObj?.$id) as number | string | null | undefined
+  const { data: dashboardData } = useUserDashboard(userId)
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
@@ -18,7 +26,7 @@ export default function Home() {
 
           <div className="mb-6 grid gap-6 md:grid-cols-2">
             <QuickAccessSection showCadastro={!user} />
-            <ProgressSection />
+            <ProgressSection bemEstarData={dashboardData?.bem_estar ?? []} />
           </div>
 
           <ResourcesSection />
