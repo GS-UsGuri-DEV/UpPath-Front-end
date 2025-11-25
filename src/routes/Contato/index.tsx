@@ -2,7 +2,7 @@ import { FaPhoneAlt } from 'react-icons/fa'
 import ContactForm from '../../components/Contato/ContactForm'
 import ContactInfo from '../../components/Contato/ContactInfo'
 import SocialLinks from '../../components/Contato/SocialLinks'
-import Footer from '../../components/Footer'
+import Footer from '../../components/Footer/Footer'
 
 export default function Contato() {
   return (

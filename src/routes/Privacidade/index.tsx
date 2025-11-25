@@ -1,4 +1,4 @@
-import { FaShieldAlt, FaCheckCircle } from 'react-icons/fa'
+import { FaCheckCircle, FaShieldAlt } from 'react-icons/fa'
 import Footer from '../../components/Footer/Footer'
 
 export default function Privacidade() {

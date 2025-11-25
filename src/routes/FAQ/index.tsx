@@ -3,7 +3,7 @@ import { FaQuestionCircle } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import FAQCategory from '../../components/FAQ/FAQCategory'
 import SearchBar from '../../components/FAQ/SearchBar'
-import Footer from '../../components/Footer'
+import Footer from '../../components/Footer/Footer'
 import { faqData } from '../../data/faqData'
 import { useDebounce } from '../../hooks/useDebounce'
 
