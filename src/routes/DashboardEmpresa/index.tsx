@@ -52,8 +52,8 @@ export default function DashboardEmpresa() {
               empresasResRaw = r
               break
             }
-          } catch (_e) {
-            // ignora e tenta próximo formato
+          } catch (error) {
+            console.warn(`Failed to fetch empresa with path ${p}:`, error)
           }
         }
       }
@@ -122,8 +122,8 @@ export default function DashboardEmpresa() {
             funcionariosData = items as unknown as Funcionario[]
             break
           }
-        } catch (_e) {
-          // tenta próximo formato
+        } catch (error) {
+          console.warn('Failed to fetch funcionarios, trying next format:', error)
         }
       }
 
@@ -329,8 +329,8 @@ export default function DashboardEmpresa() {
                 })
 
                 return items[0] as BemEstarData
-              } catch (_e) {
-                // tenta próxima
+              } catch (error) {
+                console.warn('Failed to fetch bem-estar data, trying next option:', error)
               }
             }
           }
@@ -376,8 +376,8 @@ export default function DashboardEmpresa() {
               })
 
               return items[0] as BemEstarData
-            } catch (_e) {
-              // ignore
+            } catch (error) {
+              console.warn('Failed to fetch bem-estar data by email:', error)
             }
           }
 
@@ -450,8 +450,8 @@ export default function DashboardEmpresa() {
 
               validResults = latestPerUser
               break
-            } catch (_e) {
-              // tenta próxima query
+            } catch (error) {
+              console.warn('Failed to fetch bem-estar data for all users, trying next query:', error)
             }
           }
         }

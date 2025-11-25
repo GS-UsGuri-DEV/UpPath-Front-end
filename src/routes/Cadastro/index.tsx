@@ -166,15 +166,17 @@ export default function Cadastro() {
             if (externalUser) {
               try {
                 localStorage.setItem('userData', JSON.stringify(externalUser))
-              } catch {}
+              } catch (error) {
+                console.error('Failed to store empresa user data in localStorage:', error)
+              }
             }
             try {
               await checkAuth()
-            } catch (_e) {
-              // checkAuth fallback failed
+            } catch (error) {
+              console.error('checkAuth failed after empresa registration:', error)
             }
-          } catch (_fallbackErr) {
-            // Fallback login também falhou
+          } catch (fallbackErr) {
+            console.error('Fallback login failed after empresa registration:', fallbackErr)
           }
         }
 
@@ -267,15 +269,17 @@ export default function Cadastro() {
             if (externalUser) {
               try {
                 localStorage.setItem('userData', JSON.stringify(externalUser))
-              } catch {}
+              } catch (error) {
+                console.error('Failed to store user data in localStorage:', error)
+              }
             }
             try {
               await checkAuth()
-            } catch (_e) {
-              // checkAuth fallback failed
+            } catch (error) {
+              console.error('checkAuth failed after user registration:', error)
             }
-          } catch (_fallbackErr) {
-            // Fallback login também falhou
+          } catch (fallbackErr) {
+            console.error('Fallback login failed after user registration:', fallbackErr)
           }
         }
 
