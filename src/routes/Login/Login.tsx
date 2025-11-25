@@ -311,12 +311,23 @@ export default function Login() {
                 </>
               )}
             </FormButton>
-            <Link to="/cadastro" className="block text-center text-sm">
-              <span className="text-[var(--text-muted)]">Não tem conta?</span>{' '}
-              <span className="font-semibold text-blue-400 transition-colors hover:text-blue-300">
-                Criar conta
-              </span>
-            </Link>
+            <div className="space-y-2">
+              <Link to="/cadastro" className="block text-center text-sm">
+                <span className="text-[var(--text-muted)]">Não tem conta?</span>{' '}
+                <span className="font-semibold text-blue-400 transition-colors hover:text-blue-300">
+                  Criar conta
+                </span>
+              </Link>
+              <p className="text-center text-xs text-[var(--text-muted)]">
+                Ao fazer login, você concorda com nossos{' '}
+                <Link
+                  to="/termos"
+                  className="text-blue-400 underline transition-colors hover:text-blue-300"
+                >
+                  Termos de Uso
+                </Link>
+              </p>
+            </div>
           </div>
         </form>
       </div>

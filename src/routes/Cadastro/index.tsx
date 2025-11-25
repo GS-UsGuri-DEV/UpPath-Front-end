@@ -12,6 +12,7 @@ export default function Cadastro() {
   const [msg, setMsg] = useState('')
   const [submitError, setSubmitError] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
   const nav = useNavigate()
 
   const { register, handleSubmit, formState, watch, setValue } = useForm<SignupFormData>({
@@ -637,7 +638,26 @@ export default function Cadastro() {
               {submitError}
             </div>
           )}
-          <FormButton type="submit" disabled={formState.isSubmitting}>
+          <label className="flex items-start gap-2 text-sm text-[var(--text-muted)]">
+            <input
+              type="checkbox"
+              className="mt-0.5 rounded border-[var(--border-color)] bg-[var(--bg-tertiary)]"
+              checked={acceptedTerms}
+              onChange={(e) => setAcceptedTerms(e.target.checked)}
+              required
+            />
+            <span>
+              Li e aceito os{' '}
+              <Link
+                to="/termos"
+                className="text-blue-400 underline transition-colors hover:text-blue-300"
+                target="_blank"
+              >
+                Termos de Uso
+              </Link>
+            </span>
+          </label>
+          <FormButton type="submit" disabled={formState.isSubmitting || !acceptedTerms}>
             {formState.isSubmitting ? 'Criando conta...' : 'Criar conta'}
           </FormButton>
           <p className="link-muted">
