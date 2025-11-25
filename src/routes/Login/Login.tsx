@@ -7,6 +7,7 @@ import FormInput from '../../components/Form/FormInput'
 import { useAuth } from '../../contexts/useAuth'
 import { account, db } from '../../shared/appwrite'
 import type { LoginFormData } from '../../types/auth'
+import { clearRememberedEmail, getRememberedEmail, rememberEmail } from '../../utils/storage'
 
 export default function Login() {
   const [msg, setMsg] = useState('')
@@ -58,11 +59,9 @@ export default function Login() {
   }
 
   useEffect(() => {
-    const savedEmail = localStorage.getItem('rememberedEmail')
-    const savedPassword = localStorage.getItem('rememberedPassword')
-    if (savedEmail && savedPassword) {
+    const savedEmail = getRememberedEmail()
+    if (savedEmail) {
       setValue('email', savedEmail)
-      setValue('password', savedPassword)
       setRemember(true)
     }
   }, [setValue])
@@ -87,11 +86,9 @@ export default function Login() {
       await login(loginIdentifier, data.password, loginType)
 
       if (remember) {
-        localStorage.setItem('rememberedEmail', data.email)
-        localStorage.setItem('rememberedPassword', data.password)
+        rememberEmail(data.email)
       } else {
-        localStorage.removeItem('rememberedEmail')
-        localStorage.removeItem('rememberedPassword')
+        clearRememberedEmail()
       }
 
       if (loginType === 'empresa') {
