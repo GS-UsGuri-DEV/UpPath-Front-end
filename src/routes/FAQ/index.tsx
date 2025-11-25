@@ -5,10 +5,12 @@ import FAQCategory from '../../components/FAQ/FAQCategory'
 import SearchBar from '../../components/FAQ/SearchBar'
 import Footer from '../../components/Footer'
 import { faqData } from '../../data/faqData'
+import { useDebounce } from '../../hooks/useDebounce'
 
 export default function FAQ() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
+  const debouncedSearchTerm = useDebounce(searchTerm, 300)
   const [expandedItems, setExpandedItems] = useState<number[]>([])
 
   const toggleItem = (index: number) => {
@@ -19,9 +21,9 @@ export default function FAQ() {
 
   const filteredFAQ = faqData.filter(
     (item) =>
-      item.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.answer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchTerm.toLowerCase()),
+      item.question.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+      item.answer.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+      item.category.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
   )
 
   const categories = Array.from(new Set(faqData.map((item) => item.category)))

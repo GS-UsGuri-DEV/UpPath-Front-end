@@ -4,11 +4,65 @@
  */
 
 /**
+ * Resposta da API para dados de usuário
+ * Estrutura específica retornada pelos endpoints de usuário
+ */
+export interface UserResponse {
+  /** ID único do usuário */
+  id_usuario?: number | string
+  /** ID da empresa vinculada (null se independente) */
+  id_empresa?: number | string | null
+  /** Nome completo */
+  nome_completo?: string
+  /** CPF (11 dígitos) */
+  cpf?: string
+  /** Email (usado para login) */
+  email?: string
+  /** Nível de carreira */
+  nivel_carreira?: string
+  /** Ocupação profissional */
+  ocupacao?: string
+  /** Gênero */
+  genero?: string
+  /** Data de nascimento */
+  data_nascimento?: string
+  /** Data de cadastro */
+  data_cadastro?: string
+  /** Flag de admin */
+  is_admin?: boolean
+  /** ID do Appwrite (se usado) */
+  $id?: string
+  /** Campos adicionais da API */
+  [key: string]: unknown
+}
+
+/**
+ * Resposta da API para dados de empresa
+ * Estrutura específica retornada pelos endpoints de empresa
+ */
+export interface CompanyResponse {
+  /** ID único da empresa */
+  id_empresa?: number | string
+  /** Nome da empresa */
+  nome_empresa?: string
+  /** CNPJ (14 dígitos) */
+  cnpj?: string
+  /** Email de contato */
+  email_contato?: string
+  /** Data de cadastro */
+  data_cadastro?: string
+  /** ID do Appwrite (se usado) */
+  $id?: string
+  /** Campos adicionais da API */
+  [key: string]: unknown
+}
+
+/**
  * Estrutura completa e flexível de dados do usuário
  * Permite qualquer campo adicional retornado pela API
- * @deprecated Prefira usar tipos mais específicos como UserResponse quando possível
+ * @deprecated Prefira usar UserResponse para dados estruturados
  */
-export type UserData = Record<string, unknown>
+export type UserData = UserResponse | Record<string, unknown>
 
 /**
  * Versão simplificada dos dados do usuário
